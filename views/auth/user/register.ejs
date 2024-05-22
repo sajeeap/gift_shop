@@ -1,0 +1,125 @@
+<section>
+
+    <div class="px-4 py-5 px-md-5 text-center text-lg-start" style="background-color: hsl(0, 0%, 96%)">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3 class="ltext-103 cl5 text-center mb-5">
+                        Register
+                    </h3>
+                </div>
+            </div>
+            <div class="row gx-lg-5 justify-content-center">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <div class="card">
+                        <div class="card-body py-5 px-md-5">
+                            <form action="/register" method="POST">
+
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-outline">
+
+                                            <label for="firstName" class="form-label text-left">First Name</label>
+                                            <input name="firstName" type="text" class="form-control" id="firstName"
+                                                placeholder="First Name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-outline">
+
+                                            <label for="lastName" class="form-label text-left">Last Name</label>
+                                            <input name="lastName" type="text" class="form-control" id="lastName"
+                                                placeholder="Last Name" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+
+                                    <label for="email" class="form-label text-left">Email</label>
+                                    <input name="email" type="email" class="form-control" id="email"
+                                        placeholder="example@gmail.com" required>
+                                </div>
+
+                                <!-- Password input -->
+                                <div class="form-outline mb-4">
+
+                                    <label for="pwd" class="form-label text-left">Password</label>
+                                    <input name="pwd" type="password" class="form-control" id="pwd" required>
+                                </div>
+                                <div class="form-outline mb-4">
+                                    <label for="pwdConf" class="form-label text-left">Password
+                                        confirmation</label>
+                                    <input name="pwdConf" type="password" class="form-control" id="pwdConf" required>
+                                </div>
+
+                                <!-- Submit button -->
+                                <div class="flex-c-m">
+                                    <button type="submit"
+                                        class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                        Register
+                                    </button>
+                                </div>
+                                <div class="mt-4">
+                                    <p>Already have an account? <a href="/login" style="color: black;"><u>Login</u></a>
+                                    </p>
+
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- <script src="/javascripts/registerValidation.js"></script> -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form');
+        
+        form.addEventListener('submit', function (event) {
+            
+            //prevent form submission
+            event.preventDefault();
+
+            //check if the form is valid
+            if (!form.checkValidity()) {
+                return;
+            }
+            //custom validation for password length
+            const password = document.getElementById('pwd');
+            if (password.value.length < 8) {
+                password.setCustomValidity('password must be 8 characters long.');
+                password.reportValidity();
+                return;
+            } else {
+                password.setCustomValidity('');//clear custom validity message
+            }
+            //check if password match
+            const pwdConf = document.getElementById('pwdConf');
+            if (password.value !== pwdConf.value) {
+                pwdConf.setCustomValidity('Password do not match');
+                pwdConf.reportValidity();
+                return;
+            } else {
+                pwdConf.setCustomValidity('');
+            }
+
+            //form is valid,
+            form.submit();
+        });
+
+        // Add input event listeners to reset custom validity messages when the user corrects them
+        document.querySelectorAll('input[type="password"]').forEach(function (input) {
+            input.addEventListener('input', function () {
+                input.setCustomValidity('');
+            });
+        });
+    })
+</script>
