@@ -1,34 +1,34 @@
 <style>
-  .otp-field {
-    flex-direction: row;
-    column-gap: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    .otp-field {
+        flex-direction: row;
+        column-gap: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-  .otp-field input {
-    height: 45px;
-    width: 42px;
-    border-radius: 6px;
-    outline: none;
-    font-size: 1.125rem;
-    text-align: center;
-    border: 1px solid #ddd;
-  }
+    .otp-field input {
+        height: 45px;
+        width: 42px;
+        border-radius: 6px;
+        outline: none;
+        font-size: 1.125rem;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
 
-  .otp-field input:focus {
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-  }
+    .otp-field input:focus {
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    }
 
-  .otp-field input::-webkit-inner-spin-button,
-  .otp-field input::-webkit-outer-spin-button {
-    display: none;
-  }
+    .otp-field input::-webkit-inner-spin-button,
+    .otp-field input::-webkit-outer-spin-button {
+        display: none;
+    }
 
-  .resend {
-    font-size: 16px;
-  }
+    .resend {
+        font-size: 16px;
+    }
 </style>
 
 <section>
@@ -50,12 +50,14 @@
                             <form action="/verifyOtp" method="POST">
 
 
-                                <div class="otp-field mb-4">
-                                    <input name="otp-field" class="form-control"  min="0" max="999999" required />
-                                  </div>
+                                <div class="form-group mb-4">
+
+                                    <input type="text" name="otp" id="otp" class="form-control">
+
+                                </div>
 
                                 <!-- Verify button -->
-                                <div class="flex-c-m">
+                                <div class="my-3 flex-c-m" >
                                     <button type="submit"
                                         class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 ">
                                         Verify
@@ -63,13 +65,13 @@
                                 </div>
 
                             </form>
-                            
+
                             <div class="card-footer">
                                 <p class="lead">request again in : <span id="timer"
-                                        class="badge text-bg-warning"></span></p>
+                                        class="badge bg-warning"></span></p>
                             </div>
 
-                           
+
                         </div>
                     </div>
                 </div>
@@ -82,11 +84,11 @@
 
 <script>
 
-    
-    
+
+
     const timer = (remaining) => {
         let min = Math.floor(remaining / 60) //floor is for not giving decimal values
-        let sec = remaining % 60  
+        let sec = remaining % 60
 
         min = min < 10 ? "0" + min : min
         sec = sec < 10 ? "0" + sec : sec
@@ -104,46 +106,3 @@
 </script>
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.querySelector('form');
-
-        form.addEventListener('submit', function (event) {
-            //prevent form submission
-            event.preventDefault();
-
-            //check if the form is valid
-            if (!form.checkValidity()) {
-                return;
-            }
-            //custom validation for password length
-            const password = document.getElementById('pwd');
-            if (password.value.length < 8) {
-                password.setCustomValidity('password must be 8 characters long.');
-                password.reportValidity();
-                return;
-            } else {
-                password.setCustomValidity('');//clear custom validity message
-            }
-            //check if password match
-            const pwdConf = document.getElementById('pwdConf');
-            if (password.value !== pwdConf.value) {
-                pwdConf.setCustomValidity('Password do not match');
-                pwdConf.reportValidity();
-                return;
-            } else {
-                pwdConf.setCustomValidity('');
-            }
-
-            //form is valid,
-            form.submit();
-        });
-
-        // Add input event listeners to reset custom validity messages when the user corrects them
-        document.querySelectorAll('input[type="password"]').forEach(function (input) {
-            input.addEventListener('input', function () {
-                input.setCustomValidity('');
-            });
-        });
-    })
-</script>

@@ -6,6 +6,7 @@ const userController=require('../controller/userController');
 const {isLoggedIn} = require('../middleware/authMiddleware');
 
 
+
 //getHome
 router.get('/', userController.userHome);
 

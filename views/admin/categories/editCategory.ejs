@@ -1,0 +1,58 @@
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">
+                <%= locals.title ? locals.title : "Edit Category" %>
+            </h2>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+
+
+                    <form action="/admin/edit-category/<%= category._id %>" method="post">
+
+                        <div class="mb-4">
+                            <label for="category_name" class="form-label">Category Name</label>
+
+                            <input type="text" placeholder="Category Name" class="form-control"
+                                value="<%= category.name %>" name="category_name" id="category_name" required />
+                        </div>
+
+                       
+                        <div class="form-group mb-3">
+                            <label class="form-label" for="">Status</label>
+                            <select class="form-select" name="status" aria-label="List or Unlist the Banner">
+                              <% if (category.isActive) { %>
+                              <option value="true">Listed</option>
+                              <option value="false">Unlisted</option>
+                              <% } else { %>
+                              <option value="false">Unlisted</option>
+                              <option value="true">Listed</option>
+                              <% } %>
+                            </select>
+                          </div>
+
+                        
+                        <div class="button-grp">
+                            <button type="submit" class="btn btn-sm font-sm rounded btn-brand  px-4">Update</button>
+                            <button type="reset" class="btn btn-sm font-sm btn-light rounded px-3" onclick="deleteCategory()" >Delete</button>
+                          </div>
+                    </form>
+                </div>
+            </div> <!-- .row // -->
+        </div> <!-- card body .// -->
+    </div> <!-- card .// -->
+</section> <!-- content-main end// -->
+
+
+<script>
+    function deleteCategory() {
+        if (confirm("Are you sure you want to delete this category?")) {
+            // Redirect to delete category route
+            window.location.href = "/admin/delete-category/<%= category._id %>";
+        }
+    }
+</script>

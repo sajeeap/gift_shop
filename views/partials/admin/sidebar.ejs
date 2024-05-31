@@ -1,130 +1,54 @@
-<nav id="sidebarMenu" class="col-sm-2 col-md-2 col-lg-2 d-md-block bg-dark sidebar collapse text-bg-dark">
-    <div class="position-sticky pt-3">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="/admin">
-                    <!-- <span data-feather="home"></span> -->
-                    <i class="bi bi-house"></i>
-                    Dashboard
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="/admin/banners/">
-                    <i class="bi bi-card-image"></i>
-                    <!-- <span data-feather="users"></span> -->
-                    Banners
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="/admin/users/">
-                    <i class="bi bi-people"></i>
-                    <!-- <span data-feather="users"></span> -->
-                    Customers
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="/admin/attributes/">
-                    <i class="bi bi-paperclip"></i>
-                    <!-- <span data-feather="attribute"></span> -->
-                    Attributes
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="/admin/category/">
-                    <i class="bi bi-tag"></i>
-                    Categories
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="/admin/products/">
-                    <i class="bi bi-box"></i>
-                    Products
-                </a>
-            </li>
-
-            
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="/admin/orders/">
-                    <i class="bi bi-table"></i>
-                    <!-- <span data-feather="file"></span> -->
-                    Orders
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="/admin/category-offers/">
-                    <i class="bi bi-cash-coin"></i>
-                    <i class="bi bi-tag"></i>
-                    <!-- <span data-feather="file"></span> -->
-                    Category Offers
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="/admin/coupons/">
-                    <i class="bi bi-cash-stack"></i>
-                    <!-- <span data-feather="file"></span> -->
-                    Coupons
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="/admin/returns/">
-                    <i class="bi bi-bell"></i>
-                    <!-- <span data-feather="file"></span> -->
-                    Manage Returns
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="/admin/sales-report">
-                    <span data-feather="bar-chart-2"></span>
-                    Reports
-                </a>
-            </li>
-            <!-- <li class="nav-item">
-                <a class="nav-link fs-5" href="#">
-                    <span data-feather="layers"></span>
-                    Integrations
-                </a>
-            </li> -->
-        </ul>
-
-        <!-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-            <span>Saved reports</span>
-            <a class="link-secondary" href="#" aria-label="Add a new report">
-                <span data-feather="plus-circle"></span>
-            </a>
-        </h6>
-        <ul class="nav flex-column mb-2">
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="#">
-                    <span data-feather="file-text"></span>
-                    Current month
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="#">
-                    <span data-feather="file-text"></span>
-                    Last quarter
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="#">
-                    <span data-feather="file-text"></span>
-                    Social engagement
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link fs-5" href="#">
-                    <span data-feather="file-text"></span>
-                    Year-end sale
-                </a>
-            </li>
-        </ul> -->
+<aside class="navbar-aside" id="offcanvas_aside">
+    <div class="aside-top">
+        <a href="/admin" class="brand-wrap">
+            <img src="../images/icons/logo-admin.png" class="logo" alt="Evara Dashboard">
+        </a>
+        <div>
+            <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+        </div>
     </div>
-</nav>
-
-
+    <nav>
+        <ul class="menu-aside">
+            <li class="<%= currentRoute === '/admin' ? 'menu-item active' : 'menu-item' %>">
+                <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+            <li class="<%= currentRoute === '/admin/products' || '/admin/add-products' || '/admin/edit-products'  ? 'menu-item active' : 'menu-item' %>">
+                <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                    <span class="text">Products</span>
+                </a>
+            </li>
+            <li class="<%= currentRoute === '/admin/users' ? 'menu-item active' : 'menu-item' %>">
+                <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-people"></i>
+                    <span class="text">Uers</span>
+                </a>
+            </li>
+            <li class="<%= currentRoute === '/admin/category' || '/admin/add-category' || '/admin/edit-category' ? 'menu-item active' : 'menu-item' %>">
+                <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-category"></i>
+                    <span class="text">Category</span>
+                </a>
+            </li>
+            
+            <li class="<%= currentRoute === '/admin/orders' ? 'menu-item active' : 'menu-item' %>">
+                <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-featured_play_list"></i>
+                    <span class="text">Orders</span>
+                </a>
+                
+            </li>
+            <li class="<%= currentRoute === '/admin/banners' ? 'menu-item active' : 'menu-item' %>">
+                <a class="menu-link" href="/admin/banners"> <i class="icon material-icons md-image"></i>
+                    <span class="text">Banners</span>
+                </a>
+            </li>
+            <li class="<%= currentRoute === '/admin/promocodes' ? 'menu-item active' : 'menu-item' %>">
+                <a class="menu-link" href="/admin/promocodes"> <i class="icon material-icons md-local_offer"></i>
+                    <span class="text">Promocodes</span>
+                </a>
+            </li>
+            
+        </ul>
+        <br>
+        <br>
+    </nav>
+</aside>

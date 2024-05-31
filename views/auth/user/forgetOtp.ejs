@@ -16,14 +16,12 @@
                         <div class="card-body py-5 px-md-5">
                             <form action="/forget-otp-verify" method="POST">
 
-                                <div class="otp-field mb-4">
-                                    <input name="val1" type="number" />
-                                    <input name="val2" type="number" disabled />
-                                    <input name="val3" type="number" disabled />
-                                    <input name="val4" type="number" disabled />
-                                    <input name="val5" type="number" disabled />
-                                    <input name="val6" type="number" disabled />
+                                <div class="form-group mb-4">
+
+                                    <input type="text" name="otp" id="otp" class="form-control">
+
                                 </div>
+
 
 
 
@@ -43,7 +41,13 @@
                                 </div>
 
 
+
                             </form>
+                            <div class="card-footer text-center my-3">
+                                <p class="lead" id="timer-class">request again in : <span id="timer" class="badge bg-warning"></span>
+                                </p>
+                                <button class="btn btn-info d-none" id="resend-btn">Resend OTP</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -54,61 +58,9 @@
 </section>
 
 
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.querySelector('form');
-
-        form.addEventListener('submit', function (event) {
-            //prevent form submission
-            event.preventDefault();
-
-            //check if the form is valid
-            if (!form.checkValidity()) {
-                return;
-            }
-            //custom validation for password length
-            const password = document.getElementById('pwd');
-            if (password.value.length < 8) {
-                password.setCustomValidity('password must be 8 characters long.');
-                password.reportValidity();
-                return;
-            } else {
-                password.setCustomValidity('');//clear custom validity message
-            }
-            //check if password match
-            const pwdConf = document.getElementById('pwdConf');
-            if (password.value !== pwdConf.value) {
-                pwdConf.setCustomValidity('Password do not match');
-                pwdConf.reportValidity();
-                return;
-            } else {
-                pwdConf.setCustomValidity('');
-            }
-
-            //form is valid,
-            form.submit();
-        });
-
-        // Add input event listeners to reset custom validity messages when the user corrects them
-        document.querySelectorAll('input[type="password"]').forEach(function (input) {
-            input.addEventListener('input', function () {
-                input.setCustomValidity('');
-            });
-        });
-    })
-</script> -->
-<div class="card-footer text-center my-3">
-    <p class="lead" id="timer-class">request again in : <span id="timer" class="badge bg-warning"></span>
-    </p>
-    <button class="btn btn-info d-none" id="resend-btn">Resend OTP</button>
-</div>
-</div>
-</div>
-</div>
-
 
 <script defer>
-    let timerOn = true
+   
     const timer = (remaining) => {
         let min = Math.floor(remaining / 60)
         let sec = remaining % 60
@@ -124,9 +76,7 @@
             }, 1000)
             return
         }
-        if (!timerOn) {
-            return
-        }
+        
         //timer need to 
         document.getElementById('timer-class').classList.add('d-none')
         document.getElementById('resend-btn').classList.remove('d-none')
@@ -134,6 +84,7 @@
     timer(10)
 
     const resendBtn = document.getElementById('resend-btn')
+    
     resendBtn.addEventListener('click', async () => {
         try {
             let response = await fetch('/resend-otp')

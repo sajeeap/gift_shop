@@ -81,7 +81,7 @@ module.exports={
   },
   userRegister: async (req, res) => {
 
-    const {firstName,lastName,email,pwd,pwdConf} = req.body;
+    const {firstName,lastName,email,password,confirmPassword} = req.body;
    
     console.log(req.body);
 
@@ -90,7 +90,7 @@ module.exports={
       req.flash("success", "Email already in use");
       return res.redirect("/register");
     }
-    if (pwd !== pwdConf) {
+    if (password !== confirmPassword) {
       req.flash("error", "Password not matching");
       return res.redirect("/register");
     }
@@ -102,7 +102,7 @@ module.exports={
     //   pwd,
     //   pwdConf,
     // });
-    const hashpwd=await bcrypt.hash(pwd,12);
+    const hashpwd=await bcrypt.hash(password,12);
     const user=await User.create({
               firstName,
               lastName,
@@ -140,14 +140,15 @@ module.exports={
   
   userLogin: async (req, res) => {
         console.log(req.body);
-        const { email, pwd } = req.body;
+        const { email, password } = req.body;
         const user = await User.findOne({ email, isAdmin: false });
+        console.log(user);
         if (!user) {
           req.flash("error", "User does not exit or invalid credentials");
           return res.redirect("/login");
         }
     
-        isValid = await bcrypt.compare(pwd, user.pwd);
+        let isValid = await bcrypt.compare(password, user.password);
         if (!isValid) {
           req.flash("error", "invalid credential");
           return res.redirect("/login");
@@ -210,6 +211,123 @@ module.exports={
             return res.redirect("/verifyOtp");
         }
     },
+
+    getForgetPassword: async (req, res) => {
+      res.render("auth/user/forgetPass.ejs");
+    },
+    getResetPassword: async (req, res) => {
+      res.render("auth/user/resetPass.ejs");
+    },
+    getForgetPasswordverify: async (req, res) => {
+      if (!req.session.forgetToken) {
+        return res.redirect("/");
+      }
+      res.render("auth/user/forgetOtp.ejs");
+    },
+    
+    forgetPassword: async (req, res) => {
+      console.log(req.body);
+      try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
+          req.flash("error", "User email does not exist");
+          return res.redirect("/forgetPass");
+        } else {
+          const isOtpSent = sendOtpEmail(user, res);
+          console.log(isOtpSent);
+          req.session.forgetToken = user._id;
+          return res.redirect("/forget-otp-verify");
+        }
+      } catch (err) {
+        console.error(err);
+        req.flash("error", "An error occurred");
+        return res.redirect("/forgetPass");
+      }
+    },
+    resetPassword: async (req, res) => {
+      console.log(req.body);
+      try {
+        const {  password, confirmPassword } = req.body;
+         // Check if passwords match
+        if (password !== confirmPassword) {
+          req.flash("error", "password doesnot match");
+          return res.redirect("/resetPass");
+        }
+
+        // Get userId from session
+        const userId = req.session.forgetToken;
+
+        // Hash the password
+        const hashpwd=await bcrypt.hash(password,12);
+        
+        // Update the user's password
+        const user = await User.updateOne(
+          { _id: userId },
+          { $set: { password: hashpwd } }
+        );
+        if (user) {
+          console.log(user);
+          req.flash("success", "Password successfully reset");
+          return res.redirect("/login");
+        } else {
+          req.flash("error", "password not reseted please try again");
+          return res.redirect("/resetPass");
+        }
+      } catch (err) {
+        console.error(err);
+        req.flash("error", "An error occurred");
+        return res.redirect("/resetPass");
+      }
+    },
+    forgetOtpVerify: async (req, res) => {
+      try {
+        // Check if verifyToken exists in session
+        if (!req.session.forgetToken) {
+          // return res.status(401).json({ message: "Verification token not found" });
+          req.flash("error", "session timed out");
+          return res.redirect("/forget-otp-verify");
+        }
+  
+        const userId = req.session.forgetToken;
+        const otpData = await OTP.findOne({ userId: userId });
+  
+        // Check if OTP data exists
+        if (!otpData) {
+          // return res.status(404).json({ message: "OTP data not found" });
+          req.flash("error", "OTP data not found");
+          return res.redirect("/forget-otp-verify");
+        }
+  
+        // Compare OTP
+        const validOtp = await bcrypt.compare(req.body.otp, otpData.otp);
+  
+        // Check if OTP is valid
+        if (!validOtp) {
+          // return res.status(400).json({ message: "Invalid OTP" });
+          req.flash("error", "Invalid OTP");
+          return res.redirect("/forget-otp-verify");
+        }
+  
+        // Success response
+        req.flash(
+          "success",
+          "OTP verification successful, please change your password"
+        );
+        delete req.session.verifyToken; // Clear the verification token from session
+        return res.redirect("/resetPass");
+      } catch (error) {
+        console.error(error); // Log the error for debugging purposes
+        // return res.status(500).json({ message: "Internal server error" });
+        req.flash("error", "Internal server error");
+        return res.redirect("/forget-otp-verify");
+      }
+    },
+  
+
+    
+
+
     
 
     
@@ -241,96 +359,118 @@ module.exports={
     });
   },
   // POST /
-  adminRegister: async (req,res) => {
-    const { firstName, lastName, email, pwd, pwdConf } = req.body;
+  // adminRegister: async (req,res) => {
+  //   const {  email, password, confirmPassword } = req.body;
 
-    const isExist = await User.findOne({ email,isAdmin:true });
+  //   const isExist = await User.findOne({ email,isAdmin:true });
 
-    if (isExist) {
-      req.flash("error", "User already exists, Please login");
-      console.log("User already exists, Please login");
-      res.redirect("/login");
-    }
+  //   if (isExist) {
+  //     req.flash("error", "User already exists, Please login");
+  //     console.log("User already exists, Please login");
+  //     res.redirect("/admin/login");
+  //   }
 
-    if (pwd < 6 && pwdConf < 6) {
-      req.flash("error", "Password is less than 6 character");
-      res.redirect("/register");
-    } else {
-      if (pwd === pwdConf) {
-        const hashpwd = await bcrypt.hash(pwd, 12);
+  //   if (password < 6 && confirmPassword < 6) {
+  //     req.flash("error", "Password is less than 6 character");
+  //     res.redirect("admin/register");
+  //   } else {
+  //     if (password === confirmPassword) {
+  //       const hashpwd = await bcrypt.hash(password, 12);
   
-        const user = await User.create({
-          firstName,
-          lastName,
-          email,
-          password: hashpwd,
-          isAdmin: true
-        });
+  //       const user = new User({
+
+          
+  //         email,
+  //         password: hashpwd,
+  //         isAdmin: true
+  //       });
+
+  //       await user.save()
+
+
   
-        if (user) {
-          req.flash("success", "User successfully created!!");
-          res.redirect("/admin/login");
-        } else {
-          req.flash("error", "User not created");
-          res.redirect("/admin/register");
-        }
-      } else {
-        req.flash("error", "Password does not match");
-        console.log("Password does not match");
-        res.redirect("/admin/register");
+  //       if (user) {
+  //         req.flash("success", "User successfully created!!");
+  //         res.redirect("/admin/login");
+  //       } else {
+  //         req.flash("error", "User not created");
+  //         res.redirect("/admin/register");
+  //       }
+  //     } else {
+  //       req.flash("error", "Password does not match");
+  //       console.log("Password does not match");
+  //       res.redirect("/admin/register");
+  //     }
+  //   }
+  // },
+
+  adminRegister: async (req, res) => {
+    const { firstName, lastName, email, password, confirmPassword } = req.body;
+  
+    console.log(req.body); // Debugging line
+  
+    try {
+      const existAdmin = await User.findOne({ email });
+      if (existAdmin) {
+        req.flash("error", "Email already in use");
+        return res.redirect("/admin/register");
       }
+      if (password !== confirmPassword) {
+        req.flash("error", "Password not matching");
+        return res.redirect("/admin/register");
+      }
+  
+      // Ensure password and salt rounds are passed correctly
+      const hashpwd = await bcrypt.hash(password, 12);
+      const admin = new User({
+        firstName,
+        lastName,
+        email,
+        password: hashpwd,
+        isAdmin: true,  // Assuming isAdmin field needs to be set
+      });
+  
+      const savedAdmin = await admin.save();
+      if (!savedAdmin) {
+        req.flash("error", "Admin registration unsuccessful");
+        return res.redirect("/admin/register");
+      } else {
+        req.flash("success", "Admin registered successfully");
+        return res.redirect("/admin/login");
+      }
+    } catch (error) {
+      console.error(error);
+      req.flash("error", "Internal server error");
+      return res.redirect("/admin/register");
     }
   },
-  adminLogin: async (req,res) => {
-    const {email, pwd} = req.body
+  
 
-    if(!email || !pwd){
-      req.flash('error', 'Email or Password not present!!!')
-      res.redirect('/login')
+ 
+  adminLogin: async (req, res) => {
+    const { email, password } = req.body;
+    console.log(req.body);
+    const adminExist = await User.findOne({ email ,isAdmin:true});
+    if (!adminExist) {
+      req.flash("error", "Invalid credential");
+      return res.redirect("/admin/login");
+    }
+    const isPassValid = await bcrypt.compare(password, adminExist.password);
+    if (!isPassValid) {
+      req.flash("error", "password not matching");
+      return res.redirect("/admin/login");
     }
 
-    const user = await User.findOne({email,isAdmin:true})
-
-    if(!user){
-      req.flash('error', 'User not found')
-      res.redirect('/admin/login')
-    } else {
-      const validPass = await bcrypt.compare(pwd, user.password)
-
-      if(!validPass){
-        
-        req.flash('error', 'Invalid Credentials')
-        res.redirect('/admin/login')
-      } else {
-        const maxAge = 3 * 60 * 60 // 3hr expire
-        const token = jwt.sign(
-          {
-            id: user._id,
-            user,
-            role: 'Admin'
-          },
-          jwtSecret,
-          {
-            expiresIn: maxAge,
-          }
-        )
-
-        res.cookie("jwt", token, {
-          httpOnly: true,
-          maxAge: maxAge * 1000
-        });
-        req.flash('success', 'Logged in successfully')
-        req.session.admin = user
-        res.redirect('/admin')
-      }
-    }
+    // req.session.isAdmin = user.isAdmin;
+    req.session.admin = adminExist;
+    req.flash("success", "admin successfully logged in");
+    return res.redirect("/admin");
   },
-
 
   getUserLogout:(req,res)=>{
     req.flash("success","You have been Logged out.")
     req.session.destroy();
-    res.redirect("/login");
+    res.redirect("/");
   },
   AdminLogout:(req,res)=>{
     req.session.destroy();

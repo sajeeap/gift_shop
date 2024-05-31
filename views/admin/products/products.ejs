@@ -1,0 +1,86 @@
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Products List</h2>
+          
+        </div>
+        <div>
+            <a href="#" class="btn btn-light rounded font-md">Export</a>
+            <a href="#" class="btn btn-light rounded  font-md">Import</a>
+            <a href="/admin/add-products" class="btn btn-primary btn-sm rounded">Add products</a>
+        </div>
+    </div>
+    <div class="card mb-4">
+
+        <table class="table text-capitalize">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">image</th>
+                <th scope="col">Name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+                <tbody>
+                    <% if (product && product.length> 0) { %>
+                      <% product.forEach((product,index)=> { %>
+                        <tr class="align-middle">
+                          <td>
+                            <%= index +1 %>
+                          </td>
+                          <td class="justify-content-center">
+                            <img class="img-fluid img-thumbnail"
+                              src="/uploads/product-images/crp/<%- product.primaryImages[0] ? product.primaryImages[0].name : product.secondaryImages[0].name %>"
+                               width="70rem" alt="">
+                          </td>
+                          <td>
+                            <%= product.name %>
+                          </td>
+                          <td>
+                            <%= product.category.name %>
+                          </td>
+                          <td>
+                            <% if (!product.isDeleted) { %>
+                              <span class="badge rounded-pill bg-success">listed</span>
+                              <% } else { %>
+                                <span class="badge rounded-pill bg-danger">Unlisted</span>
+                                <% } %>
+                          </td>
+                          <td class="text-center">
+                            <div class="d-flex flex-row justify-content-center">
+                              <% if (product.isDeleted) { %>
+                              <button onclick="toggleListing('<%- product._id %>','<%- product.isDeleted %>' ,'<%- product.name %>')" class="btn btn-danger btn-sm">
+                                <i class="bi bi-slash-circle-fill"></i> Unlist
+                              </button>
+                              <% } else { %>
+                              <button onclick="toggleListing('<%- product._id %>','<%- product.isDeleted %>' ,'<%- product.name %>')" class="btn btn-success btn-sm">
+                                <i class="bi bi-check-circle-fill"></i> List
+                              </button>
+                              <% } %>
+                            </div>
+                          </td>
+                          <td>
+                            <a href="/admin/editProduct/<%= product._id %>" class="btn btn-sm btn-warning">Edit</a>
+                          </td>
+                        </tr>
+                
+                        <% }) %>
+                          <% } else { %>
+                            <tr>
+                              <td colspan="6" class="text-center">No products found</td>
+                            </tr>
+                
+                            <% } %>
+                
+                  </tbody>
+            
+              </tbody>
+
+           
+        </table>
+    </div>    
+       
+</section> <!-- content-main end// -->

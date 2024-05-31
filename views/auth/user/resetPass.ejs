@@ -21,15 +21,15 @@
                                               <!-- Password input -->
                                               <div class="form-outline mb-4">
 
-                                                <label for="pwd" class="form-label text-left">New Password</label>
-                                                <input name="pwd" type="password" class="form-control" id="pwd"
+                                                <label for="password" class="form-label text-left">New Password</label>
+                                                <input name="password" type="password" class="form-control" id="password"
                                                     required>
                                             </div>
                                             <div class="form-outline mb-4">
-                                                <label for="pwdConf" class="form-label text-left">Confirm Password
+                                                <label for="confirmPassword" class="form-label text-left">Confirm Password
                                                     </label>
-                                                <input name="pwdConf" type="password" class="form-control"
-                                                    id="pwdConf" required>
+                                                <input name="confirmPassword" type="password" class="form-control"
+                                                    id="confirmPassword" required>
                                             </div>
                                                 
 
@@ -55,8 +55,9 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.querySelector('form');
-
+        
         form.addEventListener('submit', function (event) {
+            
             //prevent form submission
             event.preventDefault();
 
@@ -65,7 +66,7 @@
                 return;
             }
             //custom validation for password length
-            const password = document.getElementById('pwd');
+            const password = document.getElementById('password');
             if (password.value.length < 8) {
                 password.setCustomValidity('password must be 8 characters long.');
                 password.reportValidity();
@@ -74,13 +75,13 @@
                 password.setCustomValidity('');//clear custom validity message
             }
             //check if password match
-            const pwdConf = document.getElementById('pwdConf');
+            const confirmPassword = document.getElementById('confirmPassword');
             if (password.value !== pwdConf.value) {
-                pwdConf.setCustomValidity('Password do not match');
-                pwdConf.reportValidity();
+                confirmPassword.setCustomValidity('Password do not match');
+                confirmPassword.reportValidity();
                 return;
             } else {
-                pwdConf.setCustomValidity('');
+                confirmPassword.setCustomValidity('');
             }
 
             //form is valid,

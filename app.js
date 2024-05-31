@@ -17,6 +17,7 @@ const connectDB = require('./src/config/db');
 
 const authRouter=require('./src/routes/authRoutes');
 const userRouter=require('./src/routes/userRoutes');
+const adminRouter = require("./src/routes/adminRoutes");
 
 // Connect Database
 connectDB();
@@ -50,11 +51,25 @@ app.use(session({
 
 app.use(flash());
 
+app.use((req,res,next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+})
+
+// Middleware to set the current route
+app.use((req, res, next) => {
+  res.locals.currentRoute = req.path;
+  next();
+});
+
 // nocache for disabling browser caching
 app.use(nocache());
 
 app.use('/',authRouter);
 app.use('/',userRouter);
+app.use("/admin", adminRouter);
+
 
 
 // catch 404 and forward to error handler
