@@ -6,41 +6,33 @@
     </ol>
 </nav>
 
-
 <section class="content-main">
     <form action="/admin/add-products" method="post" enctype="multipart/form-data">
-    <div class="row">
-        <div class="col-9">
-            <div class="content-header">
-                <h2 class="content-title">Add New Product</h2>
-                <div>
-                    <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
-                    <button class="btn btn-md rounded font-sm hover-up" type="submit">Add Products</button>
+        <div class="row">
+            <div class="col-9">
+                <div class="content-header">
+                    <h2 class="content-title">Add New Product</h2>
+                    <div>
+                        <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                        <button class="btn btn-md rounded font-sm hover-up" type="submit">Add Products</button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="card mb-4">
-
-                <div class="card-body">
-                   
-                   
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-body">
                         <div class="mb-4">
                             <label for="product_name" class="form-label">Product title</label>
-                            <input type="text" placeholder="Type here" name="productName" class="form-control"
-                                id="product_name">
+                            <input type="text" placeholder="Type here" name="productName" class="form-control" id="product_name">
                         </div>
-
                         <div class="mb-4">
                             <label class="form-label">Category</label>
                             <select class="form-select" name="categoryName">
-                                <% categories.forEach(category=> { %>
+                                <% categories.forEach(category => { %>
                                     <option value="<%- category._id %>"><%- category.name %></option>
-
-                                    <% }) %>
+                                <% }) %>
                             </select>
                         </div>
-
                         <div class="row">
                             <div class="col-lg-4">
                                 <div class="mb-4">
@@ -50,8 +42,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label">Price</label>
@@ -60,15 +50,11 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="mb-4">
                                 <label class="form-label">Product description</label>
-                                <textarea placeholder="Type here" class="form-control" name="productDespt"
-                                    rows="4"></textarea>
+                                <textarea placeholder="Type here" class="form-control" name="productDespt" rows="4"></textarea>
                             </div>
-
                         </div>
-
                         <div class="col-lg-3">
                             <div class="card mb-4">
                                 <div class="card-header">
@@ -90,22 +76,14 @@
                                 <div class="card-body">
                                     <div class="input-upload">
                                         <img src="/assets/imgs/theme/upload.svg" alt="">
-                                        <input class="form-control" name="primaryImage"  id="inputGroupFile02" name="images" multiple required type="file">
+                                        <input class="form-control" id="inputGroupFile02" name="images" multiple required type="file">
                                     </div>
                                 </div>
-                                
                             </div>
                         </div> <!-- card end// -->
-                
-
-
-
-                    </form>
-                </div>
-            </div> <!-- card end// -->
-
+                    </div>
+                </div> <!-- card end// -->
+            </div>
         </div>
-      
-    </div>
-    </div>
-</section> 
+    </form>
+</section>

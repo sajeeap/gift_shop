@@ -42,13 +42,7 @@
                           <td>
                             <%= product.category.name %>
                           </td>
-                          <td>
-                            <% if (!product.isDeleted) { %>
-                              <span class="badge rounded-pill bg-success">listed</span>
-                              <% } else { %>
-                                <span class="badge rounded-pill bg-danger">Unlisted</span>
-                                <% } %>
-                          </td>
+                          
                           <td class="text-center">
                             <div class="d-flex flex-row justify-content-center">
                               <% if (product.isDeleted) { %>
