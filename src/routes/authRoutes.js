@@ -46,10 +46,13 @@ router
   .get(authController.getResetPassword)
   .post(authController.resetPassword);
 
+  router.get('/resend-otp',authController.resendOtp)
+
 
 
 
   router.get("/logout", authController.getUserLogout);
+  
 
 
 

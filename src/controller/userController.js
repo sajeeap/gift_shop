@@ -1,14 +1,21 @@
+const Category = require('../model/categorySchema');
+const Product = require("../model/productSchema");
+
 module.exports={
-    userHome:(req,res)=>{
+    userHome: async (req,res)=>{
         const locals={
             title:"Home Page",
         }
+
+        const products = await Product.find().populate('category').sort({createdAt:-1})
+
         try {
             res.render('index',{
                 locals,
                 success: req.flash("success"),
                 error: req.flash("error"),
                 user: req.session.user,
+                products
             })
             
         } catch (error) {

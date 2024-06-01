@@ -35,17 +35,20 @@
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 <!--===============================================================================================-->
 </head>
-<body class="animsition">
+<body >
 	
 
- <%- include('../partials/user/header.ejs') %>
-
- <%- include('../partials/flashMessage.ejs') %>
 
 
- <%- body %>
-    
- <%- include ('../partials/user/footer.ejs') %>
+ <main >
+	<%- include ('../partials/user/header.ejs') %>
+	<%- include('../partials/flashMessage.ejs') %>
+	<%- body %>
+
+	<%- include ('../partials/user/footer.ejs') %>
+
+</main>
+
 
 
 

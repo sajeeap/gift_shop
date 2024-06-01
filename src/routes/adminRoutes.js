@@ -34,9 +34,10 @@ router.get('/delete-category/:id', isAdminLoggedIn, categoryController.deleteCat
 
 router.get('/products', isAdminLoggedIn, productController.getProducts);
 router.get('/edit-products', isAdminLoggedIn, productController.getEditProducts);
+router.get('/delete-product/:id', isAdminLoggedIn, productController.deleteProduct);
 
 router
-  .route("/add-Products")
+  .route("/add-product")
   .get(isAdminLoggedIn,productController.getAddProducts)
   .post(
     isAdminLoggedIn,
@@ -45,6 +46,19 @@ router
       { name: "primaryImage" },
     ]),
     productController.addProducts
+  );
+
+  router
+  .route("/edit-product/:id")
+  .get(isAdminLoggedIn,productController.getEditProducts)
+  .post(
+    isAdminLoggedIn,
+    productUpload.fields([
+      { name: "primaryImage" },
+      { name: "secondaryImages", maxCount: 1 },
+      { name: "secondaryImages1", maxCount: 1 },
+    ]),
+    productController.editProduct
   );
 
 

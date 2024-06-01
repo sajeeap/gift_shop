@@ -43,9 +43,12 @@ module.exports = {
     addProducts: async (req, res) => {
 
 
+       
+
+
         console.log(req.body);
         try {
-            const existProduct = await Product.findOne({ name: req.body.productName.toLowerCase() });
+            const existProduct = await Product.findOne({ product_name: req.body.productName.toLowerCase() });
 
             if (existProduct) {
                 return res.status(400)
@@ -94,7 +97,7 @@ module.exports = {
                 );
 
             const product = new Product({
-                name: req.body.productName.toLowerCase(),
+                product_name: req.body.productName.toLowerCase(),
                 category: req.body.categoryName,
                 description: req.body.productDespt,
                 stock: req.body.productStock,
@@ -120,9 +123,104 @@ module.exports = {
             title: 'Products'
         }
 
-        res.render("admin/products/editproducts", {
+        const product =await Product.findById(req.params.id).populate('category')
+        const categories = await Category.find({ isActive: true })
+
+        res.render("admin/products/editProducts", {
             locals,
-            layout: adminLayout
+            layout: adminLayout,
+            product,
+            categories
+
         })
-    }
+    },
+
+    editProduct: async (req,res) =>{
+        try {
+            console.log(req.body,req.files)
+            const productId = req.params.id
+            const product = await Product.findById(productId)
+            if(!product){
+                return res.status(404).json({message:"Product not found"})
+            }
+
+            let primaryImage = product.primaryImages
+            if(req.files.primaryImage){
+                 primaryImage = [{
+                    name:req.files.primaryImage [0].filename,
+                    path:req.files.primaryImage[0].path
+                }]
+
+                await sharp(req.files.primaryImage[0].path)
+                .resize(500,500)
+                .toFile(
+                    path.join(__dirname,'../../public/uploads/products-images/crp/')+
+                    req.files.primaryImage[0].filename
+                
+                )
+            }
+            let secondaryImages = product.secondaryImages
+            for(let i=0;i<3;i++){
+                if(req.files[`images${i}`]){
+                 await sharp(req.files[`images${i}`][0].path)
+                 .resize(500,500)
+                 .toFile(
+                    path.join(__dirname,'../../public/uploads/products-images/crp/')+
+                    req.files[`images${i}`][0].filename
+                 )
+                 secondaryImages.push({
+                    name:req.files[`images${i}`][0].filename,
+                    path:req.files[`images${i}`][0].path
+                    
+                 })
+                }
+            }
+
+            const updateProduct={
+                product_name:req.body.productName,
+                category:req.body.categoryName,
+                description: req.body.productDespt,
+                details:req.body.productDetails,
+                price :req.body.price,
+                isDeleted: req.body.status === "true" ? true : false,
+                stock:req.body.productStock,
+                primaryImages:primaryImage,
+                secondaryImages:secondaryImages,
+            }
+            const{id}=req.params
+           await Product.findByIdAndUpdate(id,updateProduct,{new:true})
+            req.flash("success","product edited successfully")
+            res.redirect('/admin/products')
+        } catch (error) {
+           console.log(error)
+           res.status(500).json({message:"server error"}) 
+        }
+    },
+
+    deleteProduct: async (req, res) => {
+        try {
+          const productId= req.params.id;
+    
+          // Find the category by ID
+          const product = await Product.findById(productId);
+    
+          // If category doesn't exist, redirect with error message
+          if (!product) {
+            req.flash('error', 'Product not found');
+            return res.redirect('/admin/products');
+          }
+    
+          // Delete the category
+          await Product.findByIdAndDelete(productId);
+    
+          // Redirect with success message
+          req.flash('success', 'Product successfully deleted');
+          return res.redirect('/admin/products');
+        } catch (error) {
+          console.error(error);
+          req.flash('error', 'Server error');
+          res.redirect('/admin/products');
+        }
+      }
+
 }

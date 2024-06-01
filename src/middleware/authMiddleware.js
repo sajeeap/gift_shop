@@ -5,6 +5,7 @@ const OTP = require('../model/otpSchema')
 const jwt = require('jsonwebtoken');
 
 
+
 const jwtSecret = process.env.JWT_SECRET;
 
 module.exports = {

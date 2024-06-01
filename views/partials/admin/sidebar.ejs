@@ -1,20 +1,21 @@
 <aside class="navbar-aside" id="offcanvas_aside">
     <div class="aside-top">
         <a href="/admin" class="brand-wrap">
-            <img src="../images/icons/logo-admin.png" class="logo" alt="Evara Dashboard">
+            <img src="../../images/icons/logo-admin.png" class="logo" alt="Gift Shop">
         </a>
         <div>
             <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
         </div>
     </div>
     <nav>
+        
         <ul class="menu-aside">
             <li class="<%= currentRoute === '/admin' ? 'menu-item active' : 'menu-item' %>">
                 <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
-            <li class="<%= currentRoute === '/admin/products' || '/admin/add-products' || '/admin/edit-products'  ? 'menu-item active' : 'menu-item' %>">
+            <li class="<%= currentRoute === '/admin/products' || currentRoute === '/admin/add-product' ? 'menu-item active' : 'menu-item' %>">
                 <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
                     <span class="text">Products</span>
                 </a>
@@ -24,7 +25,7 @@
                     <span class="text">Uers</span>
                 </a>
             </li>
-            <li class="<%= currentRoute === '/admin/category' || '/admin/add-category' || '/admin/edit-category' ? 'menu-item active' : 'menu-item' %>">
+            <li class="<%= currentRoute === '/admin/category' || currentRoute === '/admin/add-category' ? 'menu-item active' : 'menu-item' %>">
                 <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-category"></i>
                     <span class="text">Category</span>
                 </a>
@@ -52,3 +53,7 @@
         <br>
     </nav>
 </aside>
+
+<script>
+    
+</script>

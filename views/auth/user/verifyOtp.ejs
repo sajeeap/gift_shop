@@ -82,12 +82,15 @@
 </section>
 
 
-<script>
 
 
 
+
+
+<script defer>
+    let timerOn = true
     const timer = (remaining) => {
-        let min = Math.floor(remaining / 60) //floor is for not giving decimal values
+        let min = Math.floor(remaining / 60)
         let sec = remaining % 60
 
         min = min < 10 ? "0" + min : min
@@ -95,14 +98,51 @@
         document.getElementById("timer").innerHTML = min + ":" + sec
 
         remaining -= 1
-        if (remaining >= 0) {
+        if (remaining >= 0 && timerOn) {
             setTimeout(() => {
                 timer(remaining)
             }, 1000)
             return
         }
+        if (!timerOn) {
+            return
+        }
+        document.getElementById('timer-class').classList.add('d-none')
+        document.getElementById('resend-btn').classList.remove('d-none')
     }
-    timer(30)
+    timer(20)
+
+    const resendBtn = document.getElementById('resend-btn')
+    resendBtn.addEventListener('click', async () => {
+        try {
+            let response = await fetch('/resend-otp')
+            console.log(response)
+            if (!response.ok) {
+                throw new Error(response.statusText)
+            }
+            let data = await response.json()
+            console.log(data)
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.message
+                }).then(()=>{
+                    location.reload()
+                })
+            }else{
+                throw new Error(data.message)
+            }
+
+        } catch (error) {
+            console.error(error)
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message
+            })
+        }
+    })
 </script>
 
 
