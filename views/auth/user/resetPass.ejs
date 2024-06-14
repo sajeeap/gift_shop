@@ -76,7 +76,7 @@
             }
             //check if password match
             const confirmPassword = document.getElementById('confirmPassword');
-            if (password.value !== pwdConf.value) {
+            if (password.value !== confirmPassword.value) {
                 confirmPassword.setCustomValidity('Password do not match');
                 confirmPassword.reportValidity();
                 return;
@@ -96,3 +96,4 @@
         });
     })
 </script>
+

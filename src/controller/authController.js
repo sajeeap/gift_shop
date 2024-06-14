@@ -39,14 +39,9 @@ module.exports={
 
     const existUser = await User.findOne({ email });
     if (existUser) {
-      req.flash("success", "Email already in use");
+      req.flash("error", "Email already in use");
       return res.redirect("/register");
     }
-    if (password !== confirmPassword) {
-      req.flash("error", "Password not matching");
-      return res.redirect("/register");
-    }
-
     
     const hashpwd=await bcrypt.hash(password,12);
     const user=await User.create({
@@ -70,13 +65,14 @@ module.exports={
             "user registered successfully, please verify your email"
           );
           return res.redirect("/verifyOtp");
-        } else {
-          req.flash(
-            "error",
-            "User registration unsuccessfull, please try to logged in"
-          );
-          return res.redirect("/login");
-        }
+        } 
+        // else {
+        //   req.flash(
+        //     "error",
+        //     "User registration unsuccessfull, please try to logged in"
+        //   );
+        //   return res.redirect("/login");
+        // }
       }
     } catch (error) {
       console.log(error), req.flash("error", "user registered unsuccessfully");
@@ -175,7 +171,7 @@ module.exports={
       console.log(req.body);
       try {
         const { email } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email , isAdmin:false});
         if (!user) {
           req.flash("error", "User email does not exist");
           return res.redirect("/forgetPass");

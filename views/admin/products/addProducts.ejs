@@ -60,10 +60,25 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="input-upload">
-                                        
-                                        <input class="form-control" name="primaryImage" id="inputGroupFile02" type="file">
+                                      
+                                        <label for="image" class="form-label">
+                                            <img id="preview" src="/uploads/products-images/image-holder-icon-614x460.png" alt="" width="150px">
+                                        </label>
+                                        <img src="../assets/imgs/theme/upload.svg" id="preview" alt="">
                                     </div>
+                                    
+                                    <div class="input-upload">  
+
+                                        <input class="form-control" type="file" id="inputImage" >
+                                        <img id="image" height="1000" name="primaryImage" style="display:none;">
+                                        
+                                        <button   id="cropButton">Crop and Upload</button>
+                                        
+                                        
+                                    </div>                                    
                                 </div>
+                                
+
                             </div>
                         </div> <!-- card end// -->
                         <div class="col-lg-12">
@@ -75,8 +90,9 @@
                                 <div class="card-body">
                                     <div class="input-upload">
                                        
-                                        <input class="form-control" id="inputGroupFile02" name="images" multiple required type="file">
+                                        <input class="form-control"  name="images" multiple required type="file">
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div> <!-- card end// -->
@@ -88,3 +104,49 @@
         </div>
     </form>
 </section>
+
+<style>
+    img {
+        max-width: 100%;
+    }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.js"></script>
+    
+<script>
+    let cropper;  // Declare cropper at a higher scope
+
+    document.getElementById('inputImage').addEventListener('change', function (event) {
+        const files = event.target.files;
+        const done = function (url) {
+            inputImage.value = '';
+            image.src = url;
+            image.style.display = 'block';
+            cropper = new Cropper(image, {
+                aspectRatio: 1,
+                viewMode: 3,
+            });
+        };
+        const inputImage = this;
+        const image = document.getElementById('image');
+
+        if (files && files.length > 0) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                done(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('cropButton').addEventListener('click', function () {
+        if (cropper) {  // Check if cropper is defined
+            const cropedImg = cropper.getCroppedCanvas().toDataURL("image/png");
+            
+            document.getElementById("preview").src = cropedImg;
+            document.getElementById("oldpreview").style.display = "none";
+        } else {
+            alert('Please select an image to crop.');
+        }
+   });
+</script>

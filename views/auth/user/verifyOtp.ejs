@@ -69,6 +69,10 @@
                             <div class="card-footer">
                                 <p class="lead">request again in : <span id="timer"
                                         class="badge bg-warning"></span></p>
+                                <button >
+                                    <a href="javascript:void(0)" id="resend-btn" class="text-primary d-none"> Resend OTP</a>
+
+                                </button>
                             </div>
 
 
@@ -107,7 +111,7 @@
         if (!timerOn) {
             return
         }
-        document.getElementById('timer-class').classList.add('d-none')
+        document.getElementById('timer').classList.add('d-none')
         document.getElementById('resend-btn').classList.remove('d-none')
     }
     timer(20)

@@ -1,5 +1,4 @@
-<section>
-
+<section id="tid-registration-form">
     <div class="px-4 py-5 px-md-5 text-center text-lg-start" style="background-color: hsl(0, 0%, 96%)">
         <div class="container">
             <div class="row">
@@ -13,59 +12,58 @@
                 <div class="col-lg-6 mb-5 mb-lg-0">
                     <div class="card">
                         <div class="card-body py-5 px-md-5">
-                            <form action="/register" method="POST">
-
+                            <form id="register_form" action="/register" method="POST">
 
                                 <div class="row">
                                     <div class="col-md-6 mb-4">
                                         <div class="form-outline">
-
                                             <label for="firstName" class="form-label text-left">First Name</label>
-                                            <input name="firstName" type="text" class="form-control" id="firstName"
-                                                placeholder="First Name" required>
+                                            <input name="firstName" type="text" class="form-control" id="firstName" placeholder="First Name" >
+                                            <small class="text-danger"></small>
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-4">
                                         <div class="form-outline">
-
                                             <label for="lastName" class="form-label text-left">Last Name</label>
-                                            <input name="lastName" type="text" class="form-control" id="lastName"
-                                                placeholder="Last Name" required>
+                                            <input name="lastName" type="text" class="form-control" id="lastName" placeholder="Last Name">
+                                            <small class="text-danger"></small>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Email input -->
                                 <div class="form-outline mb-4">
-
                                     <label for="email" class="form-label text-left">Email</label>
-                                    <input name="email" type="email" class="form-control" id="email"
-                                        placeholder="example@gmail.com" required>
+                                    <input name="email" type="email" class="form-control" id="email" placeholder="example@gmail.com" >
+                                    <small class="text-danger"></small>
                                 </div>
 
+                                
                                 <!-- Password input -->
                                 <div class="form-outline mb-4">
-
                                     <label for="password" class="form-label text-left">Password</label>
-                                    <input name="password" type="password" class="form-control" id="password" required>
+                                    <input name="password" type="password" class="form-control" id="password">
+                                    <small class="text-danger"></small>
+                                    <i id="togglePassword" class="bi bi-eye-slash"></i>
                                 </div>
+                                
+                                <!-- Confirm Password input -->
                                 <div class="form-outline mb-4">
-                                    <label for="confirmPassword" class="form-label text-left">Password
-                                        confirmation</label>
-                                    <input name="confirmPassword" type="password" class="form-control" id="confirmPassword" required>
+                                    <label for="confirmPassword" class="form-label text-left">Password confirmation</label>
+                                    <input name="confirmPassword" type="password" class="form-control" id="confirmPassword" >
+                                    <small class="text-danger"></small>
+                                    <i id="togglePasswordConfirm" class="bi bi-eye-slash"></i>
                                 </div>
 
                                 <!-- Submit button -->
                                 <div class="flex-c-m">
-                                    <button type="submit"
-                                        class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
                                         Register
                                     </button>
                                 </div>
-                                <div class="mt-4">
-                                    <p>Already have an account? <a href="/login" style="color: black;"><u>Login</u></a>
-                                    </p>
 
+                                <div class="mt-4">
+                                    <p>Already have an account? <a href="/login" style="color: black;"><u>Login</u></a></p>
                                 </div>
 
                             </form>
@@ -75,51 +73,170 @@
             </div>
         </div>
     </div>
-
 </section>
-<!-- <script src="/javascripts/registerValidation.js"></script> -->
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.querySelector('form');
-        
-        form.addEventListener('submit', function (event) {
-            
-            //prevent form submission
-            event.preventDefault();
+const firstNameEl = document.querySelector("#firstName");
+const lastNameEl = document.querySelector("#lastName");
+const emailEl = document.querySelector("#email");
+const passwordEl = document.querySelector("#password");
+const confirmPasswordEl = document.querySelector("#confirmPassword");
 
-            //check if the form is valid
-            if (!form.checkValidity()) {
-                return;
-            }
-            //custom validation for password length
-            const password = document.getElementById('password');
-            if (password.value.length < 8) {
-                password.setCustomValidity('password must be 8 characters long.');
-                password.reportValidity();
-                return;
-            } else {
-                password.setCustomValidity('');//clear custom validity message
-            }
-            //check if password match
-            const confirmPassword = document.getElementById('confirmPassword');
-            if (password.value !== confirmPassword.value) {
-                confirmPassword.setCustomValidity('Password do not match');
-                confirmPassword.reportValidity();
-                return;
-            } else {
-                confirmPassword.setCustomValidity('');
-            }
+const form = document.querySelector("#register_form");
 
-            //form is valid,
-            form.submit();
-        });
+const checkEmail = () => {
+  let valid = false;
+  const email = emailEl.value.trim();
+  if (!isRequired(email)) {
+    showError(emailEl, "Email cannot be blank.");
+  } else if (!isEmailValid(email)) {
+    showError(emailEl, "Email is not valid.");
+  } else {
+    showSuccess(emailEl);
+    valid = true;
+  }
+  return valid;
+};
 
-        // Add input event listeners to reset custom validity messages when the user corrects them
-        document.querySelectorAll('input[type="password"]').forEach(function (input) {
-            input.addEventListener('input', function () {
-                input.setCustomValidity('');
-            });
-        });
-    })
+const checkPassword = () => {
+  let valid = false;
+  const password = passwordEl.value.trim();
+  if (!isRequired(password)) {
+    showError(passwordEl, "Password cannot be blank.");
+//   } else if (!isPasswordSecure(password)) {
+//     showError(passwordEl, "Password must be at least 8 characters, include 1 lowercase, 1 uppercase, 1 number, and 1 special character.");
+  } else {
+    showSuccess(passwordEl);
+    valid = true;
+  }
+  return valid;
+};
+
+const checkConfirmPassword = () => {
+  let valid = false;
+  const confirmPassword = confirmPasswordEl.value.trim();
+  const password = passwordEl.value.trim();
+  if (!isRequired(confirmPassword)) {
+    showError(confirmPasswordEl, "Please enter the password again.");
+  } else if (password !== confirmPassword) {
+    showError(confirmPasswordEl, "The password does not match.");
+  } else {
+    showSuccess(confirmPasswordEl)
+    valid = true;
+  }
+  return valid;
+};
+
+const checkFirstName = () => {
+  let valid = false;
+  const firstName = firstNameEl.value.trim();
+  if (!isRequired(firstName)) {
+    showError(firstNameEl, "First name cannot be blank.");
+  } else if (!isAlpha(firstName)) {
+    showError(firstNameEl, "First name should only contain letters.");
+  } else {
+    showSuccess(firstNameEl);
+    valid = true;
+  }
+  return valid;
+};
+
+const checkLastName = () => {
+  let valid = false;
+  const lastName = lastNameEl.value.trim();
+  if (!isRequired(lastName)) {
+    showError(lastNameEl, "Last name cannot be blank.");
+  } else if (!isAlpha(lastName)) {
+    showError(lastNameEl, "Last name should only contain letters.");
+  } else {
+    showSuccess(lastNameEl);
+    valid = true;
+  }
+  return valid;
+};
+
+const isAlpha = (value) => /^[a-zA-Z]+$/.test(value);
+const isEmailValid = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isPasswordSecure = (password) => /^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[!@#$%^&])[A-Za-z\d!@#$%^&]{8,}$/.test(password);
+const isRequired = (value) => value !== "";
+
+const showError = (input, message) => {
+  const formField = input.parentElement;
+  formField.classList.remove("success", "is-valid");
+  input.classList.remove("success", "is-valid");
+  formField.classList.add("error", "is-invalid");
+  input.classList.add("error", "is-invalid");
+  const error = formField.querySelector("small");
+  error.textContent = message;
+};
+
+const showSuccess = (input) => {
+  const formField = input.parentElement;
+  formField.classList.remove("error", "is-invalid");
+  input.classList.remove("error", "is-invalid");
+  formField.classList.add("success", "is-valid");
+  input.classList.add("success", "is-valid");
+  const error = formField.querySelector("small");
+  error.textContent = "";
+};
+
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+  const isFormValid = checkFirstName() && checkLastName() && checkEmail() && checkPassword() && checkConfirmPassword();
+  if (isFormValid) {
+    form.submit();
+  }
+});
+
+const debounce = (fn, delay = 500) => {
+  let timeoutId;
+  return (...args) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      fn.apply(null, args);
+    }, delay);
+  };
+};
+
+form.addEventListener(
+  "input",
+  debounce(function (e) {
+    switch (e.target.id) {
+      case "firstName":
+        checkFirstName();
+        break;
+      case "lastName":
+        checkLastName();
+        break;
+      case "email":
+        checkEmail();
+        break;
+      case "password":
+        checkPassword();
+        break;
+      case "confirmPassword":
+        checkConfirmPassword();
+        break;
+    }
+  })
+);
+
+const togglePassword = document.querySelector("#togglePassword");
+const togglePasswordConfirm = document.querySelector("#togglePasswordConfirm");
+const password = document.querySelector("#password");
+const confirmPassword = document.querySelector("#confirmPassword");
+
+togglePassword.addEventListener("click", function () {
+  const type = password.getAttribute("type") === "password" ? "text" : "password";
+  password.setAttribute("type", type);
+  this.classList.toggle("bi-eye");
+});
+
+togglePasswordConfirm.addEventListener("click", function () {
+  const type = confirmPassword.getAttribute("type") === "password" ? "text" : "password";
+  confirmPassword.setAttribute("type", type);
+  this.classList.toggle("bi-eye");
+});
 </script>

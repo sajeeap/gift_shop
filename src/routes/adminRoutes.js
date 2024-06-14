@@ -5,19 +5,11 @@ const router = express.Router()
 const adminController = require('../controller/adminController')
 const categoryController = require("../controller/categoryController");
 const productController = require("../controller/productController")
-const { productUpload, upload } = require("../middleware/multer");
+const { productUpload, upload } = require("../middleware/multer1");
 
 
 const { isAdminLoggedIn } = require("../middleware/authMiddleware");
 
-// Common Middleware for Admin Routes
-router.use((req, res, next) => {
-    if (req.user && req.user.isAdmin) {
-        res.locals.admin = req.user;
-    }
-  
-    next();
-});
 
 router.get('/', isAdminLoggedIn, adminController.getDashboard)
 // router.route("/category").get(categoryController.getCategory);
@@ -36,17 +28,27 @@ router.get('/products', isAdminLoggedIn, productController.getProducts);
 router.get('/edit-products', isAdminLoggedIn, productController.getEditProducts);
 router.get('/delete-product/:id', isAdminLoggedIn, productController.deleteProduct);
 
-router
-  .route("/add-product")
-  .get(isAdminLoggedIn,productController.getAddProducts)
-  .post(
-    isAdminLoggedIn,
-    productUpload.fields([
-      { name: "images", maxCount: 3 },
-      { name: "primaryImage" },
-    ]),
-    productController.addProducts
-  );
+// router
+//   .route("/add-product")
+//   .get(isAdminLoggedIn,productController.getAddProducts)
+//   .post(
+//     isAdminLoggedIn,
+//     productUpload.fields([
+//       { name: "images", maxCount: 3 },
+//       { name: "primaryImage" },
+//     ]),
+//     productController.addProducts
+//   );
+
+// Product Management Routes
+
+router.get('/products/add', productController.getAddProducts);
+router.post('/products/add', productUpload.fields([
+    { name: 'mainImage', maxCount: 1 },
+    { name: 'subImages', maxCount: 3 }
+]), productController.addProducts);
+
+
 
   router
   .route("/edit-product/:id")
@@ -61,7 +63,14 @@ router
     productController.editProduct
   );
 
+  //user managment
+  router
+  .route("/users")
+  .get(isAdminLoggedIn,adminController.getUserList)
 
+ 
+
+  router.route("/users/toggle-block/:id").patch(isAdminLoggedIn,adminController.toggleBlock);
 
 
 

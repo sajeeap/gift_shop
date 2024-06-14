@@ -80,6 +80,34 @@ module.exports = {
     //     }
     // },
 
+    checkBlockedUser: async (req, res, next) => {
+        try {
+          // Assuming user ID is stored in req.user.id after successful login
+          if (req.user && req.user.id) {
+            const user = await User.findById(req.user.id);
+            if (user && user.isBlocked) {
+              req.logout((err) => {
+                if (err) {
+                  console.log(err);
+                } else {
+                  req.flash("error", "User is blocked by the admin!!!!");
+                  res.clearCookie("connect.sid");
+                  return res.redirect("/login");
+                }
+              });
+            } else {
+              next();
+            }
+          } else {
+            next();
+          }
+        } catch (error) {
+          console.error(error);
+          req.flash("error", "Server error");
+          res.redirect("/login");
+        }
+      },
+
 
     
 }

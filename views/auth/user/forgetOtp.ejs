@@ -1,3 +1,36 @@
+<style>
+    .otp-field {
+        flex-direction: row;
+        column-gap: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .otp-field input {
+        height: 45px;
+        width: 42px;
+        border-radius: 6px;
+        outline: none;
+        font-size: 1.125rem;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    .otp-field input:focus {
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .otp-field input::-webkit-inner-spin-button,
+    .otp-field input::-webkit-outer-spin-button {
+        display: none;
+    }
+
+    .resend {
+        font-size: 16px;
+    }
+</style>
+
 <section>
 
     <div class="px-4 py-5 px-md-5 text-center text-lg-start" style="background-color: hsl(0, 0%, 96%)">
@@ -5,7 +38,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h3 class="ltext-103 cl5 text-center mb-5">
-                        Forgot Password
+                      FORGOT PASSWORD
                     </h3>
                 </div>
             </div>
@@ -16,34 +49,33 @@
                         <div class="card-body py-5 px-md-5">
                             <form action="/forget-otp-verify" method="POST">
 
+
                                 <div class="form-group mb-4">
 
                                     <input type="text" name="otp" id="otp" class="form-control">
 
                                 </div>
 
-
-
-
-
                                 <!-- Verify button -->
-                                <div class="flex-c-m">
+                                <div class="my-3 flex-c-m" >
                                     <button type="submit"
                                         class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 ">
                                         Verify
                                     </button>
                                 </div>
-                                
-                                <div class="card-footer text-center my-3">
-                                    <p class="lead" id="timer-class">request again in : <span id="timer" class="badge bg-warning"></span>
-                                    </p>
-                                    <button class="btn btn-info d-none" id="resend-btn">Resend OTP</button>
-                                </div>
-
-
 
                             </form>
-                          
+
+                            <div class="card-footer">
+                                <p class="lead">request again in : <span id="timer"
+                                        class="badge bg-warning"></span></p>
+                                <button >
+                                    <a href="javascript:void(0)" id="resend-btn" class="text-primary d-none"> Resend OTP</a>
+
+                                </button>
+                            </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -55,8 +87,12 @@
 
 
 
+
+
+
+
 <script defer>
-   
+    let timerOn = true
     const timer = (remaining) => {
         let min = Math.floor(remaining / 60)
         let sec = remaining % 60
@@ -72,15 +108,15 @@
             }, 1000)
             return
         }
-        
-        //timer need to 
-        document.getElementById('timer-class').classList.add('d-none')
+        if (!timerOn) {
+            return
+        }
+        document.getElementById('timer').classList.add('d-none')
         document.getElementById('resend-btn').classList.remove('d-none')
     }
-    timer(10)
+    timer(20)
 
     const resendBtn = document.getElementById('resend-btn')
-    
     resendBtn.addEventListener('click', async () => {
         try {
             let response = await fetch('/resend-otp')
@@ -95,10 +131,10 @@
                     icon: 'success',
                     title: 'Success',
                     text: data.message
-                }).then(() => {
+                }).then(()=>{
                     location.reload()
                 })
-            } else {
+            }else{
                 throw new Error(data.message)
             }
 
@@ -112,3 +148,5 @@
         }
     })
 </script>
+
+

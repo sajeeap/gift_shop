@@ -15,21 +15,7 @@
                     <div class="card">
                         <div class="card-body py-5 px-md-5">
                             <form action="/login" method="POST">
-                               
-                                <% if (success.length> 0) { %>
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <%= success %>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                aria-label="Close"></button>
-                                    </div>
-                                    <% } %>
-                                        <% if (error.length> 0) { %>
-                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                <%= error %>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                        aria-label="Close"></button>
-                                            </div>
-                                            <% } %>
+                        
                                                 
                                                 <!-- Email input -->
                                                 <div class="form-outline mb-4">

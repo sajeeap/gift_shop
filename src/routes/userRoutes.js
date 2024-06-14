@@ -12,6 +12,7 @@ const shopController = require("../controller/shopController")
 router.get('/', userController.userHome);
 
 //productlist
-router.get("/product-list",shopController.getProductList )
+// router.get("/product-list",shopController.getProductList )
+router.get("/product-Details")
 
 module.exports = router;

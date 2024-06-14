@@ -1,0 +1,245 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white py-2 fixed-top">
+    <!-- Navbar content here -->
+</nav>
+<section class="container sproduct my-5 pt-5">
+    <div class="row mt-5">
+        <div class="col-lg-5 col-md-12 col-12">
+            <div id="mainImageContainer">
+
+                <img class="img-fluid pb-1" src="/uploads/products-images/crp/<%= product.primaryImages[0].name %>"
+                    alt="" id="mainImage">
+                </div>
+           
+            <div class="small-img-group">
+                <div class="small-img-col">
+                    <img src="/uploads/products-images/crp/<%= product.secondaryImages[0].name %>" width="100%"
+                        class="small-img" alt="" >
+                </div>
+                <div class="small-img-col">
+                    <img src="/uploads/products-images/crp/<%= product.secondaryImages[1].name %>" width="100%"
+                        class="small-img" alt="">
+                </div>
+                <div class="small-img-col">
+                    <img src="/uploads/products-images/crp/<%= product.secondaryImages[2].name %>" width="100%"
+                        class="small-img" alt="">
+                </div>
+
+           
+        </div>
+        
+        </div>
+        <div class="col-lg-6 col-md-12 col-12">
+            <nav style="--bs-breadcrumb-divider: '/';" aria-label="breadcrumb">
+                <ol class="breadcrumb my-5">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <!-- <li class="breadcrumb-item "><a href="/admin/category">Products</a></li> -->
+                    <li class="breadcrumb-item active" aria-current="page">  Products</li>
+                </ol>
+            </nav>
+            
+            
+            <h3 class="text-capitalize"><%= product.name %></h3>
+            <h2>$<%= product.price %></h2>
+            <select class="my-3">
+                <option>Select Size</option>
+                <option>L</option>
+                <option>XL</option>
+                <option>XXL</option>
+            </select>
+            <input type="number" value="1" min="1" max="<%= product.stock %>">
+            
+               <% if (product.stock===0) { %>
+                <p class="text-danger">out of stock</p>
+                <% } else { %>
+                    <p class="text-success">In Stock:<%= product.stock %></p>
+               <% } %>
+               <button class="buy-btn btn-success" style="border-radius: 10px;" >  Add to Cart</button>
+               <button class="buy-btn btn-primary" style="border-radius: 10px;" >  Buy Now</button>
+            <h4 class="mt-5 mb-5">Product Details</h4>
+            <span class="text-dark"><%= product.description %></span>
+            <h4 class="mt-5 mb-5">Additional Details</h4>
+            <span class="text-dark"><%= product.details %></span>
+        </div>
+    </div>
+</section>
+<section  class="my-3 pb-5" id="reviews">
+    <div class="container text-center mt-5 py-5">
+        <h3>Reviews and Ratings</h3>
+        <hr class="mx-auto">
+        <p>Share your thoughts with other customers</p>
+        <div class="review-form my-4">
+            <h4>Submit your review</h4>
+            <form id="reviewForm">
+                <div class="mb-3">
+                    <label for="reviewName" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="reviewerName" placeholder="Your name">
+                </div>
+                <div class="mb-3">
+                    <label for="reviewText" class="form-label">Review</label>
+                    <textarea class="form-control" id="reviewText" rows="3" placeholder="write your review here"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="reviewRating" class="form-label">Rating</label>
+                    <select name="form-select" id="reviewrating">
+                        <option value="">select rating</option>
+                        <option value="1"> 1 Star</option>
+                        <option value="2"> 2 Star</option>
+                        <option value="3"> 3 Star</option>
+                        <option value="4"> 4 Star</option>
+                        <option value="5"> 5 Star</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit review</button>
+            </form>
+        </div>
+         <!-- Placeholder for displaying reviews -->
+        <div class="reviews-list">
+            <h4>Customer Reviews</h4>
+            <div class="review-item my-3 p-3 border rounded">
+                <h5 class="reviewer-name">John Doe</h5>
+                <div class="review-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="review-text">This product is amazing! Highly recommend it.</p>
+            </div>
+            <!-- Additional reviews can be added here -->
+        </div>
+    </div>
+    </div>
+
+</section>
+<section id="featured" class="my-5 pb-5">
+    <div class="container text-center mt-5 py-5">
+        <h3>Related products</h3>
+        <hr class="mx-auto">
+        <p>Here you can check out new products with fair price </p>
+    </div>
+    <div class="row mx-auto container-fluid">
+        <% relatedProducts.forEach(product => { %>
+            <div class="product text-center col-1g-3 col-md-4 col-12">
+                <img src="/uploads/product-images/crp/<%= product.primaryImages[0].name %>" alt="" class="img-fluid mb-3"
+                    width="150px">
+                <div class="star">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+    
+                </div>
+                <h5 class="p-name"> <%= product.name %></h5>
+                <h4 class="p-price"><%= product.price %></h4>
+                <button class="buy-btn">VIEW</button>
+    
+            </div>
+         
+        <% }) %>
+        
+
+    </div>
+
+</section>
+<style>
+    .small-img-group {
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    .small-img-col {
+        flex-basis: 24%;
+        cursor: pointer;
+    }
+
+    .sproduct select {
+        display: block;
+        padding: 5px 10px;
+    }
+
+    .sproduct input {
+        width: 50px;
+        height: 40px;
+        padding-left: 10px;
+        font-size: 16px;
+        margin-right: 10px;
+    }
+
+    .sproduct input:focus {
+        outline: none;
+    }
+
+    .buy-btn {
+        background: #fb774b;
+        opacity: 1;
+        transition: 0.3s all;
+    }
+    /* Styles for the review section */
+#reviews .review-form {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#reviews .reviews-list .review-item {
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#reviews .review-rating .fas {
+    color: #ffc107;
+}
+.form-control{
+    width: 100%;
+    padding: 10px;
+}
+
+    
+</style>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+<script src="https://unpkg.com/js-image-zoom@0.7.0/js-image-zoom.js" type="application/javascript"></script>
+
+
+<script defer>
+    var mainImage = document.getElementById('mainImage');
+    var smallImages = document.getElementsByClassName('small-img');
+  
+   
+    smallImages[0].onclick = function () {
+        mainImage.src = smallImages[0].src
+    }
+    smallImages[1].onclick = function () {
+        mainImage.src = smallImages[1].src
+    }
+    smallImages[2].onclick = function () {
+        mainImage.src = smallImages[2].src
+    }
+    // smallImages[3].onclick= function () {
+    //     mainImage.src = smallImages[3].src
+    // }
+    var option = {
+        fillContainer: true,
+        zoomWidth : 500,
+        // width:400,
+        // height:400,
+        // scale:1.5,
+        
+
+        offset: { vertical: 0, horizontal: 10 },
+
+    }
+
+    new ImageZoom(document.getElementById('mainImageContainer'), option)
+    console.log(ImageZoom)
+
+
+    
+
+</script>
+
+

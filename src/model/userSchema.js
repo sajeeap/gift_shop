@@ -21,9 +21,22 @@ const userSchema = new Schema({
         required: true,
     },
     isAdmin: {
-        type: String,
+        type: Boolean,
         default: false,
     },
+    isBlocked: {
+        type: Boolean,
+        default: false,
+    },
+    joined_date: {
+        type: Date,
+        default: Date.now,
+        immutable: true,
+      },
+      isVerified: {
+        type: Boolean,
+        default: false,
+      },
 },
     {
         timestamps: true,
