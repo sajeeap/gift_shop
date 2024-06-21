@@ -65,6 +65,8 @@ module.exports = {
               path: e.path,
             });
           });
+
+        
     
           secondaryImages.forEach(async (e) => {
             await sharp(
@@ -77,6 +79,7 @@ module.exports = {
               );
           });
     
+          
           let primaryImage = [];
           req.files.primaryImage.forEach((e) => {
             primaryImage = {

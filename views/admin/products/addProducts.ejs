@@ -22,16 +22,17 @@
                         <!-- Product title input -->
                         <div class="mb-4">
                             <label for="product_name" class="form-label">Product title</label>
-                            <input type="text" placeholder="Type here" name="productName" class="form-control" id="product_name">
+                            <input type="text" placeholder="Type here" name="productName" class="form-control"
+                                id="product_name">
                         </div>
 
                         <!-- Category selection -->
                         <div class="mb-4">
                             <label class="form-label">Category</label>
                             <select class="form-select" name="categoryName">
-                                <% categories.forEach(category => { %>
+                                <% categories.forEach(category=> { %>
                                     <option value="<%- category._id %>"><%- category.name %></option>
-                                <% }) %>
+                                    <% }) %>
                             </select>
                         </div>
 
@@ -54,7 +55,8 @@
                         <!-- Product description -->
                         <div class="mb-4">
                             <label class="form-label">Product description</label>
-                            <textarea placeholder="Type here" class="form-control" name="productDespt" rows="4"></textarea>
+                            <textarea placeholder="Type here" class="form-control" name="productDespt"
+                                rows="4"></textarea>
                         </div>
 
                         <!-- Primary image upload with cropping -->
@@ -66,10 +68,13 @@
                                 <div class="card-body">
                                     <div class="input-upload text-start">
                                         <label for="image1" class="form-label">
-                                            <img id="preview1" src="../assets/imgs/theme/upload.svg" alt="" width="150px">
+                                            <img id="preview1" src="../assets/imgs/theme/upload.svg" alt=""
+                                                width="150px">
                                         </label>
-                                        <input type="file" class="form-control" id="image1" name="primaryImage" style="display: none;">
-                                        <button type="button" class="btn btn-md rounded font-sm" onclick="document.getElementById('image1').click();">Upload Image</button>
+                                        <input type="file" class="form-control" id="image1" style="display: none;"
+                                            name="primaryImage">
+                                        <button type="button" class="btn btn-md rounded font-sm"
+                                            onclick="document.getElementById('image1').click();">Upload Image</button>
                                     </div>
                                 </div>
                             </div>
@@ -84,10 +89,13 @@
                                 <div class="card-body">
                                     <div class="input-upload text-start">
                                         <label for="image2" class="form-label">
-                                            <img id="preview2" src="../assets/imgs/theme/upload.svg" alt="" width="150px">
+                                            <img id="preview2" src="../assets/imgs/theme/upload.svg" alt=""
+                                                width="150px">
                                         </label>
-                                        <input type="file" class="form-control" id="image2" name="images" style="display: none;">
-                                        <button type="button" class="btn btn-md rounded font-sm" onclick="document.getElementById('image2').click();">Upload Image</button>
+                                        <input type="file" class="form-control" id="image2" name="images"
+                                            style="display: none;">
+                                        <button type="button" class="btn btn-md rounded font-sm"
+                                            onclick="document.getElementById('image2').click();">Upload Image</button>
                                     </div>
                                 </div>
                             </div>
@@ -100,10 +108,13 @@
                                 <div class="card-body">
                                     <div class="input-upload text-start">
                                         <label for="image3" class="form-label">
-                                            <img id="preview3" src="../assets/imgs/theme/upload.svg" alt="" width="150px">
+                                            <img id="preview3" src="../assets/imgs/theme/upload.svg" alt=""
+                                                width="150px">
                                         </label>
-                                        <input type="file" class="form-control" id="image3" name="images" style="display: none;">
-                                        <button type="button" class="btn btn-md rounded font-sm" onclick="document.getElementById('image3').click();">Upload Image</button>
+                                        <input type="file" class="form-control" id="image3" name="images"
+                                            style="display: none;">
+                                        <button type="button" class="btn btn-md rounded font-sm"
+                                            onclick="document.getElementById('image3').click();">Upload Image</button>
                                     </div>
                                 </div>
                             </div>
@@ -199,30 +210,31 @@
             console.error("Cropper is not initialized.");
             return;
         }
+
         cropper.getCroppedCanvas().toBlob((blob) => {
-            let inputId;
+
+
             const previewId = currentPreviewId;
-            const formData = new FormData(document.getElementById('addProductForm'));
-            if(currentInputId == 'image1'){
-                inputId = 'primaryImage1';                
-            } else if (currentInputId == 'image2') {
-                inputId = 'secondaryImage1';                
-            } else {
-                inputId = 'secondaryImage2';                
-            }
-            
-            formData.append(inputId, blob, originalFileNames);
-            
-            console.log(inputId);
-            
+            const file = new File([blob], originalFileNames[currentInputId], { type: 'image/png' });
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            document.getElementById(currentInputId).files = dataTransfer.files;
+
+
             const preview = document.getElementById(currentPreviewId);
+
             preview.src = URL.createObjectURL(blob);
 
-            
-            
 
             croppedImages[currentInputId] = blob;
             $('#imageCropModal').modal('hide');
+
+
         }, 'image/png');
+
     }
+
+    
+
 </script>
