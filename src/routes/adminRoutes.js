@@ -5,7 +5,7 @@ const router = express.Router()
 const adminController = require('../controller/adminController')
 const categoryController = require("../controller/categoryController");
 const productController = require("../controller/productController")
-const { productUpload, upload } = require("../middleware/multer1");
+const {productUpload, upload } = require("../middleware/multer");
 
 
 const { isAdminLoggedIn } = require("../middleware/authMiddleware");
@@ -28,6 +28,12 @@ router.get('/products', isAdminLoggedIn, productController.getProducts);
 router.get('/edit-products', isAdminLoggedIn, productController.getEditProducts);
 router.get('/delete-product/:id', isAdminLoggedIn, productController.deleteProduct);
 
+
+
+
+
+
+
 // router
 //   .route("/add-product")
 //   .get(isAdminLoggedIn,productController.getAddProducts)
@@ -40,13 +46,18 @@ router.get('/delete-product/:id', isAdminLoggedIn, productController.deleteProdu
 //     productController.addProducts
 //   );
 
-// Product Management Routes
+router
+  .route("/add-product")
+  .get(isAdminLoggedIn, productController.getAddProducts)
+  .post(
+    isAdminLoggedIn,
+    productUpload.fields([
+      { name: "images", maxCount: 3 },
+      { name: "primaryImage", maxCount: 1 }
+    ]),
+    productController.addProducts
+  );
 
-router.get('/products/add', productController.getAddProducts);
-router.post('/products/add', productUpload.fields([
-    { name: 'mainImage', maxCount: 1 },
-    { name: 'subImages', maxCount: 3 }
-]), productController.addProducts);
 
 
 

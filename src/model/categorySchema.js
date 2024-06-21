@@ -18,6 +18,16 @@ const catogorySchema = new Schema({
         default: true,
     },
 
+    image: {
+        filename: String,
+        originalname: String,
+        path: String,
+      },
+      
+      description: {
+        type: String,
+      },
+
 },
 {
     timestamps: true

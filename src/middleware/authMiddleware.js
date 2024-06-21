@@ -32,6 +32,24 @@ module.exports = {
     //     }
     // },
 
+    authenticateUser : async (req, res, next) => {
+      if (req.session && req.session.userId) {
+          try {
+              const user = await User.findById(req.session.userId);
+              if (user) {
+                  req.user = user;
+                  next();
+              } else {
+                  res.status(401).send('User not found');
+              }
+          } catch (error) {
+              next(error);
+          }
+      } else {
+          res.status(401).send('You need to log in first');
+      }
+  },
+
     //user login
     isLoggedIn: (req,res,next) => {
         if(req.session && req.session.user){

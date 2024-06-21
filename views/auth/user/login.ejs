@@ -1,5 +1,4 @@
 <section>
-    
     <div class="px-4 py-5 px-md-5 text-center text-lg-start" style="background-color: hsl(0, 0%, 96%)">
         <div class="container">
             <div class="row">
@@ -10,50 +9,35 @@
                 </div>
             </div>
             <div class="row gx-lg-5 justify-content-center">
-                
                 <div class="col-lg-6 mb-5 mb-lg-0">
                     <div class="card">
                         <div class="card-body py-5 px-md-5">
                             <form action="/login" method="POST">
-                        
-                                                
-                                                <!-- Email input -->
-                                                <div class="form-outline mb-4">
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+                                    <label for="email" class="form-label text-left">Email</label>
+                                    <input name="email" type="email" class="form-control" id="email" placeholder="example@gmail.com" required>
+                                </div>
 
-                                                    <label for="email" class="form-label text-left">Email</label>
-                                                    <input name="email" type="email" class="form-control" id="email"
-                                                        placeholder="example@gmail.com" required>
-                                                </div>
+                                <!-- Password input -->
+                                <div class="form-outline mb-4">
+                                    <label for="password" class="form-label text-left">Password</label>
+                                    <input name="password" type="password" class="form-control" id="password" required>
+                                </div>
 
-                                                <!-- Password input -->
-                                                <div class="form-outline mb-4">
+                                <div class="mt-4 text-left">
+                                    <a href="/forgetPass" style="color: #413E65;">Forgot your password?</a>
+                                </div>  
 
-                                                    <label for="password" class="form-label text-left">Password</label>
-                                                    <input name="password" type="password" class="form-control" id="password"
-                                                        required>
-                                                </div>
-
-                                                <div class="mt-4 text-left">
-                                                    
-                                                    <a href="/forgetPass"  style="color: #413E65;">Forgot your password?</a>
-
-                                                </div>  
-                                                
-
-                                                <!-- Submit button -->
-                                                <div class="flex-c-m">
-                                                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 ">
-                                                        login
-                                                    </button>
-
-                                                </div>      
-                                                <div class="mt-4">
-                                                    <p>Don't have an account? <a href="/register" style="color: black;" ><u>Create account</u></a></p>
-
-                                                </div>  
-                                                                                        
-                                                
-                                                
+                                <!-- Submit button -->
+                                <div class="flex-c-m">
+                                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 ">
+                                        login
+                                    </button>
+                                </div>      
+                                <div class="mt-4">
+                                    <p>Don't have an account? <a href="/register" style="color: black;"><u>Create account</u></a></p>
+                                </div>  
                             </form>
                         </div>
                     </div>
@@ -61,43 +45,47 @@
             </div>
         </div>
     </div>
-    
 </section>
-
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.querySelector('form');
-        
+
         form.addEventListener('submit', function (event) {
-            
-            //prevent form submission
+            // Prevent form submission
             event.preventDefault();
 
-            //check if the form is valid
-            if (!form.checkValidity()) {
+            // Custom validation for email using regex
+            const email = document.getElementById('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                email.setCustomValidity('Please enter a valid email address.');
+                email.reportValidity();
                 return;
+            } else {
+                email.setCustomValidity(''); // Clear custom validity message
             }
-            //custom validation for password length
+
+            // Custom validation for password length and regex
             const password = document.getElementById('password');
-            if (password.value.length < 8) {
-                password.setCustomValidity('password must be 8 characters long.');
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/; // Example: At least one uppercase, one lowercase, one number, and minimum 8 characters
+            if (!passwordRegex.test(password.value)) {
+                password.setCustomValidity('Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number.');
                 password.reportValidity();
                 return;
             } else {
-                password.setCustomValidity('');//clear custom validity message
+                password.setCustomValidity(''); // Clear custom validity message
             }
-            
 
-            //form is valid,
+            // Form is valid, submit the form
             form.submit();
         });
 
         // Add input event listeners to reset custom validity messages when the user corrects them
-        document.querySelectorAll('input[type="password"]').forEach(function (input) {
+        document.querySelectorAll('input[type="email"], input[type="password"]').forEach(function (input) {
             input.addEventListener('input', function () {
                 input.setCustomValidity('');
             });
         });
-    })
+    });
 </script>
