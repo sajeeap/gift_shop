@@ -11,9 +11,7 @@ const shopController = require("../controller/shopController")
 //getHome
 router.get('/', userController.userHome);
 
-//productlist
-router.get("/product-list",shopController.getProductList )
-router.get("/product-Details")
+
 
 //user profile
 router

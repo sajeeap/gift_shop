@@ -1,18 +1,16 @@
 const express = require('express')
-const router =express.Router()
-
-
+const router =express.Router();
 
 //controller
 
-const shopController = require('../controllers/shopController')
+const shopController = require('../controller/shopController')
 
 
-router.get('/shop',shopController.getShop)
-router.get('/product/:id',shopController.getProduct)
+//productlist
+router.get("/product-list",shopController.getProductList )
 
-
-
+//prduct details
+router.get("/product-Details/:id", shopController.getProductDetails)
 
 
 

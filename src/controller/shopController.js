@@ -1,6 +1,7 @@
 
 const Category = require('../model/categorySchema');
 const Product = require("../model/productSchema");
+const User = require("../model/userSchema")
 const path = require('path');
 
 
@@ -16,16 +17,39 @@ module.exports={
         try {
             res.render('shop/productList.ejs',{
                 locals,
-                success: req.flash("success"),
-                error: req.flash("error"),
                 user: req.session.user,
                 products,
-                categories
+                categories,
+               
+                
             })
             
         } catch (error) {
             console.log(error);
         }
+    },
+
+    getProductDetails : async(req,res)=>{
+
+        const locals={
+            title:"Product Details",
+        }
+
+        const product = await Product.findById(req.params.id).populate("category");
+        
+
+        try {
+            res.render('shop/productDetails',{
+                locals,
+                product,
+              
+                
+            })
+            
+        } catch (error) {
+            console.log(error);
+        }
+
     }
 }
 
