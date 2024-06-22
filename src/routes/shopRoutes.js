@@ -1,4 +1,4 @@
-const express = require('express')
+const express = require('express');
 const router =express.Router();
 
 //controller
@@ -10,8 +10,8 @@ const shopController = require('../controller/shopController')
 router.get("/product-list",shopController.getProductList )
 
 //prduct details
-router.get("/product-Details/:id", shopController.getProductDetails)
-
+router.get("/product-details/:id", shopController.getProductDetails)
+router.get("/dummy", shopController.dummy)
 
 
 

@@ -35,11 +35,32 @@ module.exports={
             title:"Product Details",
         }
 
-        const product = await Product.findById(req.params.id).populate("category");
-        
+        const product = await Product.findById(req.params.id).populate("category");        
 
         try {
             res.render('shop/productDetails',{
+                locals,
+                product,
+              
+                
+            })
+            
+        } catch (error) {
+            console.log(error);
+        }
+
+    },
+
+    dummy: async(req,res)=>{
+
+        const locals={
+            title:"Product Details",
+        }
+
+        const product = await Product.findById(req.params.id).populate("category");        
+
+        try {
+            res.render('shop/productDummy',{
                 locals,
                 product,
               

@@ -70,7 +70,7 @@ app.use(nocache());
 app.use("/admin", adminRouter);
 app.use('/', authRouter);
 app.use('/', userRouter);
-app.use('/',shopRouter)
+app.use('/', shopRouter)
 
 
 
