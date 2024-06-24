@@ -6,6 +6,26 @@ const path = require('path');
 
 
 module.exports={
+
+    userHome: async (req,res)=>{
+        const locals={
+            title:"Home Page",
+        }
+
+        const products = await Product.find().populate('category').sort({createdAt:-1})
+
+        try {
+            res.render('index',{
+                locals,
+                user: req.session.user,
+                products
+            })
+            
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
     getProductList : async (req,res)=>{
         const locals={
             title:"All Product",
@@ -51,27 +71,7 @@ module.exports={
 
     },
 
-    dummy: async(req,res)=>{
-
-        const locals={
-            title:"Product Details",
-        }
-
-        const product = await Product.findById(req.params.id).populate("category");        
-
-        try {
-            res.render('shop/productDummy',{
-                locals,
-                product,
-              
-                
-            })
-            
-        } catch (error) {
-            console.log(error);
-        }
-
-    }
+   
 }
 
 

@@ -6,12 +6,15 @@ const router =express.Router();
 const shopController = require('../controller/shopController')
 
 
+//getHome
+router.get('/', shopController.userHome);
+
 //productlist
 router.get("/product-list",shopController.getProductList )
 
 //prduct details
 router.get("/product-details/:id", shopController.getProductDetails)
-router.get("/dummy", shopController.dummy)
+
 
 
 

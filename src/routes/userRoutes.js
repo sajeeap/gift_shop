@@ -3,20 +3,27 @@ const router=express.Router();
 
 //authcontroller
 const userController=require('../controller/userController');
-const {isLoggedIn, authenticateUser} = require('../middleware/authMiddleware');
+
 const shopController = require("../controller/shopController")
 
+const authMiddleware = require('../middleware/authMiddleware');
 
 
-//getHome
-router.get('/', userController.userHome);
+
+
 
 
 
 //user profile
 router
     .route("/profile")
-    .get(authenticateUser,userController.getProfile)
+    .get(userController.getProfile)
     .post(userController.editProfile)
+
+ //change password
+ router
+ .route("/change-password")
+ 
+ .post(userController.changePassword)   
 
 module.exports = router;

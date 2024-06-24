@@ -18,7 +18,10 @@ const connectDB = require('./src/config/db');
 const authRouter = require('./src/routes/authRoutes');
 const userRouter = require('./src/routes/userRoutes');
 const adminRouter = require("./src/routes/adminRoutes");
-const shopRouter = require("./src/routes/shopRoutes")
+const shopRouter = require("./src/routes/shopRoutes");
+
+const { checkBlockedUser } = require("./src/middleware/authMiddleware");
+
 
 // Connect Database
 connectDB();
@@ -69,8 +72,8 @@ app.use(nocache());
 
 app.use("/admin", adminRouter);
 app.use('/', authRouter);
-app.use('/', userRouter);
-app.use('/', shopRouter)
+app.use('/', shopRouter);
+app.use('/user', userRouter);
 
 
 
@@ -79,6 +82,8 @@ app.use('/', shopRouter)
 app.use(function (req, res, next) {
   next(createError(404));
 });
+
+app.use(checkBlockedUser);
 
 // error handler
 app.use(function (err, req, res, next) {

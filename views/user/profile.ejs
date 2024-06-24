@@ -1,65 +1,418 @@
- <!-- Profile form-->
+<!-- Profile form-->
 
-  <section id="tid-registration-form">
-    <div class="px-4 py-5 px-md-5 text-center text-lg-start" style="background-color: hsl(0, 0%, 96%)">
-            <div class="row gx-lg-5 justify-content-center">
-                <div class="col-lg-6 mb-5 mb-lg-0">
-                    <div class="card">
-                        <div class="card-body py-5 px-md-5">
-                            <form id="update_profile" action="/user/profile" method="POST">
+<section class="user-profile-page">
+    <div class="px-4 py-5 px-md-5 text-lg-start" style="background-color: hsl(0, 0%, 96%)">
+        <div class="row gx-lg-5 justify-content-center">
+            <div class="col-lg-3 mb-5 mb-lg-0">
+                <div class="card">
+                    <div class="card-body py-5 px-md-5">
+                        <div class="d-flex">
+                            <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist"
+                                aria-orientation="vertical">
+                                <a href="#" class="nav-link active" id="v-pills-account-tab" data-bs-toggle="pill"
+                                    data-bs-target="#v-pills-account" type="button" role="tab"
+                                    aria-controls="v-pills-account" aria-selected="true">Account
+                                </a>
+                                <a href="#" class="nav-link" id="v-pills-password-tab" data-bs-toggle="pill"
+                                    data-bs-target="#v-pills-password" type="button" role="tab"
+                                    aria-controls="v-pills-password" aria-selected="false">Change Password
+                                </a>
+                                <a href="#" class="nav-link" id="v-pills-orders-tab" data-bs-toggle="pill"
+                                    data-bs-target="#v-pills-orders" type="button" role="tab"
+                                    aria-controls="v-pills-orders" aria-selected="false">Orders
+                                </a>
+                                <a href="#" class="nav-link" id="v-pills-wishlist-tab" data-bs-toggle="pill"
+                                    data-bs-target="#v-pills-wishlist" type="button" role="tab"
+                                    aria-controls="v-pills-wishlist" aria-selected="false">Wishlist
+                                </a>
+                                <a href="#" class="nav-link" id="v-pills-address-tab" data-bs-toggle="pill"
+                                    data-bs-target="#v-pills-address" type="button" role="tab"
+                                    aria-controls="v-pills-address" aria-selected="false">Address
+                                </a>
 
-                                <div class="row">
+                            </div>
 
-                                    <div class="col-md-6 mb-4">
-                                        <div class="form-outline">
-                                            <h3 ><%- user.firstName + ' ' + user.lastName %></h3>
-                                            <p>Update Profile</p>
-                                        </div>
-                                    </div>
-
-                                </div>
-  
-                                <div class="row">
-                                    <div class="col-md-6 mb-4">
-                                        <div class="form-outline">
-                                            <label for="firstName" class="form-label text-left">First Name</label>
-                                            <input name="firstName" type="text" class="form-control" id="firstName" placeholder="First Name" value="<%- user.firstName %>" >
-                                            <small></small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mb-4">
-                                        <div class="form-outline">
-                                            <label for="lastName" class="form-label text-left">Last Name</label>
-                                            <input name="lastName" type="text" class="form-control" id="lastName" placeholder="Last Name" value="<%- user.lastName %>">
-                                            <small ></small>
-                                        </div>
-                                    </div>
-                                </div>
-  
-                                <!-- Email input -->
-                                <div class="form-outline mb-4">
-                                    <label for="email" class="form-label text-left">Email</label>
-                                    <input name="email" type="email" class="form-control" id="email" value="<%- user.email %>" placeholder="example@gmail.com" disabled>
-                                    <small class="text-danger"></small>
-                                </div>
-  
-                                
-                               
-  
-                                <!-- Submit button -->
-                                <div class="flex-c-m">
-                                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                                        Update
-                                    </button>
-                                </div>
-  
-                                
-  
-                            </form>
                         </div>
                     </div>
+
+                </div>
+            </div>
+            <div class="col-lg-9 mb-5 mb-lg-0">
+                <div class="card">
+                    <div class="card-body py-5 px-md-5">
+                        <div class="tab-content" id="v-pills-tabContent">
+
+                            <!-- Account -->
+                            <div class="tab-pane fade show active" id="v-pills-account" role="tabpanel"
+                                aria-labelledby="v-pills-home-tab" tabindex="0">
+                                <form id="update_profile" action="/user/profile" method="post">
+                                    <div class="row">
+                                        <div class="col-md-12 mb-4">
+                                            <div class="form-outline">
+                                                <h3 class="text-capitalize" id="username">
+                                                    <%= user.firstName %>
+                                                        <%= user.lastName %>
+                                                </h3>
+                                                <p>Update Profile</p>
+                                            </div>
+                                            <hr />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <label for="firstName" class="form-label text-left">First Name</label>
+                                                <input name="firstName" type="text" class="form-control" id="firstName"
+                                                    placeholder="First Name" value="<%= user.firstName %>">
+                                                <small class="text-danger"></small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <label for="lastName" class="form-label text-left">Last Name</label>
+                                                <input name="lastName" type="text" class="form-control" id="lastName"
+                                                    placeholder="Last Name" value="<%= user.lastName %>">
+                                                <small class="text-danger"></small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-outline mb-4">
+                                        <label for="email" class="form-label text-left">Email</label>
+                                        <input name="email" type="email" class="form-control" id="email"
+                                            value="<%= user.email %>" placeholder="example@gmail.com" disabled>
+                                        <small class="text-danger"></small>
+                                    </div>
+
+                                    <div class="flex-c-m">
+                                        <button type="submit"
+                                            class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                            Update
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- change password -->
+                            <div class="tab-pane fade" id="v-pills-password" role="tabpanel"
+                                aria-labelledby="v-pills-profile-tab" tabindex="0">
+                                <div class="row">
+                                    <div class="col-md-12 mb-4">
+                                        <div class="form-outline">
+                                            <h3 class="text-capitalize">
+
+                                                Change Password
+                                            </h3>
+                                        </div>
+                                        <hr />
+                                    </div>
+                                </div>
+                                <!-- change password -->
+                                <form id="changePasswordForm" action="/user/change-password" method="POST">
+                                    <div class="form-outline mb-4">
+                                        <label for="currentPassword" class="form-label text-left">Current Password</label>
+                                        <input name="currentPassword" type="password" class="form-control" id="currentPassword" required>
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <label for="newPassword" class="form-label text-left">New Password</label>
+                                        <input name="newPassword" type="password" class="form-control" id="newPassword" required>
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <label for="confirmPassword" class="form-label text-left">Confirm Password</label>
+                                        <input name="confirmPassword" type="password" class="form-control" id="confirmPassword" required>
+                                    </div>
+                                    <div class="flex-c-m">
+                                        <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">Confirm</button>
+                                    </div>
+                                </form>
+
+                            </div>
+
+                            <!-- Orders -->
+                            <div class="tab-pane fade" id="v-pills-orders" role="tabpanel"
+                                aria-labelledby="v-pills-profile-tab" tabindex="0">
+                                <div class="row">
+                                    <div class="col-md-12 mb-4">
+                                        <div class="form-outline">
+                                            <h3 class="text-capitalize">
+                                                My Orders
+                                            </h3>
+                                        </div>
+                                        <hr />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
+                                        <div class="wrap-table-shopping-cart">
+                                            <table class="table-shopping-cart">
+                                                <tr class="table_head">
+                                                    <th class="column-1">Order ID</th>
+                                                    <th class="column-2">Date</th>
+                                                    <th class="column-3">Status</th>
+                                                    <th class="column-4">Total</th>
+                                                    <th class="column-5">Action</th>
+                                                </tr>
+
+                                                <tr class="table_row">
+                                                    <td class="column-1">
+                                                        #234234
+                                                    </td>
+                                                    <td class="column-2">01/02/2024</td>
+                                                    <td class="column-3">
+                                                        Processing
+                                                    </td>
+                                                    <td class="column-4">
+                                                        $250.00
+                                                    </td>
+                                                    <td class="column-5">
+                                                        <a href="#" class="table-button">
+                                                            View
+                                                        </a>
+                                                    </td>
+
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Whishlist -->
+                            <div class="tab-pane fade" id="v-pills-wishlist" role="tabpanel"
+                                aria-labelledby="v-pills-profile-tab" tabindex="0">
+                                <div class="row">
+                                    <div class="col-md-12 mb-4">
+                                        <div class="form-outline">
+                                            <h3 class="text-capitalize">
+                                                Wishlist
+                                            </h3>
+                                        </div>
+                                        <hr />
+                                    </div>
+                                </div>
+                                <!-- Wishlist -->
+                                <div class="row">
+                                    <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
+                                        <div class="wrap-table-shopping-cart">
+                                            <table class="table-shopping-cart">
+                                                <tr class="table_head">
+                                                    <th class="column-1">Product</th>
+                                                    <th class="column-2"></th>
+                                                    <th class="column-3">Price</th>
+                                                    <th class="column-4"></th>
+                                                    <th class="column-5">Actions</th>
+                                                </tr>
+
+                                                <tr class="table_row">
+                                                    <td class="column-1">
+                                                        <div class="how-itemcart1">
+                                                            <img src="images/item-cart-04.jpg" alt="IMG">
+                                                        </div>
+                                                    </td>
+                                                    <td class="column-2">Fresh Strawberries</td>
+                                                    <td class="column-3">$ 36.00</td>
+                                                    <th class="column-4">
+                                                        <a href="#" class="table-button">
+                                                            Add to Cart
+                                                        </a>
+                                                    </th>
+                                                    <th class="column-5">
+                                                        <button class="delete-item btn btn-danger">
+                                                            <i class="zmdi zmdi-delete"></i>
+                                                        </button>
+
+
+                                                    </th>
+                                                </tr>
+
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Address -->
+                            <div class="tab-pane fade" id="v-pills-address" role="tabpanel"
+                                aria-labelledby="v-pills-profile-tab" tabindex="0">
+                                <div class="row">
+                                    <div class="col-md-12 mb-4">
+                                        <div class="form-outline">
+                                            <h3 class="text-capitalize">
+                                                Address
+                                            </h3>
+                                        </div>
+                                        <hr />
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
-  </section>
+    </div>
+</section>
+
+
+<script>
+    document.getElementById('changePasswordForm').addEventListener('submit', function (e) {
+        e.preventDefault(); // Prevent form submission
+
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (newPassword !== confirmPassword) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'New passwords do not match',
+            });
+            return; // Exit function to prevent further execution
+        }
+
+        // Optional client-side validation for password complexity
+        if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'New password must be at least 8 characters long and contain at least one uppercase letter and one digit',
+            });
+            return; // Exit function to prevent further execution
+        }
+
+        // If all validations pass, submit the form using AJAX
+        fetch('/user/change-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.message,
+                }).then(() => {
+                    // Optionally redirect or perform other actions after success
+                    window.location.href = '/user/profile'; // Redirect to profile page
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message,
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Server Error',
+                text: 'An error occurred while changing the password',
+            });
+        });
+    });
+</script>
+
+
+<script>
+    document.getElementById('update_profile').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+
+        // Clear previous validation messages
+        document.querySelectorAll('.form-outline small').forEach(el => el.textContent = '');
+
+        let isValid = true;
+
+        // Client-side validation
+        if (!firstName) {
+            isValid = false;
+            document.querySelector('#firstName + small').textContent = 'First name is required.';
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'First name is required.'
+            });
+        }
+
+        if (!lastName) {
+            isValid = false;
+            document.querySelector('#lastName + small').textContent = 'Last name is required.';
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Last name is required.'
+            });
+        }
+
+        if (isValid) {
+            // Confirm with the user using SweetAlert2
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to update your profile?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, update it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Send AJAX request
+                    fetch('/user/profile', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ firstName, lastName }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            // Display success message
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: data.message
+                            });
+
+                            // Update the username in the DOM
+                            const usernameElement = document.getElementById('username');
+                            usernameElement.textContent = `${firstName} ${lastName}`;
+                        } else {
+                            // Handle error message
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An error occurred while updating the profile.'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while updating the profile.'
+                        });
+                    });
+                }
+            });
+        }
+    });
+</script>

@@ -1,0 +1,35 @@
+.nav-pills .nav-link{
+    background: none;
+    color: #333;
+}
+.nav-pills .nav-link.active, .show>.nav-pills .nav-link {
+    color: #ffffff;
+    background: #413E65;
+}
+.table-shopping-cart .table_row {
+    height: 130px;
+}
+.table-shopping-cart .table_row td.column-1 {
+    padding-bottom: 20px;
+}
+.table-button {
+    font-family: Poppins-Regular;
+    font-size: 14px;
+    line-height: 1.466667;
+    color: #ffffff;
+    background-color: #413E65;
+    border-radius: 5px;
+    padding: 7px 15px;
+    font-weight: 100;
+    text-decoration: none;
+}
+.table-button:hover {
+    background-color: #222;
+    color: #fff;
+}
+.delete-item {
+    position: relative;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
