@@ -41,7 +41,11 @@ module.exports = {
 
             const name = req.body.category_name.trim().toLowerCase();
 
-            const category = await Category.findOne({ name : name })
+            const { description} = req.body;
+
+          
+
+            const category = await Category.findOne({ name : name})
             
             if(category){
                 req.flash("error", "Category already exist")
@@ -49,7 +53,7 @@ module.exports = {
                 return res.redirect("/admin/add-category")
             }
 
-            const addCategory = new Category({ name })
+            const addCategory = new Category({ name , description })
 
             await addCategory.save()
             req.flash("success", "Category successfully saved")
@@ -109,7 +113,7 @@ module.exports = {
         try {
            
     
-            const { status } = req.body;
+            const { status , description} = req.body;
             console.log(req.body);
             const name = req.body.category_name.trim().toLowerCase();
     
@@ -123,6 +127,7 @@ module.exports = {
             const updatedCategory = {
                 name: name,
                 isActive: status === "true" ? true : false,
+                description : description
             };
     
             const id = req.params.id;
@@ -159,6 +164,8 @@ module.exports = {
             req.flash('error', 'Category not found');
             return res.redirect('/admin/category');
           }
+
+
     
           // Delete the category
           await Category.findByIdAndDelete(categoryId);

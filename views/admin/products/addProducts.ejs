@@ -22,17 +22,17 @@
                         <!-- Product title input -->
                         <div class="mb-4">
                             <label for="product_name" class="form-label">Product title</label>
-                            <input type="text" placeholder="Type here" name="productName" class="form-control"
-                                id="product_name">
+                            <input type="text" placeholder="Type here" name="productName" class="form-control" id="product_name" required>
+                            <div class="invalid-feedback">Product title is required.</div>
                         </div>
 
                         <!-- Category selection -->
                         <div class="mb-4">
                             <label class="form-label">Category</label>
-                            <select class="form-select" name="categoryName">
-                                <% categories.forEach(category=> { %>
+                            <select class="form-select" name="categoryName" required>
+                                <% categories.forEach(category => { %>
                                     <option value="<%- category._id %>"><%- category.name %></option>
-                                    <% }) %>
+                                <% }) %>
                             </select>
                         </div>
 
@@ -41,13 +41,15 @@
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label">Add Stock</label>
-                                    <input placeholder="$" name="productStock" type="number" class="form-control">
+                                    <input placeholder="$" name="productStock" type="number" class="form-control" min="0" required>
+                                    <div class="invalid-feedback">Stock cannot be negative.</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label">Price</label>
-                                    <input placeholder="$" type="number" class="form-control" name="price">
+                                    <input placeholder="$" type="number" class="form-control" name="price" min="0" required>
+                                    <div class="invalid-feedback">Price cannot be negative.</div>
                                 </div>
                             </div>
                         </div>
@@ -55,8 +57,8 @@
                         <!-- Product description -->
                         <div class="mb-4">
                             <label class="form-label">Product description</label>
-                            <textarea placeholder="Type here" class="form-control" name="productDespt"
-                                rows="4"></textarea>
+                            <textarea placeholder="Type here" class="form-control" name="productDespt" rows="4" required></textarea>
+                            <div class="invalid-feedback">Product description is required.</div>
                         </div>
 
                         <!-- Primary image upload with cropping -->
@@ -68,13 +70,10 @@
                                 <div class="card-body">
                                     <div class="input-upload text-start">
                                         <label for="image1" class="form-label">
-                                            <img id="preview1" src="../assets/imgs/theme/upload.svg" alt=""
-                                                width="150px">
+                                            <img id="preview1" src="../assets/imgs/theme/upload.svg" alt="" width="150px">
                                         </label>
-                                        <input type="file" class="form-control" id="image1" style="display: none;"
-                                            name="primaryImage">
-                                        <button type="button" class="btn btn-md rounded font-sm"
-                                            onclick="document.getElementById('image1').click();">Upload Image</button>
+                                        <input type="file" class="form-control" id="image1" style="display: none;" name="primaryImage" required>
+                                        <button type="button" class="btn btn-md rounded font-sm" onclick="document.getElementById('image1').click();">Upload Image</button>
                                     </div>
                                 </div>
                             </div>
@@ -89,13 +88,10 @@
                                 <div class="card-body">
                                     <div class="input-upload text-start">
                                         <label for="image2" class="form-label">
-                                            <img id="preview2" src="../assets/imgs/theme/upload.svg" alt=""
-                                                width="150px">
+                                            <img id="preview2" src="../assets/imgs/theme/upload.svg" alt="" width="150px">
                                         </label>
-                                        <input type="file" class="form-control" id="image2" name="images"
-                                            style="display: none;">
-                                        <button type="button" class="btn btn-md rounded font-sm"
-                                            onclick="document.getElementById('image2').click();">Upload Image</button>
+                                        <input type="file" class="form-control" id="image2" name="images" style="display: none;">
+                                        <button type="button" class="btn btn-md rounded font-sm" onclick="document.getElementById('image2').click();">Upload Image</button>
                                     </div>
                                 </div>
                             </div>
@@ -108,13 +104,10 @@
                                 <div class="card-body">
                                     <div class="input-upload text-start">
                                         <label for="image3" class="form-label">
-                                            <img id="preview3" src="../assets/imgs/theme/upload.svg" alt=""
-                                                width="150px">
+                                            <img id="preview3" src="../assets/imgs/theme/upload.svg" alt="" width="150px">
                                         </label>
-                                        <input type="file" class="form-control" id="image3" name="images"
-                                            style="display: none;">
-                                        <button type="button" class="btn btn-md rounded font-sm"
-                                            onclick="document.getElementById('image3').click();">Upload Image</button>
+                                        <input type="file" class="form-control" id="image3" name="images" style="display: none;">
+                                        <button type="button" class="btn btn-md rounded font-sm" onclick="document.getElementById('image3').click();">Upload Image</button>
                                     </div>
                                 </div>
                             </div>
@@ -160,8 +153,6 @@
         document.getElementById('image2').addEventListener('change', function () { prepareImageForCropping('image2', 'preview2'); });
         document.getElementById('image3').addEventListener('change', function () { prepareImageForCropping('image3', 'preview3'); });
 
-
-
         document.getElementById('cropImageBtn').addEventListener('click', function () {
             performCropping();
         });
@@ -185,6 +176,63 @@
             if (cropper) {
                 cropper.destroy();
                 cropper = null;
+            }
+        });
+
+        const stockInput = document.querySelector('input[name="productStock"]');
+        const priceInput = document.querySelector('input[name="price"]');
+        const titleInput = document.querySelector('input[name="productName"]');
+        const descriptionInput = document.querySelector('textarea[name="productDespt"]');
+
+        stockInput.addEventListener('input', function () {
+            if (stockInput.value < 0) {
+                stockInput.setCustomValidity('Stock cannot be negative.');
+                stockInput.reportValidity();
+            } else {
+                stockInput.setCustomValidity('');
+            }
+        });
+
+        priceInput.addEventListener('input', function () {
+            if (priceInput.value < 0) {
+                priceInput.setCustomValidity('Price cannot be negative.');
+                priceInput.reportValidity();
+            } else {
+                priceInput.setCustomValidity('');
+            }
+        });
+
+        document.getElementById('addProductForm').addEventListener('submit', function (e) {
+            if (stockInput.value < 0) {
+                e.preventDefault();
+                stockInput.setCustomValidity('Stock cannot be negative.');
+                stockInput.reportValidity();
+            } else {
+                stockInput.setCustomValidity('');
+            }
+
+            if (priceInput.value < 0) {
+                e.preventDefault();
+                priceInput.setCustomValidity('Price cannot be negative.');
+                priceInput.reportValidity();
+            } else {
+                priceInput.setCustomValidity('');
+            }
+
+            if (titleInput.value.trim() === "") {
+                e.preventDefault();
+                titleInput.setCustomValidity('Product title is required.');
+                titleInput.reportValidity();
+            } else {
+                titleInput.setCustomValidity('');
+            }
+
+            if (descriptionInput.value.trim() === "") {
+                e.preventDefault();
+                descriptionInput.setCustomValidity('Product description is required.');
+                descriptionInput.reportValidity();
+            } else {
+                descriptionInput.setCustomValidity('');
             }
         });
     });
@@ -212,8 +260,6 @@
         }
 
         cropper.getCroppedCanvas().toBlob((blob) => {
-
-
             const previewId = currentPreviewId;
             const file = new File([blob], originalFileNames[currentInputId], { type: 'image/png' });
 
@@ -221,20 +267,11 @@
             dataTransfer.items.add(file);
             document.getElementById(currentInputId).files = dataTransfer.files;
 
-
             const preview = document.getElementById(currentPreviewId);
-
             preview.src = URL.createObjectURL(blob);
-
 
             croppedImages[currentInputId] = blob;
             $('#imageCropModal').modal('hide');
-
-
         }, 'image/png');
-
     }
-
-    
-
 </script>

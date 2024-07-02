@@ -106,82 +106,14 @@ module.exports={
           req.flash('error', 'User is blocked by the admin');
           return res.redirect('/login');
       }
-      
+
         req.session.user = user;
         req.flash("success", "user successfully logged in");
         return res.redirect("/");
       },
      
 
-  // userLogin: async (req, res) => {
-  //   const { email, password } = req.body;
-
-  //   try {
-  //     const user = await User.findOne({ email });
-  //     if (!user) {
-  //       req.flash('error', 'User not found');
-  //       return res.redirect('/login');
-  //     }
-
-  //     const isMatch = await bcrypt.compare(password, user.password);
-  //     if (!isMatch) {
-  //       req.flash('error', 'Invalid credentials');
-  //       return res.redirect('/login');
-  //     }
-
-  //     const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: '1h' });
-  //     res.cookie('jwt', token, { httpOnly: true });
-
-  //     req.session.user = user;
-  //     req.flash('success', 'User successfully logged in');
-  //     return res.redirect('/');
-  //   } catch (error) {
-  //     console.error(error);
-  //     req.flash('error', 'Server error');
-  //     return res.redirect('/login');
-  //   }
-  // },
-
-  // userRegister: async (req, res) => {
-  //   const { firstName, lastName, email, password } = req.body;
-
-  //   try {
-  //     const existUser = await User.findOne({ email });
-  //     if (existUser) {
-  //       req.flash('error', 'Email already in use');
-  //       return res.redirect('/register');
-  //     }
-
-  //     const hashedPassword = await bcrypt.hash(password, 12);
-  //     const newUser = new User({
-  //       firstName,
-  //       lastName,
-  //       email,
-  //       password: hashedPassword,
-  //     });
-
-  //     const savedUser = await newUser.save();
-  //     if (!savedUser) {
-  //       req.flash('error', 'User registration unsuccessful');
-  //       return res.redirect('/register');
-  //     }
-
-  //     req.session.verifyToken = savedUser._id;
-  //     const isOtpSent = sendOtpEmail(savedUser, res);
-  //     if (isOtpSent) {
-  //       req.flash('success', 'User registered successfully, please verify your email');
-  //       return res.redirect('/verifyOtp');
-  //     } else {
-  //       req.flash('error', 'User registration unsuccessful, please try to log in');
-  //       return res.redirect('/login');
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     req.flash('error', 'Server error');
-  //     return res.redirect('/register');
-  //   }
-  // },
-
+  
   /**
    * User Verification
    */

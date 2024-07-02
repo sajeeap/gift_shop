@@ -17,16 +17,32 @@ const catogorySchema = new Schema({
         required: true,
         default: true,
     },
-
-    image: {
-        filename: String,
-        originalname: String,
-        path: String,
-      },
-      
+    
       description: {
         type: String,
       },
+   
+
+    primaryImages:[
+        {
+            name:{
+                type:String,
+            },
+            path:{
+                type:String
+            }
+        }
+    ],
+    secondaryImages:[
+        {
+            name:{
+                type:String,
+            },
+            path:{
+                type:String
+            }
+        }
+    ],
 
 },
 {

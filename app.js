@@ -19,6 +19,7 @@ const authRouter = require('./src/routes/authRoutes');
 const userRouter = require('./src/routes/userRoutes');
 const adminRouter = require("./src/routes/adminRoutes");
 const shopRouter = require("./src/routes/shopRoutes");
+const cartRouter = require("./src/routes/cart")
 
 const { checkBlockedUser } = require("./src/middleware/authMiddleware");
 
@@ -74,6 +75,7 @@ app.use("/admin", adminRouter);
 app.use('/', authRouter);
 app.use('/', shopRouter);
 app.use('/user', userRouter);
+app.use("/", cartRouter)
 
 
 

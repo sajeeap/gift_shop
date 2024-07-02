@@ -9,7 +9,8 @@
                         <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
                         <div class="slick3 gallery-lb">
-                            <div class="item-slick3" data-thumb="/uploads/products-images/crp/<%= product.primaryImages[0].name %>">
+                            <div class="item-slick3"
+                                data-thumb="/uploads/products-images/crp/<%= product.primaryImages[0].name %>">
                                 <div class="wrap-pic-w pos-relative">
                                     <img src="/uploads/products-images/crp/<%= product.primaryImages[0].name %>"
                                         alt="IMG-PRODUCT">
@@ -21,7 +22,8 @@
                                 </div>
                             </div>
 
-                            <div class="item-slick3" data-thumb="/uploads/products-images/crp/<%=product.secondaryImages[0].name %>">
+                            <div class="item-slick3"
+                                data-thumb="/uploads/products-images/crp/<%=product.secondaryImages[0].name %>">
                                 <div class="wrap-pic-w pos-relative">
                                     <img src="/uploads/products-images/crp/<%=product.secondaryImages[0].name %>"
                                         alt="IMG-PRODUCT">
@@ -33,7 +35,8 @@
                                 </div>
                             </div>
 
-                            <div class="item-slick3" data-thumb="/uploads/products-images/crp/<%=product.secondaryImages[1].name %>">
+                            <div class="item-slick3"
+                                data-thumb="/uploads/products-images/crp/<%=product.secondaryImages[1].name %>">
                                 <div class="wrap-pic-w pos-relative">
                                     <img src="/uploads/products-images/crp/<%=product.secondaryImages[1].name %>"
                                         alt="IMG-PRODUCT">
@@ -44,8 +47,8 @@
                                     </a>
                                 </div>
                             </div>
-                           
-                           
+
+
 
 
                         </div>
@@ -56,7 +59,7 @@
             <div class="col-md-6 col-lg-5 p-b-30">
                 <div class="p-r-50 p-t-5 p-lr-0-lg">
                     <h4 class="mtext-105 cl2 js-name-detail p-b-14">
-                       <%= product.product_name %>
+                        <%= product.product_name %>
                     </h4>
 
                     <span class="mtext-106 cl2">
@@ -64,62 +67,68 @@
                     </span>
 
                     <p class="stext-102 cl3 p-t-23">
-                       <%= product.description %>
+                        <%= product.description %>
                     </p>
 
                     <!--  -->
-                  
-                        <div class="flex-w flex-r-m p-b-10">
-                            <div class="size-204 flex-w flex-m respon6-next">
-                                <div class="wrap-num-product flex-w m-r-20 m-tb-10">
-                                    <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                                        <i class="fs-16 zmdi zmdi-minus"></i>
-                                    </div>
 
-                                    <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product"
-                                        value="1">
-
-                                    <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                        <i class="fs-16 zmdi zmdi-plus"></i>
-                                    </div>
+                    <div class="flex-w flex-r-m p-b-10">
+                        <div class="size-204 flex-w flex-m respon6-next">
+                            <div class="wrap-num-product flex-w m-r-20 m-tb-10">
+                                <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                                    <i class="fs-16 zmdi zmdi-minus"></i>
                                 </div>
 
-                                <button
-                                    class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
-                                    Add to cart
-                                </button>
+                              
+
+                                <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product"
+                                    value="1">
+
+                                <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                                    <i class="fs-16 zmdi zmdi-plus"></i>
+                                </div>
                             </div>
+
+                            <button id="addToCartBtn" class="btn btn-primary" <%= product.stock === 0 ? 'disabled' : '' %> data-product-id="<%= product._id %>">Add to Cart</button>
+                            <% if (product.stock === 0) { %>
+                                <p style="color: red;">This product is out of stock.</p>
+                            <% } %>
+
+                            
+
+                           
+
                         </div>
                     </div>
+                </div>
 
-                    <!--  -->
-                    <div class="flex-w flex-m p-l-100 p-t-40 respon7">
-                        <div class="flex-m bor9 p-r-10 m-r-11">
-                            <a href="#"
-                                class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100"
-                                data-tooltip="Add to Wishlist">
-                                <i class="zmdi zmdi-favorite"></i>
-                            </a>
-                        </div>
-
-                        <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
-                            data-tooltip="Facebook">
-                            <i class="fa fa-facebook"></i>
-                        </a>
-
-                        <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
-                            data-tooltip="Twitter">
-                            <i class="fa fa-twitter"></i>
-                        </a>
-
-                        <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
-                            data-tooltip="Google Plus">
-                            <i class="fa fa-google-plus"></i>
+                <!--  -->
+                <div class="flex-w flex-m p-l-100 p-t-40 respon7">
+                    <div class="flex-m bor9 p-r-10 m-r-11">
+                        <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100"
+                            data-tooltip="Add to Wishlist">
+                            <i class="zmdi zmdi-favorite"></i>
                         </a>
                     </div>
+
+                    <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
+                        data-tooltip="Facebook">
+                        <i class="fa fa-facebook"></i>
+                    </a>
+
+                    <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
+                        data-tooltip="Twitter">
+                        <i class="fa fa-twitter"></i>
+                    </a>
+
+                    <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
+                        data-tooltip="Google Plus">
+                        <i class="fa fa-google-plus"></i>
+                    </a>
                 </div>
             </div>
         </div>
+    </div>
 
 
     </div>
@@ -134,3 +143,63 @@
         </span>
     </div>
 </section>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#addToCartBtn').click(function() {
+            var quantity = $('.num-product').val();
+            var productId = $(this).data('product-id');
+
+            console.log('Product ID:', productId);
+    
+            $.ajax({
+                url: '/cart',
+                method: 'POST',
+                data: { productId: productId,  quantity: quantity },
+                success: function(response) {
+                    if (response.success) {
+                        // Show success message
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Product added to cart.',
+                            icon: 'success',
+                            confirmButtonText: 'Go to Cart'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/cart';
+                            }
+                        });
+                    } else if (response.error === 'exist') {
+                        // Show specific error message
+                        Swal.fire({
+                            title: 'Already in Cart',
+                            text: 'This item is already in your cart.',
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        // Show general error message
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.error || 'An error occurred while adding the product to the cart.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while adding the product to the cart.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+    

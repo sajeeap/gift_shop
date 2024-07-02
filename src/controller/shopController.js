@@ -61,6 +61,7 @@ module.exports={
             res.render('shop/productDetails',{
                 locals,
                 product,
+                user: req.session.user,
               
                 
             })

@@ -111,19 +111,25 @@
                                 <!-- change password -->
                                 <form id="changePasswordForm" action="/user/change-password" method="POST">
                                     <div class="form-outline mb-4">
-                                        <label for="currentPassword" class="form-label text-left">Current Password</label>
-                                        <input name="currentPassword" type="password" class="form-control" id="currentPassword" required>
+                                        <label for="currentPassword" class="form-label text-left">Current
+                                            Password</label>
+                                        <input name="currentPassword" type="password" class="form-control"
+                                            id="currentPassword" required>
                                     </div>
                                     <div class="form-outline mb-4">
                                         <label for="newPassword" class="form-label text-left">New Password</label>
-                                        <input name="newPassword" type="password" class="form-control" id="newPassword" required>
+                                        <input name="newPassword" type="password" class="form-control" id="newPassword"
+                                            required>
                                     </div>
                                     <div class="form-outline mb-4">
-                                        <label for="confirmPassword" class="form-label text-left">Confirm Password</label>
-                                        <input name="confirmPassword" type="password" class="form-control" id="confirmPassword" required>
+                                        <label for="confirmPassword" class="form-label text-left">Confirm
+                                            Password</label>
+                                        <input name="confirmPassword" type="password" class="form-control"
+                                            id="confirmPassword" required>
                                     </div>
                                     <div class="flex-c-m">
-                                        <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">Confirm</button>
+                                        <button type="submit"
+                                            class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">Confirm</button>
                                     </div>
                                 </form>
 
@@ -240,14 +246,42 @@
                                 aria-labelledby="v-pills-profile-tab" tabindex="0">
                                 <div class="row">
                                     <div class="col-md-12 mb-4">
-                                        <div class="form-outline">
+                                        <div class="address-title">
                                             <h3 class="text-capitalize">
                                                 Address
                                             </h3>
+                                            <button class="btn bg1 cl0 bor1" data-toggle="modal" data-target="#exampleModal">+ New Address</button>
                                         </div>
+                                        
+                                    
+                                        
                                         <hr />
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="card mb-3 mb-lg-0 mb-3">
+                                            <div class="card-body">
+                                                <address>
+                                                    3522 Interstate<br> 75 Business Spur,<br> Sault Ste. <br>Marie,
+                                                    MI 49783 <br> New York
+                                                </address>
+                                                
+                                                <div class="mt-2">
+                                                    <button class="btn btn-primary"  data-toggle="modal" data-target="#exampleModal">Edit</button>
+                                                    <button class="btn btn-danger">Delete</button>
+                                                </div>                                                
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                    
+                                  
+                                </div>
+
+                                
+
+
 
                             </div>
 
@@ -260,7 +294,34 @@
     </div>
     </div>
 </section>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Address</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="">
+            <input type="text" placeholder="Name" class="form-control mb-2">
+            
+            <input type="text" placeholder="Address" class="form-control mb-2">
+            <input type="text" placeholder="House Name" class="form-control mb-2">
+            <input type="text" placeholder="Street" class="form-control mb-2">
+            <input type="text" placeholder="Zip code" class="form-control mb-2">            
 
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <script>
     document.getElementById('changePasswordForm').addEventListener('submit', function (e) {
@@ -297,33 +358,33 @@
             },
             body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: data.message,
-                }).then(() => {
-                    // Optionally redirect or perform other actions after success
-                    window.location.href = '/user/profile'; // Redirect to profile page
-                });
-            } else {
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message,
+                    }).then(() => {
+                        // Optionally redirect or perform other actions after success
+                        window.location.href = '/user/profile'; // Redirect to profile page
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message,
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: data.message,
+                    title: 'Server Error',
+                    text: 'An error occurred while changing the password',
                 });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Server Error',
-                text: 'An error occurred while changing the password',
             });
-        });
     });
 </script>
 
@@ -381,36 +442,36 @@
                         },
                         body: JSON.stringify({ firstName, lastName }),
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message) {
-                            // Display success message
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: data.message
-                            });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message) {
+                                // Display success message
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: data.message
+                                });
 
-                            // Update the username in the DOM
-                            const usernameElement = document.getElementById('username');
-                            usernameElement.textContent = `${firstName} ${lastName}`;
-                        } else {
-                            // Handle error message
+                                // Update the username in the DOM
+                                const usernameElement = document.getElementById('username');
+                                usernameElement.textContent = `${firstName} ${lastName}`;
+                            } else {
+                                // Handle error message
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'An error occurred while updating the profile.'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
                                 text: 'An error occurred while updating the profile.'
                             });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'An error occurred while updating the profile.'
                         });
-                    });
                 }
             });
         }

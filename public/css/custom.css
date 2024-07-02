@@ -33,3 +33,37 @@
     line-height: 1;
     cursor: pointer;
 }
+.address-card {
+    position: relative;
+    display: flex;
+    
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #e2e9e1;
+    border-radius: .25rem;
+}
+.table-shopping-cart .column-1 {
+    padding-left: 25px;
+}
+.table-shopping-cart .column-5 {
+    padding-right: 25px;
+}
+.address-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.header-v2 {
+    position: sticky;
+    z-index: 1;
+}
+.btn-primary {
+    background-color: #413E65;
+    border-radius: 23px;
+    color: #ffffff;
+    border: none;
+}
+.btn {
+    border-radius: 23px;
+}

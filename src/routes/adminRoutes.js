@@ -12,7 +12,9 @@ const { isAdminLoggedIn } = require("../middleware/authMiddleware");
 
 
 router.get('/', isAdminLoggedIn, adminController.getDashboard)
-// router.route("/category").get(categoryController.getCategory);
+
+
+//category management
 router.get('/category', isAdminLoggedIn, categoryController.getCategory);
 
 router.get('/add-category', isAdminLoggedIn, categoryController.getAddCategory);
@@ -24,27 +26,16 @@ router.post('/edit-category/:id', isAdminLoggedIn, categoryController.editCatego
 router.get('/delete-category/:id', isAdminLoggedIn, categoryController.deleteCategory)
 
 
+
+
+
+//product controller
+
 router.get('/products', isAdminLoggedIn, productController.getProducts);
 router.get('/edit-products', isAdminLoggedIn, productController.getEditProducts);
 router.get('/delete-product/:id', isAdminLoggedIn, productController.deleteProduct);
-
-
-
-
-
-
-
-// router
-//   .route("/add-product")
-//   .get(isAdminLoggedIn,productController.getAddProducts)
-//   .post(
-//     isAdminLoggedIn,
-//     productUpload.fields([
-//       { name: "images", maxCount: 3 },
-//       { name: "primaryImage" },
-//     ]),
-//     productController.addProducts
-//   );
+router.get("/stocks",isAdminLoggedIn, productController.getStocks)
+router.post("/update-stock", isAdminLoggedIn, productController.updateStocks)
 
 router
   .route("/add-product")
@@ -59,20 +50,32 @@ router
   );
 
 
-
+  // router
+  // .route("/edit-product/:id")
+  // .get(isAdminLoggedIn,productController.getEditProducts)
+  // .post(
+  //   isAdminLoggedIn,
+  //   productUpload.fields([
+  //     { name: "primaryImage" },
+  //     { name: "secondaryImages", maxCount: 1 },
+  //     { name: "secondaryImages1", maxCount: 1 },
+  //   ]),
+  //   productController.editProduct
+  // );
 
   router
   .route("/edit-product/:id")
-  .get(isAdminLoggedIn,productController.getEditProducts)
+  .get(isAdminLoggedIn, productController.getEditProducts)
   .post(
     isAdminLoggedIn,
     productUpload.fields([
-      { name: "primaryImage" },
-      { name: "secondaryImages", maxCount: 1 },
-      { name: "secondaryImages1", maxCount: 1 },
+      { name: 'primaryImage', maxCount: 1 },
+      { name: 'image2', maxCount: 1 },
+      { name: 'image3', maxCount: 1 }
     ]),
     productController.editProduct
   );
+
 
   //user managment
   router

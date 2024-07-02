@@ -2,6 +2,7 @@ const Category = require('../model/categorySchema');
 const Product = require("../model/productSchema");
 const User = require("../model/userSchema")
 const bcrypt = require('bcrypt');
+const Address = require("../model/addressSchema")
 module.exports = {
 
     getProfile: async (req, res) => {
@@ -111,6 +112,56 @@ module.exports = {
 
 
     },
+
+
+    //whishlist
+
+    getWhishlist: async (req, res) => {
+
+        try {
+            const userId = req.session.user; // Retrieve userId from session
+
+            // Find user by userId
+            const user = await User.findById(userId);
+
+            if (!user) {
+                return res.status(404).send('User not found');
+            }
+
+            // Render profile page with updated user data
+            res.render('user/whishlist', {
+                user
+            });
+
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+            res.status(500).send('An error occurred while fetching the profile');
+        }
+
+    },
+
+    //address
+    getAddress : async(req,res)=>{
+        const address = await Address.find( { 
+            customer_id :req.session.user._id,
+            delete : false
+        })
+
+        res.render("/user/profile", {
+            address,
+            user: req.session.user
+        })
+    },
+
+    addAddress : async(req,res)=>{
+        await Address.create(req.body)
+        req.flash("success", "Address added");
+        res.redirect("/user/profile")
+    }
+
+
+
+
 
     
 }
