@@ -242,48 +242,79 @@
                             </div>
 
                             <!-- Address -->
+                            <!-- Address Section -->
                             <div class="tab-pane fade" id="v-pills-address" role="tabpanel"
                                 aria-labelledby="v-pills-profile-tab" tabindex="0">
                                 <div class="row">
                                     <div class="col-md-12 mb-4">
                                         <div class="address-title">
-                                            <h3 class="text-capitalize">
-                                                Address
-                                            </h3>
-                                            <button class="btn bg1 cl0 bor1" data-toggle="modal" data-target="#exampleModal">+ New Address</button>
+                                            <h3 class="text-capitalize">Address</h3>
+                                            <button class="btn bg1 cl0 bor1" data-toggle="modal"
+                                                data-target="#exampleModal">+ New Address</button>
                                         </div>
-                                        
-                                    
-                                        
                                         <hr />
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="card mb-3 mb-lg-0 mb-3">
-                                            <div class="card-body">
-                                                <address>
-                                                    3522 Interstate<br> 75 Business Spur,<br> Sault Ste. <br>Marie,
-                                                    MI 49783 <br> New York
-                                                </address>
-                                                
-                                                <div class="mt-2">
-                                                    <button class="btn btn-primary"  data-toggle="modal" data-target="#exampleModal">Edit</button>
-                                                    <button class="btn btn-danger">Delete</button>
-                                                </div>                                                
-                                            </div>                                            
-                                        </div>
-                                    </div>
-                                    
-                                  
+                                    <% if (addresses && addresses.length> 0) { %>
+                                        <% addresses.forEach(function(address) { %>
+                                            <div class="col-lg-6 mb-3" id="address-<%= address._id %>">
+                                                <div class="card mb-3 mb-lg-0 mb-3">
+                                                    <div class="card-body">
+                                                        <address>
+                                                            <span class="name">
+                                                                <%= address.name %>
+                                                            </span><br>
+                                                            <span class="address_type">
+                                                                <%= address.address_type %>
+                                                            </span><br>
+                                                            <span class="zip_code">
+                                                                <%= address.zip_code %>
+                                                            </span><br>
+                                                            <span class="locality">
+                                                                <%= address.locality %>
+                                                            </span><br>
+                                                            <span class="house_name">
+                                                                <%= address.house_name %>
+                                                            </span><br>
+                                                            <span class="area_street">
+                                                                <%= address.area_street %>
+                                                            </span><br>
+                                                            <span class="town">
+                                                                <%= address.town %>
+                                                            </span><br>
+                                                            <span class="state">
+                                                                <%= address.state %>
+                                                            </span><br>
+                                                            <span class="landmark">
+                                                                <%= address.landmark %>
+                                                            </span>
+                                                        </address>
+                                                        <div class="mt-2">
+                                                            <button class="btn btn-primary"
+                                                                onclick="openEditModal('<%= address._id %>')">Edit</button>
+                                                            <button class="btn btn-danger"
+                                                                onclick="deleteAddress('<%= address._id %>')">Delete</button>
+                                                            <button class="btn btn-success"
+                                                                onclick="setDefaultAddress('<%= address._id %>')">
+                                                                <% if (address.default) { %>
+                                                                    Default Address
+                                                                    <% } else { %>
+                                                                        Set as Default
+                                                                        <% } %>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% }); %>
+                                                <% } else { %>
+                                                    <p>No addresses found.</p>
+                                                    <% } %>
                                 </div>
-
-                                
-
-
-
                             </div>
+
 
                         </div>
                     </div>
@@ -295,33 +326,191 @@
     </div>
 </section>
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Add Address</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form action="">
-            <input type="text" placeholder="Name" class="form-control mb-2">
-            
-            <input type="text" placeholder="Address" class="form-control mb-2">
-            <input type="text" placeholder="House Name" class="form-control mb-2">
-            <input type="text" placeholder="Street" class="form-control mb-2">
-            <input type="text" placeholder="Zip code" class="form-control mb-2">            
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add/Edit Address</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="address-form" action="/user/add-address" method="POST">
+                <div class="modal-body">
 
-          </form>
+                    <input type="hidden" name="addressId" id="addressId">
+                    <input type="text" name="name" id="name" placeholder="Name" class="form-control mb-2" required>
+                    <input type="text" name="address_type" id="address_type" placeholder="Address Type"
+                        class="form-control mb-2" required>
+                    <input type="text" name="zip_code" id="zip_code" placeholder="Zip Code" class="form-control mb-2"
+                        required>
+                    <input type="text" name="locality" id="locality" placeholder="Locality" class="form-control mb-2"
+                        required>
+                    <input type="text" name="house_name" id="house_name" placeholder="House Name"
+                        class="form-control mb-2" required>
+                    <input type="text" name="area_street" id="area_street" placeholder="Area/Street"
+                        class="form-control mb-2" required>
+                    <input type="text" name="town" id="town" placeholder="Town" class="form-control mb-2" required>
+                    <input type="text" name="state" id="state" placeholder="State" class="form-control mb-2" required>
+                    <input type="text" name="landmark" id="landmark" placeholder="Landmark" class="form-control mb-2"
+                        required>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
+
+
+<script>
+    function openAddModal() {
+        document.getElementById('address-form').reset();
+        document.getElementById('addressId').value = ''; // Clear the address ID for adding a new address
+        $('#exampleModal').modal('show');
+    }
+
+    function openEditModal(addressId) {
+        const address = document.getElementById('address-' + addressId);
+        const name = address.querySelector('.name').innerText;
+        const addressType = address.querySelector('.address_type').innerText;
+        const zipCode = address.querySelector('.zip_code').innerText;
+        const locality = address.querySelector('.locality').innerText;
+        const houseName = address.querySelector('.house_name').innerText;
+        const areaStreet = address.querySelector('.area_street').innerText;
+        const town = address.querySelector('.town').innerText;
+        const state = address.querySelector('.state').innerText;
+        const landmark = address.querySelector('.landmark').innerText;
+
+        document.getElementById('addressId').value = addressId;
+        document.getElementById('name').value = name;
+        document.getElementById('address_type').value = addressType;
+        document.getElementById('zip_code').value = zipCode;
+        document.getElementById('locality').value = locality;
+        document.getElementById('house_name').value = houseName;
+        document.getElementById('area_street').value = areaStreet;
+        document.getElementById('town').value = town;
+        document.getElementById('state').value = state;
+        document.getElementById('landmark').value = landmark;
+
+        $('#exampleModal').modal('show');
+    }
+
+    document.getElementById('address-form').addEventListener('submit', function (e) {
+        e.preventDefault(); // Prevent form submission
+
+        const name = document.getElementById('name').value;
+        const addressType = document.getElementById('address_type').value;
+        const zipCode = document.getElementById('zip_code').value;
+        const locality = document.getElementById('locality').value;
+        const houseName = document.getElementById('house_name').value;
+        const areaStreet = document.getElementById('area_street').value;
+        const town = document.getElementById('town').value;
+        const state = document.getElementById('state').value;
+        const landmark = document.getElementById('landmark').value;
+
+        const addressId = document.getElementById('addressId').value;
+
+        let url = '/user/add-address';
+        let method = 'POST';
+
+        if (addressId) {
+            url = '/user/edit-address';
+            method = 'POST';
+        }
+
+        // If all validations pass, submit the form using AJAX
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ addressId, name, addressType, zipCode, locality, houseName, areaStreet, town, state, landmark }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message,
+                    }).then(() => {
+                        // Optionally redirect or perform other actions after success
+                        window.location.href = '/user/profile'; // Redirect to profile page
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message,
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Server Error',
+                    text: 'An error occurred while processing the address',
+                });
+            });
+    });
+
+    function editAddress(addressId) {
+        openEditModal(addressId);
+    }
+
+    function deleteAddress(addressId) {
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you really want to delete this address??",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Delete it!",
+            cancelButtonText: "No, Cancel!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch("/user/delete-address", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+
+                    },
+                    body: JSON.stringify({ addressId })
+                })
+
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: "Success",
+                                title: "Deleted",
+                                text: "Your address has been deleted",
+                            }).then(() => {
+                                location.reload();
+                            })
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Server Error",
+                                text: "An error occured while deleting the address"
+                            })
+                        }
+                    })
+            }
+        })
+    }
+</script>
+
+
+
+
+
 
 <script>
     document.getElementById('changePasswordForm').addEventListener('submit', function (e) {
@@ -476,4 +665,45 @@
             });
         }
     });
+</script>
+
+<script>
+    function setDefaultAddress(addressId) {
+        fetch('/user/set-default-address', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ addressId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    title: 'Success',
+                    text: data.message,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload(); // Reload the page to reflect the changes
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: data.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'An error occurred while processing your request.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        });
+    }
 </script>

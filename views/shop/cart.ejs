@@ -45,8 +45,11 @@
                                                 </div>
                                             </td>
                                             <td class="column-4 item-total">
-                                                $ <%= (item.product_id && item.product_id.price * item.quantity).toFixed(2) %>
-                                                
+                                                <% if (item.product_id && item.product_id.price && item.quantity) { %>
+                                                    $ <%= (item.product_id.price * item.quantity).toFixed(2) %>
+                                                <% } else { %>
+                                                    $ 0.00 
+                                                <% } %>
                                             </td>
                                             <td class="column-5">
                                                 <button type="button" class="btn btn-danger btn-sm" onclick="confirmRemove('<%= item._id %>')">

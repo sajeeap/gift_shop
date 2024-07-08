@@ -45,6 +45,7 @@ module.exports={
       req.flash("error", "Email already in use");
       return res.redirect("/register");
     }
+
     
     const hashpwd=await bcrypt.hash(password,12);
     const user=await User.create({
@@ -77,6 +78,8 @@ module.exports={
         //   return res.redirect("/login");
         // }
       }
+
+      console.log();
     } catch (error) {
       console.log(error), req.flash("error", "user registered unsuccessfully");
       return res.redirect("/register");

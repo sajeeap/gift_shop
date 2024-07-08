@@ -73,7 +73,7 @@
                                 </div>
 
                                 <div class="block2-txt-child2 flex-r p-t-3">
-                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+                                    <a href="#" class="btn-addwish-b2 dis-block pos-relative   add-to-wishlist" data-product-id="<%= product._id %>">
                                         <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png"
                                             alt="ICON">
                                         <img class="icon-heart2 dis-block trans-04 ab-t-l"
@@ -89,3 +89,47 @@
 
     </div>
 </div>
+
+
+<script>
+	document.querySelectorAll('.btn-addwish-b2').forEach(icon => {
+		icon.addEventListener('click', function () {
+			const productId = this.getAttribute('data-product-id');
+			addToWishlist(productId);
+		});
+	});
+
+	function addToWishlist(productId) {
+		fetch('/user/add-to-wishlist', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ productId }),
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Added to Wishlist',
+					text: 'Product added to your wishlist successfully!',
+				});
+			} else {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Failed to add product to wishlist: ' + data.message,
+				});
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Server Error',
+				text: 'An error occurred while adding product to wishlist',
+			});
+		});
+	}
+</script>

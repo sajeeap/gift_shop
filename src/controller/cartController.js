@@ -25,7 +25,7 @@ module.exports = {
                 });
             } else {
                 for (const item of cart.items) {
-                    const product = item.product_id; 
+                    const product = item.product_id;
                    
 
                     if (!product) {
@@ -105,7 +105,7 @@ module.exports = {
             const userId = req.session.user._id;
 
             // Find or create a cart for the user
-            let cart = await Cart.findOne({ userId }).populate("items.product_id");
+            let cart = await Cart.findOne({ userId }).populate("items.product_id.");
 
 
 
@@ -113,14 +113,18 @@ module.exports = {
                 cart = new Cart({ userId, items: [] });
             }
 
+            console.log("cart item", cart.items);
+
 
 
 
 
             // Check if the product already exists in the cart
-            const existingItem = cart.items.find(item => item.product_id._id.toString() === productId.toString());
+            const existingItem = cart.items.find(item => item.product_id.toString() === productId.toString());
 
-            console.log(cart.items);
+            console.log("exist", existingItem);
+
+            
 
 
             if (existingItem) {

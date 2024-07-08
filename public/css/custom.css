@@ -67,3 +67,8 @@
 .btn {
     border-radius: 23px;
 }
+
+.invalid-feedback {
+    color: red;
+    font-size: 14px;
+}

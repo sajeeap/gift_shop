@@ -50,19 +50,6 @@ router
   );
 
 
-  // router
-  // .route("/edit-product/:id")
-  // .get(isAdminLoggedIn,productController.getEditProducts)
-  // .post(
-  //   isAdminLoggedIn,
-  //   productUpload.fields([
-  //     { name: "primaryImage" },
-  //     { name: "secondaryImages", maxCount: 1 },
-  //     { name: "secondaryImages1", maxCount: 1 },
-  //   ]),
-  //   productController.editProduct
-  // );
-
   router
   .route("/edit-product/:id")
   .get(isAdminLoggedIn, productController.getEditProducts)
