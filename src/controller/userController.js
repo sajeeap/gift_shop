@@ -4,6 +4,9 @@ const User = require("../model/userSchema")
 const bcrypt = require('bcrypt');
 const Address = require("../model/addressSchema")
 const Wishlist = require("../model/whishlistSchema")
+const Orders = require("../model/orderSchema")
+const Cart = require("../model/cartSchema");
+
 
 
 const setDefaultAddress = async (req, res) => {
@@ -28,32 +31,42 @@ module.exports = {
     getProfile: async (req, res) => {
 
         try {
-            const userId = req.session.user; // Retrieve userId from session
-
-            // Find user by userId
+            const userId = req.session.user._id;
             const user = await User.findById(userId);
 
             if (!user) {
                 return res.status(404).send('User not found');
             }
 
+            let cart = await Cart.findOne({userId:req.session.user}).populate("items");
+            const wishlist = await Wishlist.findOne({ user_id:req.session.user }).populate("products");
+
             //Get Addresses
             const addresses = await Address.find({
-                customer_id: req.session.user._id,
+                customer_id: userId,
                 delete: false
             });
+
+            //Get Orders
+            const orders = await Orders.find({ 
+                customer_id: userId })
+                .sort({ createdAt: -1 })
+                .exec();
 
             if (!addresses) {
                 throw new Error('No addresses found for the user.');
             }
 
-            // Render profile page with updated user data
             res.render('user/profile', {
                 user,
-                addresses
+                addresses,
+                orders,
+                cart,
+                wishlist
             });
 
         } catch (error) {
+
             console.error('Error fetching profile:', error);
             res.status(500).send('An error occurred while fetching the profile');
         }
@@ -165,6 +178,7 @@ module.exports = {
             }
 
             const wishlist = await Wishlist.findOne({ user_id: user._id }).populate("products");
+            let cart = await Cart.findOne({userId:req.session.user}).populate("items");
 
 
             let products;
@@ -180,7 +194,8 @@ module.exports = {
                 locals,
                 wishlist,
                 products,
-                user
+                user,
+                cart
             });
 
         } catch (error) {
@@ -191,7 +206,10 @@ module.exports = {
 
     addToWishlist: async (req, res) => {
         try {
-            const userId = req.session.user._id;
+
+            
+
+            const userId = req.session.user._id|| req.session.user
             if (!userId) {
                 return res.status(401).json({ success: false, message: "User not logged in or session expired" });
             }

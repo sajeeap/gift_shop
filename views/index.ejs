@@ -68,10 +68,11 @@
                         <div class="block2-txt flex-w flex-t p-t-14">
                             <div class="block2-txt-child1 flex-col-l ">
                                 <p class="stext-109">
-                                    <%= product.category.name %>
+                                    <%= product.category.name.charAt(0).toUpperCase() + product.category.name.slice(1) %>
+									
                                 </p>
                                 <a href="#" class="stext-106 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    <%= product.product_name %>
+                                    <%= product.product_name.charAt(0).toUpperCase() + product.product_name.slice(1) %>
                                 </a>
 
                                 <span class="stext-105 cl3">

@@ -10,6 +10,7 @@
                         <table class="table-shopping-cart">
                             <thead>
                                 <tr class="table_head">
+                                    
                                     <th class="column-1">Product</th>
                                     <th class="column-2">Name</th>
                                     <th class="column-3">Price</th>
@@ -21,7 +22,9 @@
                             <tbody>
                                 <% if (cart.items && cart.items.length > 0) { %>
                                     <% cart.items.forEach((item, index) => { %>
+                                     
                                         <tr class="table_row" data-item-id="<%= item._id %>">
+                                           
                                             <td class="column-1">
                                                 <div class="how-itemcart1">
                                                     <% if (item.product_id && item.product_id.primaryImages && item.product_id.primaryImages.length > 0) { %>
@@ -31,7 +34,8 @@
                                                     <% } %>
                                                 </div>
                                             </td>
-                                            <td class="column-2"><%= item.product_id && item.product_id.product_name %></td>
+                                            
+                                            <td class="column-2"><%= item.product_id && item.product_id.product_name.charAt(0).toUpperCase() +  item.product_id.product_name.slice(1) %></td>
                                             <td class="column-3 item-price">$ <%= item.product_id && item.product_id.price %></td>
                                             <td class="column-4">
                                                 <div class="input-group">
@@ -139,6 +143,7 @@
 </script>
 
 <script>
+
     
     function updateQuantity(itemId, change) {
         const quantityElement = document.getElementById('quantity_' + itemId);
@@ -187,6 +192,8 @@
         subtotalElement.textContent = ` ${cart.totalPrice.toFixed(2)}`;
         totalElement.textContent = ` ${cart.totalPrice.toFixed(2)}`;
     }
+
+  
 </script>
 
 

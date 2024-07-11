@@ -2,29 +2,61 @@ const mongoose = require("mongoose");
 const Product = require("../model/productSchema");
 const Cart = require("../model/cartSchema");
 const User = require("../model/userSchema");
+const Address = require("../model/addressSchema")
+const Wishlist = require("../model/whishlistSchema")
 
 module.exports = {
-    getCheckOut : async(req,res)=>{
 
-        try {
-            const userId = req.session.user; // Retrieve userId from session
+    getCheckOutPage: async (req, res) => {
+        const userId = req.session.user._id;
 
-            // Find user by userId
-            const user = await User.findById(userId);
+        const address = await Address.findOne({
+            customer_id: userId,
+            default: true,
+            delete: false
+        })
+       
+        let cart = await Cart.findOne({ userId }).populate("items.product_id");       
+        const wishlist = await Wishlist.findOne({ user_id: req.session.user }).populate("products");
 
-            if (!user) {
-                return res.status(404).send('User not found');
+
+
+
+        
+        let totalItems = 0;
+        let totalPrice = 0;
+
+        if (cart) {
+            for (const item of cart.items) {         
+                               
+
+                let total = 0;
+                if(!item.itemTotal){
+                    total = item.price*item.quantity
+                } else {
+                    total = item.itemTotal
+                }
+
+                totalPrice += total;
+                totalItems += item.quantity;                 
+                                               
+                
             }
+        } 
 
-            // Render profile page with updated user data
-            res.render('shop/checkout', {
-                user
-            });
 
-        } catch (error) {
-            console.error('Error fetching profile:', error);
-            res.status(500).send('An error occurred while fetching the profile');
-        }
 
-}
+        res.render("shop/checkout", {
+            user: req.session.user,
+            address,
+            cart,
+            wishlist,
+            totalPrice,
+            totalItems,
+            
+
+        })
+    },
+
+
 }

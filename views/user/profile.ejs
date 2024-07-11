@@ -160,24 +160,31 @@
                                                     <th class="column-5">Action</th>
                                                 </tr>
 
-                                                <tr class="table_row">
-                                                    <td class="column-1">
-                                                        #234234
-                                                    </td>
-                                                    <td class="column-2">01/02/2024</td>
-                                                    <td class="column-3">
-                                                        Processing
-                                                    </td>
-                                                    <td class="column-4">
-                                                        $250.00
-                                                    </td>
-                                                    <td class="column-5">
-                                                        <a href="#" class="table-button">
-                                                            View
-                                                        </a>
-                                                    </td>
+                                                <% orders.forEach(order => { %>
 
-                                                </tr>
+                                                    <tr class="table_row">
+                                                        <td class="column-1">
+                                                            <%= order._id %>
+                                                        </td>
+                                                        <td class="column-2"><%= order.createdAt().toDateString() %></td>
+                                                        <td class="column-3">
+                                                            <%= order.status %>
+                                                        </td>
+                                                        <td class="column-4">
+                                                           $<%= order.items.reduce((total,item)=> total + item.itemTotal,0) %>
+                                                        </td>
+                                                        <td class="column-5"  >
+                                                            <a href="/order-details/<%= order._id %>" class="table-button">
+                                                                View
+                                                            </a>
+                                                        </td>
+    
+                                                    </tr>
+
+                                                 
+                                                <% }) %>
+
+                                                
                                             </table>
                                         </div>
                                     </div>

@@ -1,57 +1,61 @@
+
 const bcrypt = require("bcrypt");
 const OTP = require("../model/otpSchema");
 const nodemailer = require("nodemailer");
 
 const sendOtpEmail = async ({ _id, email }, res) => {
-  const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
+  try {
+    const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
 
-  console.log("otp: ", otp);
+    console.log("otp: ", otp);
 
-  const transporter = nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    secure: false,
-    requireTLS: true,
-    auth: {
-      user: process.env.BREVO_MAIL,
-      pass: process.env.BREVO_KEY,
-    },
-  });
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user:process.env.USER_EMAIL,
+        pass:process.env.USER_PASS,
+      }
+    });
 
-  const mailOptions = {
-    from: process.env.BREVO_MAIL,
-    to: email,
-    subject: "For email verification from Gift shop",
-    html: `<P> Your OTP for verification is ${otp} . Don't share your otp !</p> <p> The otp is only valid for 5 minutes</p> `,
-  };
+    const mailOptions = {
+      from:process.env.USER_EMAIL,
+      to: email,
+      subject: "Email Verification from Gift Shop",
+      html: ` <p>Your OTP for verification is ${otp}. Don't share your OTP!</p><p>The OTP is valid for 30 seconds.</p>`,
+    };
 
-  const hashedOtp = await bcrypt.hash(otp, 10);
+    const hashedOtp = await bcrypt.hash(otp, 10);
 
-  const existingOtpData = await OTP.findOne({ userId: _id });
+    const existingOtpData = await OTP.findOne({ userId: _id });
 
-  if (existingOtpData) {
-    const deletedOldOtpData = await OTP.deleteOne({ userId: _id });
-  }
-
-  const otpdata = new OTP({
-    userId: _id,
-    otp: hashedOtp,
-    createdAt: Date.now(),
-    expiresAt: Date.now() + (5 *  60 *  1000),
-  });
-
-  await otpdata.save();
-
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-      return false;
-    } else {
-      console.log("email has send ", info.response);
-
-      return true;
+    if (existingOtpData) {
+      await OTP.deleteOne({ userId: _id });
     }
-  });
+
+    const otpdata = new OTP({
+      userId: _id,
+      otp: hashedOtp,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + (30 * 1000), // 30 seconds expiration
+    });
+
+    await otpdata.save();
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+        res.status(500).send("Error sending email");
+      } else {
+        console.log("Email sent: ", info.response);
+        res.status(200).send("OTP sent successfully");
+      }
+    });
+  } catch (error) {
+    console.error("Error in sendOtpEmail:", error);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
-module.exports = { sendOtpEmail };
+module.exports = {sendOtpEmail};
+
+

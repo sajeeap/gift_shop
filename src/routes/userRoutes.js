@@ -15,25 +15,23 @@ router
     .get(userController.getProfile)
     .post(userController.editProfile)
 
+    
 //change password
 router
     .route("/change-password")
     .post(userController.changePassword)
 
+
 //whishlist
 router
     .route("/whishlist")
     .get(userController.getWishlist)
-
 router
     .route("/add-to-wishlist")
     .post(userController.addToWishlist)
-
 router
     .route("/remove-from-whishlist")
     .post(userController.removeFromWishlist)
-
-
 
 
 
@@ -41,23 +39,15 @@ router
 router
     .route("/address")
     .get(userController.getAddress)
-
-//add/edit address
 router
     .route("/add-address")
     .post(userController.addAddress)
-//editAddress
-
 router
-     .route("/edit-address")
-     .post(userController.editAddress)
-
-//delete address
+    .route("/edit-address")
+    .post(userController.editAddress)
 router
     .route("/delete-address")
     .post(userController.deleteAddress)
-
-//default address
 router
     .route("/set-default-address")
     .post(userController.setDefaultAddress)

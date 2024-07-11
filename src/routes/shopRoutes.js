@@ -17,7 +17,7 @@ router.get("/product-list",shopController.getProductList )
 router.get("/product-details/:id", shopController.getProductDetails)
 
 //checkout
-router.get("/checkout", checkOutController.getCheckOut )
+router.get("/checkout", checkOutController.getCheckOutPage )
 
 
 

@@ -36,7 +36,7 @@
                                             <% } %>
                                         </div>
                                     </td>
-                                    <td class="column-2"><%= product.product_name %></td>
+                                    <td class="column-2"> <%= product.product_name.charAt(0).toUpperCase() + product.product_name.slice(1) %></td>
                                     <td class="column-3">$ <%= product.price.toFixed() %></td>
                                     <th class="column-4">
                                         <a href="#" onclick="addToCart('<%= product._id %>')" class="btn btn-primary" <%= product.stock === 0 ? 'disabled' : '' %> >Add to Cart</a>

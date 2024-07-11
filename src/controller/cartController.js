@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Product = require("../model/productSchema");
 const Cart = require("../model/cartSchema");
 const User = require("../model/userSchema");
+const Wishlist = require("../model/whishlistSchema")
 
 module.exports = {
 
@@ -13,10 +14,11 @@ module.exports = {
         try {
             const userId = req.session.user._id;
             let cart = await Cart.findOne({ userId }).populate("items.product_id");
+            const wishlist = await Wishlist.findOne({ user_id: req.session.user }).populate("products");
 
             let errors = [];
-            let totalPrice = 0;
             let totalItems = 0;
+            let totalPrice = 0;
 
             if (!cart) {
                 cart = new Cart({
@@ -26,7 +28,19 @@ module.exports = {
             } else {
                 for (const item of cart.items) {
                     const product = item.product_id;
-                   
+                    
+                    
+
+                    let total = 0;
+                    if(!item.itemTotal){
+                        total = item.price*item.quantity
+                    } else {
+                        total = item.itemTotal
+                    }
+
+                    totalPrice += total;
+                    totalItems += item.quantity;                   
+                    
 
                     if (!product) {
                         errors.push(`The Product ${item.product_id} is not found!!`);
@@ -38,33 +52,32 @@ module.exports = {
                         continue;
                     }
 
-                    // if (item.quantity > product.stock) {
-                    //     item.outOfStock = true;
-                    //     errors.push(`The Product ${product.product_name} is out of stock!!`);
-                    // } else {
-                    //     item.outOfStock = false;
-                    // }
-
-                    const itemTotal = product.price * item.quantity;
-                    item.itemTotal = itemTotal;
-                    totalPrice += itemTotal;
-
-                    totalItems += item.quantity;
-
+                    if (item.quantity > product.stock) {
+                        item.outOfStock = true;
+                        errors.push(`The Product ${product.product_name} is out of stock!!`);
+                    } else {
+                        item.outOfStock = false;
+                    }                  
+                    
                 }
-
+                
                 await cart.save();
             }
 
+            console.log('Cart///////////', cart);
             res.render("shop/cart", {
+                
                 user: req.session.user,
                 cart: {
                     items: cart.items,
                     totalPrice,
                     totalItems,
                     errorMsg: errors,
-                }
+                },
+                wishlist
             });
+            
+
 
         } catch (error) {
             console.error('Cart error:', error);
@@ -124,7 +137,7 @@ module.exports = {
 
             console.log("exist", existingItem);
 
-            
+
 
 
             if (existingItem) {
