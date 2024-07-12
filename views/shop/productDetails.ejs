@@ -9,49 +9,34 @@
                         <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
                         <div class="slick3 gallery-lb">
-                            <div class="item-slick3"
-                                data-thumb="/uploads/products-images/crp/<%= product.primaryImages[0].name %>">
+                            <div class="item-slick3" data-thumb="/uploads/products-images/crp/<%= product.primaryImages[0].name %>">
                                 <div class="wrap-pic-w pos-relative">
-                                    <img src="/uploads/products-images/crp/<%= product.primaryImages[0].name %>"
-                                        alt="IMG-PRODUCT">
-
-                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-                                        href="images/product-detail-01.jpg">
+                                    <img id="zoom_01" src="/uploads/products-images/crp/<%= product.primaryImages[0].name %>" data-zoom-image="/uploads/products-images/crp/<%= product.primaryImages[0].name %>" alt="IMG-PRODUCT">
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="/uploads/products-images/crp/<%= product.primaryImages[0].name %>">
                                         <i class="fa fa-expand"></i>
                                     </a>
                                 </div>
                             </div>
-
-                            <div class="item-slick3"
-                                data-thumb="/uploads/products-images/crp/<%=product.secondaryImages[0].name %>">
+                        
+                            <div class="item-slick3" data-thumb="/uploads/products-images/crp/<%=product.secondaryImages[0].name %>">
                                 <div class="wrap-pic-w pos-relative">
-                                    <img src="/uploads/products-images/crp/<%=product.secondaryImages[0].name %>"
-                                        alt="IMG-PRODUCT">
-
-                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-                                        href="images/product-detail-01.jpg">
+                                    <img id="zoom_02" src="/uploads/products-images/crp/<%=product.secondaryImages[0].name %>" data-zoom-image="/uploads/products-images/crp/<%=product.secondaryImages[0].name %>" alt="IMG-PRODUCT">
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="/uploads/products-images/crp/<%=product.secondaryImages[0].name %>">
                                         <i class="fa fa-expand"></i>
                                     </a>
                                 </div>
                             </div>
-
-                            <div class="item-slick3"
-                                data-thumb="/uploads/products-images/crp/<%=product.secondaryImages[1].name %>">
+                        
+                            <div class="item-slick3" data-thumb="/uploads/products-images/crp/<%=product.secondaryImages[1].name %>">
                                 <div class="wrap-pic-w pos-relative">
-                                    <img src="/uploads/products-images/crp/<%=product.secondaryImages[1].name %>"
-                                        alt="IMG-PRODUCT">
-
-                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-                                        href="images/product-detail-01.jpg">
+                                    <img id="zoom_03" src="/uploads/products-images/crp/<%=product.secondaryImages[1].name %>" data-zoom-image="/uploads/products-images/crp/<%=product.secondaryImages[1].name %>" alt="IMG-PRODUCT">
+                                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="/uploads/products-images/crp/<%=product.secondaryImages[1].name %>">
                                         <i class="fa fa-expand"></i>
                                     </a>
                                 </div>
                             </div>
-
-
-
-
                         </div>
+                        
                     </div>
                 </div>
             </div>
@@ -591,7 +576,11 @@
 </section>
 
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevateZoom.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 <script>
     $(document).ready(function() {
         $('#addToCartBtn').click(function() {
@@ -646,6 +635,31 @@
             });
         });
     });
+
+
+
 </script>
+
+<script>
+    $(document).ready(function() {
+    $('#zoom_01').elevateZoom({
+        zoomType: "inner",
+        cursor: "crosshair"
+    });
+
+   
+    $('#zoom_02').elevateZoom({
+        zoomType: "inner",
+        cursor: "crosshair"
+    });
+
+    $('#zoom_03').elevateZoom({
+        zoomType: "inner",
+        cursor: "crosshair"
+    });
+});
+
+</script>
+
 
     
