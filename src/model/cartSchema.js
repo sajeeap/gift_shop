@@ -13,39 +13,40 @@ const cartSchema = new mongoose.Schema(
                     ref: "Product"
 
                 },
-                price : {
+               
+                price: {
                     type: Number,
                 },
-                quantity : {
-                    type : Number,
-                    required : true,
-                    min : [1, "Quantity can't be less than one"]
+                quantity: {
+                    type: Number,
+                    required: true,
+                    min: [1, "Quantity can't be less than one"]
 
                 },
-                itemTotal : {
+                itemTotal: {
                     type: Number
                 }
-            },     
+            },
         ]
 
         ,
 
-        totalPrice : {
-            type : Number
+        totalPrice: {
+            type: Number
         },
-        coupon : {
-            type : mongoose.Schema.Types.ObjectId,
-            ref : "Coupon"
+        coupon: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Coupon"
         },
-        couponDiscount :{
-            type : Number,
-            default : 0
+        couponDiscount: {
+            type: Number,
+            default: 0
         }
 
     },
 
     {
-        timestamps : true
+        timestamps: true
     }
 
 )

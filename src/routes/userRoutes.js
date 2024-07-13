@@ -7,6 +7,8 @@ const userController = require('../controller/userController');
 const shopController = require("../controller/shopController")
 
 const authMiddleware = require('../middleware/authMiddleware');
+const checkOutController = require("../controller/checkoutController")
+const orderController = require("../controller/orderController")
 
 
 //user profile
@@ -51,6 +53,24 @@ router
 router
     .route("/set-default-address")
     .post(userController.setDefaultAddress)
+
+
+//checkout
+router.get("/checkout", checkOutController.getCheckOutPage )
+router.post("/place-order", checkOutController.placeOrder)
+router.get("/success-order", checkOutController.successOrder)
+
+router.get('/order-details/:orderId', orderController.getOrderDetails)
+router.get("/getOrder", orderController.getUserOrders)
+
+
+
+
+
+
+
+
+
 
 
 

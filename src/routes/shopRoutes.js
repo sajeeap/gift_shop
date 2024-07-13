@@ -5,6 +5,9 @@ const router =express.Router();
 
 const shopController = require('../controller/shopController');
 const checkOutController = require("../controller/checkoutController")
+const reviewController = require("../controller/reviewController")
+
+
 
 
 //getHome
@@ -16,8 +19,11 @@ router.get("/product-list",shopController.getProductList )
 //prduct details
 router.get("/product-details/:id", shopController.getProductDetails)
 
-//checkout
-router.get("/checkout", checkOutController.getCheckOutPage )
+router.post("/product/:productId/review", )
+
+
+
+
 
 
 

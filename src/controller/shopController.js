@@ -5,6 +5,7 @@ const User = require("../model/userSchema")
 const path = require('path');
 const Cart = require("../model/cartSchema");
 const Wishlist =require("../model/whishlistSchema")
+const Review = require("../model/reviewSchema")
 
 
 
@@ -109,13 +110,16 @@ module.exports = {
         const wishlist = await Wishlist.findOne({ user_id:req.session.user }).populate("products");
         let cart = await Cart.findOne({userId:req.session.user}).populate("items");
 
+        const reviews = await Review.find({ product_id: req.params.id }).populate("userId");
+
         try {
             res.render('shop/productDetails', {
                 locals,
                 product,
                 user: req.session.user,
                 wishlist,
-                cart
+                cart,
+                reviews 
 
 
             })

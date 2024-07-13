@@ -55,7 +55,13 @@
                     <%= product.price %>
                   </td>
                   <td>
-                    <%= product.stock %>
+                    
+                    <%if(product.stock === 0 || product.stock < 0  ){%>
+                      <span class=" text text-danger"> Out Of Stock</span>
+                  <% }else{ %>
+                      <%=product.stock %>
+                  <% } %>
+                     
                   </td>
                   <td>
                     <% if (!product.isDeleted) { %>

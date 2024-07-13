@@ -6,6 +6,7 @@ const Address = require("../model/addressSchema")
 const Wishlist = require("../model/whishlistSchema")
 const Orders = require("../model/orderSchema")
 const Cart = require("../model/cartSchema");
+const { getUserOrders } = require('../controller/orderController');
 
 
 
@@ -53,6 +54,11 @@ module.exports = {
                 .sort({ createdAt: -1 })
                 .exec();
 
+                 // Get Orders using the getUserOrders function
+        // const orders = await getUserOrders(userId);
+
+                
+
             if (!addresses) {
                 throw new Error('No addresses found for the user.');
             }
@@ -86,6 +92,7 @@ module.exports = {
 
             // Update user's profile 
             const { firstName, lastName } = req.body;
+           
             user.firstName = firstName || user.firstName;
             user.lastName = lastName || user.lastName;
 

@@ -1,0 +1,61 @@
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title"><%= locals.title ? locals.title : 'Dashboard' %></h2>
+          
+        </div>
+        
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            
+
+                            <th >#</th>
+                            <th >Order Id</th>
+                            <th >Date</th>
+                            <th >Payment</th>
+                            <th >Amount</th>
+                            
+                            <th >Action</th>
+                            
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        
+                            <th>
+                                <% orders.forEach((order, index) => { %>
+                                    <% console.log('ORder//////////////////', order); %>
+                                    <tr>
+                                        <td><%= index+1 %></td>
+                                        <td><%= order._id %></td>
+                                        <td><%= order.createdAt.toLocaleDateString('en-GB'); %></td>
+                                    
+                                          <td><%= order.paymentMethod %></td>
+                                          <td><%= order.totalPrice %></td>
+                                          <td><% order.p %></td>
+
+                                    </tr>
+                                 
+                                <% }) %>
+                            </th>
+                       
+                    </tbody>
+                   
+                  
+                   
+                </table>
+            </div>
+           
+        </div>
+        
+
+
+    </div>    
+       
+</section> <!-- content-main end// -->

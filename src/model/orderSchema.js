@@ -9,10 +9,9 @@ const orderSchema = new mongoose.Schema(
       required: true
     },
     items: [{
-
       product_id: {
         type: ObjectId,
-        ref: "User",
+        ref: "Product",
         required: true
       },
       quantity: {
@@ -20,8 +19,14 @@ const orderSchema = new mongoose.Schema(
         required: true,
         min: [1, `Quantity Can't be less than 1`],
       },
+      
       productDetails: {
-        name: {
+        product_name: {
+          type: String,
+         
+        },
+        
+        primaryImage: {  
           type: String,
         },
         quantity: {
@@ -49,14 +54,82 @@ const orderSchema = new mongoose.Schema(
       payment_status: {
         type: String,
       },
-    }]
+      returnReason: {
+        type: String,
+      },
+      shipped_on: {
+        type: Date,
+      },
+      out_for_delivery: {
+        type: Date,
+      },
+      delivered_on: {
+        type: Date,
+      },
+      cancelled_on: {
+        type: Date,
+      },
+      returned_on: {
+        type: Date,
+      },
+    }],
+    shippingAddress: {
+      name: {
+        type: String,
+      },
+      house_name: {
+        type: String,
+      },
+      locality: {
+        type: String,
+      },
+      area_street: {
+        type: String,
+      },
+      phone: {
+        type: String,
+      },
+      zipcode: {
+        type: Number,
+      },
+      state: {
+        type: String,
+      },
+      landmark: {
+        type: String,
+      },
+      city: {
+        type: String,
+      },
+      address: {
+        type: String,
+      },
+    },
+    paymentMethod: {
+      type: String,
+      required: true,
+    },
+    totalPrice: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    payable: {
+      type: Number,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["Paid", "Pending", "COD", "Failed", "Refunded", "Cancelled"],
+      required: true,
+    },
+    status: {
+      type: String,
+      required: true,
+    },
   },
-
   {
     timestamps: true
   }
+);
 
-)
-
-
-module.exports = mongoose.model("Order", orderSchema)
+module.exports = mongoose.model("Order", orderSchema);

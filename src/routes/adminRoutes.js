@@ -5,6 +5,7 @@ const router = express.Router()
 const adminController = require('../controller/adminController')
 const categoryController = require("../controller/categoryController");
 const productController = require("../controller/productController")
+const orderController = require("../controller/orderController")
 const {productUpload, upload } = require("../middleware/multer");
 
 
@@ -68,6 +69,11 @@ router
   router
   .route("/users")
   .get(isAdminLoggedIn,adminController.getUserList)
+
+  //order mangment 
+  router
+    .route("/orders")
+    .get(isAdminLoggedIn,orderController.getOrder)
 
  
 
