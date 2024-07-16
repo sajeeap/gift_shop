@@ -11,22 +11,22 @@ const mongoose = require("mongoose");
 module.exports = {
     //user side
 
-    getUserOrders : async (userId) => {
+    getUserOrders: async (userId) => {
         try {
             let orders = await Order.find({ customer_id: userId })
                 .populate("customer_id items.product_id shippingAddress")
                 .sort({ createdAt: -1 })
                 .exec();
-    
+
             for (const order of orders) {
                 const allCancelled = order.items.every(item => item.status === "Cancelled");
                 const allReturned = order.items.every(item => item.status === "Returned");
                 const allDelivered = order.items.every(item => item.status === "Delivered");
                 const allShipped = order.items.every(item => item.status === "Shipped");
                 const allPending = order.items.every(item => item.status === "Pending");
-    
+
                 let status;
-    
+
                 if (allCancelled) {
                     status = "Cancelled";
                 } else if (allReturned) {
@@ -38,14 +38,14 @@ module.exports = {
                 } else if (allPending) {
                     status = "Pending";
                 }
-    
+
                 if (status) {
                     await Order.updateOne({ _id: order._id }, { $set: { status: status } });
                 }
             }
-    
+
             return orders;
-    
+
         } catch (error) {
             console.error('Error fetching orders:', error);
             throw error;
@@ -112,28 +112,28 @@ module.exports = {
         try {
             const orderId = req.params.orderId;
             const order = await Order.findById(orderId).populate("items.product_id");
-    
+
             if (!order) {
                 return res.status(404).json({ success: false, message: "Order not found" });
             }
-    
+
             res.json(order);
-            
-            
+
+
         } catch (error) {
             console.error("Error fetching order details:", error);
             res.status(500).json({ success: false, message: "Failed to fetch order details" });
         }
     },
 
-    getSingleOrder : async(req,res)=>{
+    getSingleOrder: async (req, res) => {
 
 
 
 
     },
 
-    cancelOrders : async(req,res)=>{
+    cancelOrders: async (req, res) => {
 
 
     },
@@ -142,24 +142,28 @@ module.exports = {
 
     //Admin
 
-    getOrder : async(req,res)=>{
+    getOrder: async (req, res) => {
 
         const locals = {
             title: "Orders",
-          };
-      
-          
-          const orders = await Order.aggregate([{ $sort : {createdAt : -1 } } ]).exec();
-          res.render("admin/orders/order",{
-      
+        };
+
+        let perPage = 12;
+        let page = req.query.page || 1;
+        const orders = await Order.aggregate([{ $sort: { createdAt: -1 } }])
+            
+
+        res.render("admin/orders/order", {
+
             locals,
             orders,
-            
+           
+
             layout: adminLayout
-      
-          } 
-      
-          )
+
+        }
+
+        )
 
     }
 

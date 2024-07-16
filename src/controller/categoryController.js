@@ -3,67 +3,83 @@ const User = require("../model/userSchema");
 const Category = require("../model/categorySchema");
 
 module.exports = {
-    getCategory : async (req,res)=>{
+    getCategory: async (req, res) => {
 
-        const locals =  {
-            title : 'Category',
+        const locals = {
+            title: 'Category',
         }
 
+        let perPage = 6;
+        let page = req.query.page || 1;
+
         const categories = await Category.find()
+            .skip(perPage * page - perPage)
+            .limit(perPage)
+            .exec();
+
+        const count = await Category.find().countDocuments({});
+        const nextPage = parseInt(page) + 1;
+        const hasNextPage = nextPage <= Math.ceil(count / perPage);
+
+
         console.log(categories);
         res.render("admin/categories/category", {
             locals,
             layout: adminLayout,
             categories,
+            current: page,
+            pages: Math.ceil(count / perPage),
+            nextPage: hasNextPage ? nextPage : null,
         })
-    
+
 
     },
-   
 
 
-    getAddCategory : async (req,res)=>{
 
-        const locals =  {
-            title : 'Add Category',
+    getAddCategory: async (req, res) => {
+
+        const locals = {
+            title: 'Add Category',
         }
+
         res.render("admin/categories/addCategory", {
             locals,
             layout: adminLayout,
         })
-    
+
 
     },
-    addCategory : async (req,res)=>{
+    addCategory: async (req, res) => {
 
         try {
             console.log(req.body);
 
             const name = req.body.category_name.trim().toLowerCase();
 
-            const { description} = req.body;
+            const { description } = req.body;
 
-          
 
-            const category = await Category.findOne({ name : name})
-            
-            if(category){
+
+            const category = await Category.findOne({ name: name })
+
+            if (category) {
                 req.flash("error", "Category already exist")
-                
+
                 return res.redirect("/admin/add-category")
             }
 
-            const addCategory = new Category({ name , description })
+            const addCategory = new Category({ name, description })
 
             await addCategory.save()
             req.flash("success", "Category successfully saved")
 
             return res.redirect("/admin/category")
-            
+
         } catch (error) {
 
             console.error(error);
-            
+
         }
     },
 
@@ -76,24 +92,24 @@ module.exports = {
     //         locals,
     //         layout: adminLayout,
     //     })
-    
+
 
     // },
 
-     getEditCategory : async (req, res) => {
+    getEditCategory: async (req, res) => {
         try {
             const categoryId = req.params.id;
             const category = await Category.findById(categoryId);
-    
+
             if (!category) {
                 req.flash('error', 'Category not found');
                 return res.redirect('/admin/category');
             }
-    
+
             const locals = {
                 title: 'Edit Category',
             };
-    
+
             res.render('admin/categories/editCategory', {
                 locals,
                 category, // Pass the category data to the view
@@ -111,32 +127,32 @@ module.exports = {
 
     editCategory: async (req, res) => {
         try {
-           
-    
-            const { status , description} = req.body;
+
+
+            const { status, description } = req.body;
             console.log(req.body);
             const name = req.body.category_name.trim().toLowerCase();
-    
+
             const category = await Category.findOne({ name: name });
-    
+
             if (category && category._id.toString() !== req.params.id) {
                 req.flash("error", "Category with this name already exists");
                 return res.redirect(`/admin/edit-category/${req.params.id}`);
             }
-    
+
             const updatedCategory = {
                 name: name,
                 isActive: status === "true" ? true : false,
-                description : description
+                description: description
             };
-    
+
             const id = req.params.id;
             const update_category = await Category.findByIdAndUpdate(
                 id,
                 updatedCategory,
                 { new: true }
             );
-    
+
             if (update_category) {
                 req.flash("success", "Category successfully updated");
                 return res.redirect("/admin/category");
@@ -144,7 +160,7 @@ module.exports = {
                 req.flash("error", "Category not found");
                 return res.redirect("/admin/category");
             }
-    
+
         } catch (error) {
             console.error(error);
             req.flash("error", "Server error");
@@ -154,30 +170,30 @@ module.exports = {
 
     deleteCategory: async (req, res) => {
         try {
-          const categoryId = req.params.id;
-    
-          // Find the category by ID
-          const category = await Category.findById(categoryId);
-    
-          // If category doesn't exist, redirect with error message
-          if (!category) {
-            req.flash('error', 'Category not found');
+            const categoryId = req.params.id;
+
+            // Find the category by ID
+            const category = await Category.findById(categoryId);
+
+            // If category doesn't exist, redirect with error message
+            if (!category) {
+                req.flash('error', 'Category not found');
+                return res.redirect('/admin/category');
+            }
+
+
+
+            // Delete the category
+            await Category.findByIdAndDelete(categoryId);
+
+            // Redirect with success message
+            req.flash('success', 'Category successfully deleted');
             return res.redirect('/admin/category');
-          }
-
-
-    
-          // Delete the category
-          await Category.findByIdAndDelete(categoryId);
-    
-          // Redirect with success message
-          req.flash('success', 'Category successfully deleted');
-          return res.redirect('/admin/category');
         } catch (error) {
-          console.error(error);
-          req.flash('error', 'Server error');
-          res.redirect('/admin/category');
+            console.error(error);
+            req.flash('error', 'Server error');
+            res.redirect('/admin/category');
         }
-      }
-   
+    }
+
 }

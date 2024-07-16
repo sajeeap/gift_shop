@@ -11,11 +11,23 @@ module.exports = {
     const locals = {
       title: 'Products'
     }
+
+    let perPage = 3;
+    let page = req.query.page || 1;
     const product = await Product.find().populate('category').sort({ createdAt: -1 })
+    .skip(perPage * page-perPage)
+    .limit(perPage)
+    .exec();
+    const count = await Product.find().countDocuments({});
+    const nextPage = parseInt(page) + 1;
+    const hasNextPage = nextPage <= Math.ceil(count / perPage);
 
     res.render("admin/products/products", {
       locals,
       layout: adminLayout,
+      current: page,
+      pages: Math.ceil(count /perPage),
+      nextPage: hasNextPage ? nextPage : null,
       product
     })
   },
