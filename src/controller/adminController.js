@@ -2,6 +2,7 @@ const adminLayout = "./layouts/adminLayouts";
 
 const User = require("../model/userSchema");
 const Product = require("../model/productSchema");
+const Order = require("../model/orderSchema")
 
 
 
@@ -16,11 +17,13 @@ module.exports = {
 
     const userCount = await User.find().countDocuments()
     const productCount = await Product.find().countDocuments()
+    const orderCount = await Order.find().countDocuments()
 
     res.render("admin/dashboard", {
       locals,
       userCount,
       productCount,
+      orderCount,
       layout: adminLayout,
     });
   },

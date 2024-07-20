@@ -62,6 +62,8 @@ router.get("/success-order", checkOutController.successOrder)
 
 // router.get('/order-details/:orderId', orderController.getOrderDetails)
 // router.get('/profile', orderController.getOrderDetails)
+
+//User order managemnt
 router.get("/profile", orderController.getUserOrders)
 
 

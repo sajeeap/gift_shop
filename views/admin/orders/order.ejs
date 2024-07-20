@@ -18,6 +18,7 @@
                             <th>Date</th>
                             <th>User</th>
                             <th>Payment</th>
+                            <th>Items</th>
                             <th>Amount</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -31,12 +32,23 @@
                                 <td><%= order.createdAt.toLocaleDateString('en-GB') %></td>
                                 <td><%= order.customer_id ? `${order.customer_id.firstName} ${order.customer_id.lastName}` : 'Unknown User' %></td>
                                 <td><%= order.paymentMethod %></td>
+                                <td><%= order.items.length %></td>
                                 <td><%= order.totalPrice %></td>
-                                <td><%= order.status %></td>
                                 <td>
-                                    <button type="button" class="btn btn-sm font-sm rounded btn-brand" data-toggle="modal" data-target="#statusModal-<%= index %>">
-                                        Manage
-                                    </button>
+                                    <span class="badge rounded-pill
+                                        <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Shipped' ? 'alert-warning' : '' %>
+                                        <%= order.status === 'Cancelled' ? 'alert-danger' : '' %>
+                                        <%= order.status === 'Delivered' ? 'alert-success' : '' %>"
+                                        data-toggle="modal" data-target="#statusModal-<%= index %>">
+                                        <%= order.status %>
+                                    </span>
+                                </td>
+                                
+                                <td>
+                                    <a href="/admin/view-orders/<%= order._id %>" class="btn btn-sm font-sm rounded btn-brand" >
+                                        View
+                                    </a>
+                                    
                                 </td>
                             </tr>
                         <% }) %>
@@ -53,7 +65,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="statusModalLabel-<%= index %>">Order Details - <%= order._id %></h5>
+                    <h5 class="modal-title" id="statusModalLabel-<%= index %>">Order Id- <%= order._id %></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -62,7 +74,7 @@
                     <form id="statusForm-<%= index %>" action="/admin/manage-status/<%= order._id %>" method="post">
                         <div class="form-group">
                             <label for="statusSelect-<%= index %>">Status</label>
-                            <select class="form-control" id="statusSelect-<%= index %>" name="status">
+                            <select class="form-control" id="statusSelect-<%= index %>" name="status" >
                                 <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
                                 <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
                                 <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
@@ -80,6 +92,9 @@
         </div>
     </div>
 <% }) %>
+
+
+
 
 <!-- jQuery and Bootstrap JavaScript -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

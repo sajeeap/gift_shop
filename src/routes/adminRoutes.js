@@ -70,6 +70,12 @@ router
   .route("/users")
   .get(isAdminLoggedIn, adminController.getUserList)
 
+router
+  .route("/users/toggle-block/:id")
+  .patch(isAdminLoggedIn, adminController.toggleBlock);
+
+  
+
 //order mangment 
 router
   .route("/orders")
@@ -79,9 +85,15 @@ router
   .route("/manage-status/:id")
   .post(isAdminLoggedIn, orderController.manageOrderStatus)
 
+  router
+  .route("/view-orders/:id")
+  .get(isAdminLoggedIn, orderController.getAdminOrderDetails)
 
 
-router.route("/users/toggle-block/:id").patch(isAdminLoggedIn, adminController.toggleBlock);
+
+
+
+
 
 
 

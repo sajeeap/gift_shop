@@ -193,6 +193,22 @@ module.exports = {
 
 
 
+    },
+
+    getAdminOrderDetails: async (req, res) => {
+        const locals = {
+            title: "Order Details",
+        };
+        const orderId = req.params.id;
+        const order = await Order.findById(orderId)
+            .populate('items.product_id')
+            .populate('customer_id');
+    
+        res.render("admin/orders/view", {
+            locals,
+            order,
+            layout: adminLayout
+        });
     }
 
 }
