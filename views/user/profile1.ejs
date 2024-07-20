@@ -132,107 +132,67 @@
 
                             </div>
 
-                          <!-- Orders -->
-<div class="tab-pane fade" id="v-pills-orders" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0">
-    <div class="row">
-        <div class="col-md-12 mb-4">
-            <div class="form-outline">
-                <h3 class="text-capitalize">My Orders</h3>
-            </div>
-            <hr />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
-            <div class="wrap-table-shopping-cart">
-                <table class="table-shopping-cart">
-                    <tr class="table_head">
-                        <th class="column-1">Order ID</th>
-                        <th class="column-2">Date</th>
-                        <th class="column-3">Status</th>
-                        <th class="column-4">Total</th>
-                        <th class="column-5">Action</th>
-                    </tr>
-
-                    <% orders.forEach(order => { %> 
-                        <tr class="table_row">
-                            <td class="column-1"><%= order._id %></td>
-                            <td class="column-2"><%= new Date(order.createdAt).toDateString() %></td>
-                            <td class="column-3"><%= order.status %></td>
-                            <td class="column-4">$<%= order.items.reduce((total, item) => total + item.itemTotal, 0) %></td>
-                            <td class="column-5">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#orderModal_<%= order._id %>">
-                                    View
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!-- Order Modal -->
-                        <div class="modal fade" id="orderModal_<%= order._id %>" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel_<%= order._id %>" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="orderModalLabel_<%= order._id %>">Order Details</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p class="mt-2"><strong>Order ID:</strong> <%= order._id %></p>
-                                        <p><strong>Date:</strong> <%= new Date(order.createdAt).toDateString() %></p>
-                                        <p><strong>Status:</strong> <%= order.status %></p>
-                                   
-                                        <h5 class="mt-5 mb-2">Ordered Items:</h5>
-                                        <hr>
-                                        <% order.items.forEach(item => {   // Debugging line to log item%>
-                                            <div class="row">
-                                                <div class="col">
-                                                    <% if (item.product_id.primaryImages && item.product_id.primaryImages.length > 0) { %>
-                                                        
-                                                            <img src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>" 
-                                                             class="card-img-top" alt="<%= item.product_id.product_name %>" 
-                                                             style="width: 100%; height: auto;">
-                                                        
-                                                        
-                                                    <% } else { %>
-                                                        
-                                                    <% } %>
-                                                </div>
-                                                <div class="col">
-                                                    <%= item.product_id.product_name %>
-                                                </div>
-                                                <div class="col">
-                                                    <%= item.quantity %>
-                                                </div>
-                                                <div class="col">
-                                                    $<%= item.price %>
-                                                </div>
-                                                
-                                            </div>
-                                            <hr>
-                                        <% }); %>
-                                        <div class="row">
-                                            <div class="col"></div>
-                                            <div class="col"></div>
-                                            <div class="col"><strong>Total</strong></div>
-                                            <div class="col"><strong>$<%= order.items.reduce((total, item) => total + item.itemTotal, 0) %></strong></div>
+                            <!-- Orders -->
+                            <div class="tab-pane fade" id="v-pills-orders" role="tabpanel"
+                                aria-labelledby="v-pills-profile-tab" tabindex="0">
+                                <div class="row">
+                                    <div class="col-md-12 mb-4">
+                                        <div class="form-outline">
+                                            <h3 class="text-capitalize">
+                                                My Orders
+                                            </h3>
                                         </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <hr />
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
+                                        <div class="wrap-table-shopping-cart">
+                                            <table class="table-shopping-cart">
+                                                <tr class="table_head">
+                                                    <th class="column-1">Order ID</th>
+                                                    <th class="column-2">Date</th>
+                                                    <th class="column-3">Status</th>
+                                                    <th class="column-4">Total</th>
+                                                    <th class="column-5">Action</th>
+                                                </tr>
+
+                                                <% orders.forEach(order=> { %>
+
+                                                    <tr class="table_row">
+                                                        <td class="column-1">
+                                                            <%= order._id %>
+                                                        </td>
+                                                        <td class="column-2">
+                                                            <%= order.createdAt.toDateString() %>
+                                                        </td>
+                                                        <td class="column-3">
+                                                            <%= order.status %>
+                                                        </td>
+                                                        <td class="column-4">
+                                                            $<%= order.items.reduce((total,item)=> total +
+                                                                item.itemTotal,0) %>
+                                                        </td>
+                                                        <td class="column-5">
+                                                            <button type="button" class="btn btn-primary btn-sm"
+                                                                data-toggle="modal" data-target="#orderModal"
+                                                                onclick="populateOrderModal('<%= order._id %>')">
+                                                                View
+                                                            </button>
+                                                        </td>
+
+                                                    </tr>
+
+
+                                                    <% }) %>
+
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
-                        </div>
-
-                    <% }) %>
-
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 
                         </div>
@@ -363,6 +323,8 @@
         </div>
     </div>
 </div>
+
+<!-- Order Modal -->
 
 
 
@@ -704,3 +666,50 @@
 </script>
 
 
+<script>
+    function populateOrderModal(orderId) {
+        fetch(`/user/order-details/${orderId}`)
+            .then(response => response.json())
+            .then(order => {
+                console.log("Order details:", order);  // Debugging: log the entire order object
+                if (order) {
+                    document.getElementById('modalOrderId').textContent = order._id;
+                    document.getElementById('modalOrderDate').textContent = new Date(order.createdAt).toDateString();
+                    document.getElementById('modalOrderStatus').textContent = order.status;
+
+                    const itemsList = document.getElementById('modalOrderItems');
+                    itemsList.innerHTML = '';
+                    order.items.forEach(item => {
+                        console.log("Item details:", item);  // Debugging: log each item object
+                        const li = document.createElement('li');
+
+                        // Create an image element
+                        const img = document.createElement('img');
+                        // Construct the image URL based on primaryImages[0]
+                        img.src = `/uploads/products-images/crp/${item.product_id.primaryImages[0].name}`;
+                        img.alt = item.product_id.product_name;
+                        img.style.width = '50px';  // Adjust the size as needed
+                        img.style.height = '50px';
+
+                        // Append the image and product details to the list item
+                        li.appendChild(img);
+                        li.appendChild(document.createTextNode(` ${item.product_id.product_name} - $${item.price}`));
+                        itemsList.appendChild(li);
+                    });
+
+                    document.getElementById('modalOrderTotal').textContent = order.items.reduce((total, item) => total + item.itemTotal, 0);
+
+                    $('#orderModal').modal('show');
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to fetch order details'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching order details:', error);
+            });
+    }
+</script>

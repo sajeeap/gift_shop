@@ -60,8 +60,9 @@ router.get("/checkout", checkOutController.getCheckOutPage )
 router.post("/place-order", checkOutController.placeOrder)
 router.get("/success-order", checkOutController.successOrder)
 
-router.get('/order-details/:orderId', orderController.getOrderDetails)
-router.get("/getOrder", orderController.getUserOrders)
+// router.get('/order-details/:orderId', orderController.getOrderDetails)
+// router.get('/profile', orderController.getOrderDetails)
+router.get("/profile", orderController.getUserOrders)
 
 
 

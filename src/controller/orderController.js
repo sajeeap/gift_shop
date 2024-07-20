@@ -44,7 +44,12 @@ module.exports = {
                 }
             }
 
-            return orders;
+
+            res.render('user/profile', {
+                orders
+            });
+
+
 
         } catch (error) {
             console.error('Error fetching orders:', error);
@@ -52,7 +57,6 @@ module.exports = {
         }
     },
 
-    // getUserOrders : async (req, res) => {
     //     try {
     //         const userId = req.session.user._id || req.session.user;
     //         let user = await User.findById(userId);
@@ -107,33 +111,34 @@ module.exports = {
     //     }
     // },
 
-    getOrderDetails: async (req, res) => {
-        console.log(res);
-        try {
-            const orderId = req.params.orderId;
-            const order = await Order.findById(orderId).populate("items.product_id");
+    // getOrderDetails: async (req, res) => {
+    //     console.log(res);
+    //     try {
+    //     const orderId = req.params.orderId;
+    //     const order = await Order.findById(orderId).populate('items.product_id');
 
-            if (!order) {
-                return res.status(404).json({ success: false, message: "Order not found" });
-            }
+    //     if (!order) {
+    //         return res.status(404).send('Order not found');
+    //     }
 
-            res.json(order);
-
-
-        } catch (error) {
-            console.error("Error fetching order details:", error);
-            res.status(500).json({ success: false, message: "Failed to fetch order details" });
-        }
-    },
+    //     res.render('orderModal', { order });
+    // } catch (error) {
+    //     console.error("Error fetching order details:", error);
+    //     res.status(500).send('Failed to fetch order details');
+    // }
+    // },
 
     getSingleOrder: async (req, res) => {
-
-
 
 
     },
 
     cancelOrders: async (req, res) => {
+
+
+
+
+
 
 
     },
@@ -150,20 +155,43 @@ module.exports = {
 
         let perPage = 12;
         let page = req.query.page || 1;
-        const orders = await Order.aggregate([{ $sort: { createdAt: -1 } }])
-            
+        const orders = await Order.find().populate('items.product_id').populate('customer_id').sort({ createdAt: -1 })
+
 
         res.render("admin/orders/order", {
 
             locals,
             orders,
-           
+
 
             layout: adminLayout
 
         }
 
         )
+
+    },
+
+    manageOrderStatus: async (req, res) => {
+
+        const orderId = req.params.id;
+        const { status } = req.body;
+
+        try {
+            const order = await Order.findById(orderId);
+            if (order) {
+                order.status = status;
+                await order.save();
+                res.redirect('/admin/orders');
+            } else {
+                res.status(404).send('Order not found');
+            }
+        } catch (error) {
+            console.error('Error updating order status:', error);
+            res.status(500).send('Internal Server Error');
+        }
+
+
 
     }
 

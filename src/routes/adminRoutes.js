@@ -6,7 +6,7 @@ const adminController = require('../controller/adminController')
 const categoryController = require("../controller/categoryController");
 const productController = require("../controller/productController")
 const orderController = require("../controller/orderController")
-const {productUpload, upload } = require("../middleware/multer");
+const { productUpload, upload } = require("../middleware/multer");
 
 
 const { isAdminLoggedIn } = require("../middleware/authMiddleware");
@@ -19,7 +19,7 @@ router.get('/', isAdminLoggedIn, adminController.getDashboard)
 router.get('/category', isAdminLoggedIn, categoryController.getCategory);
 
 router.get('/add-category', isAdminLoggedIn, categoryController.getAddCategory);
-router.post("/add-category",categoryController.addCategory)
+router.post("/add-category", categoryController.addCategory)
 
 
 router.get('/edit-category/:id', isAdminLoggedIn, categoryController.getEditCategory);
@@ -35,7 +35,7 @@ router.get('/delete-category/:id', isAdminLoggedIn, categoryController.deleteCat
 router.get('/products', isAdminLoggedIn, productController.getProducts);
 router.get('/edit-products', isAdminLoggedIn, productController.getEditProducts);
 router.get('/delete-product/:id', isAdminLoggedIn, productController.deleteProduct);
-router.get("/stocks",isAdminLoggedIn, productController.getStocks)
+router.get("/stocks", isAdminLoggedIn, productController.getStocks)
 router.post("/update-stock", isAdminLoggedIn, productController.updateStocks)
 
 router
@@ -51,7 +51,7 @@ router
   );
 
 
-  router
+router
   .route("/edit-product/:id")
   .get(isAdminLoggedIn, productController.getEditProducts)
   .post(
@@ -65,19 +65,23 @@ router
   );
 
 
-  //user managment
-  router
+//user managment
+router
   .route("/users")
-  .get(isAdminLoggedIn,adminController.getUserList)
+  .get(isAdminLoggedIn, adminController.getUserList)
 
-  //order mangment 
-  router
-    .route("/orders")
-    .get(isAdminLoggedIn,orderController.getOrder)
+//order mangment 
+router
+  .route("/orders")
+  .get(isAdminLoggedIn, orderController.getOrder)
 
- 
+router
+  .route("/manage-status/:id")
+  .post(isAdminLoggedIn, orderController.manageOrderStatus)
 
-  router.route("/users/toggle-block/:id").patch(isAdminLoggedIn,adminController.toggleBlock);
+
+
+router.route("/users/toggle-block/:id").patch(isAdminLoggedIn, adminController.toggleBlock);
 
 
 

@@ -27,6 +27,7 @@ module.exports = {
       layout: adminLayout,
       current: page,
       pages: Math.ceil(count /perPage),
+      count,
       nextPage: hasNextPage ? nextPage : null,
       product
     })

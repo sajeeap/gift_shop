@@ -33,10 +33,10 @@
           <tbody>
           <tbody>
             <% if (product && product.length> 0) { %>
-              <% product.forEach((product,index)=> { %>
+              <% product.forEach((product)=> { %>
                 <tr>
                   <td>
-                    <%= index +1 %>
+                    <%= count-- %>
                   </td>
                   <td>
                     <img class="img-fluid img-thumbnail"

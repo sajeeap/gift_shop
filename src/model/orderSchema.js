@@ -20,22 +20,6 @@ const orderSchema = new mongoose.Schema(
         min: [1, `Quantity Can't be less than 1`],
       },
       
-      productDetails: {
-        product_name: {
-          type: String,
-         
-        },
-        
-        primaryImage: {  
-          type: String,
-        },
-        quantity: {
-          type: Number,
-        },
-        price: {
-          type: Number,
-        }
-      },
       price: {
         type: Number,
         required: true,

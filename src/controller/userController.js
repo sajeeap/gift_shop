@@ -50,7 +50,7 @@ module.exports = {
 
             //Get Orders
             const orders = await Orders.find({ 
-                customer_id: userId })
+                customer_id: userId }).populate('items.product_id')
                 .sort({ createdAt: -1 })
                 .exec();
 

@@ -1,64 +1,86 @@
 <section class="content-main">
     <div class="content-header">
         <div>
-            <h2 class="content-title card-title"><%= locals.title ? locals.title : 'Dashboard' %></h2>
-          
+            <h2 class="content-title card-title">
+                <%= locals.title ? locals.title : 'Dashboard' %>
+            </h2>
         </div>
-        
     </div>
-    
+
     <div class="card mb-4">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            
-
-                            <th >#</th>
-                            <th >Order Id</th>
-                            <th >Date</th>
-                            <th >Payment</th>
-                            <th >Amount</th>
-                            
-                            <th >Action</th>
-                            
+                            <th>#</th>
+                            <th>Order Id</th>
+                            <th>Date</th>
+                            <th>User</th>
+                            <th>Payment</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
-
                     <tbody>
-                        
-                            <th>
-                                <% orders.forEach((order, index) => { %>
-                                    <% console.log('ORder//////////////////', order); %>
-                                    <tr>
-                                        <td><%= index+1 %></td>
-                                        <td><%= order._id %></td>
-                                        <td><%= order.createdAt.toLocaleDateString('en-GB'); %></td>
-                                    
-                                          <td><%= order.paymentMethod %></td>
-                                          <td><%= order.totalPrice %></td>
-                                          <td><% order.p %></td>
-
-                                    </tr>
-                                 
-                                <% }) %>
-                            </th>
-                       
+                        <% orders.forEach((order, index) => { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td><%= order._id %></td>
+                                <td><%= order.createdAt.toLocaleDateString('en-GB') %></td>
+                                <td><%= order.customer_id ? `${order.customer_id.firstName} ${order.customer_id.lastName}` : 'Unknown User' %></td>
+                                <td><%= order.paymentMethod %></td>
+                                <td><%= order.totalPrice %></td>
+                                <td><%= order.status %></td>
+                                <td>
+                                    <button type="button" class="btn btn-sm font-sm rounded btn-brand" data-toggle="modal" data-target="#statusModal-<%= index %>">
+                                        Manage
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }) %>
                     </tbody>
-                   
-                  
-                   
                 </table>
             </div>
-           
         </div>
-        
+    </div>
+</section>
 
+<!-- Modals -->
+<% orders.forEach((order, index) => { %>
+    <div class="modal fade" id="statusModal-<%= index %>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel-<%= index %>" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusModalLabel-<%= index %>">Order Details - <%= order._id %></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="statusForm-<%= index %>" action="/admin/manage-status/<%= order._id %>" method="post">
+                        <div class="form-group">
+                            <label for="statusSelect-<%= index %>">Status</label>
+                            <select class="form-control" id="statusSelect-<%= index %>" name="status">
+                                <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                                <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" form="statusForm-<%= index %>" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<% }) %>
 
-    </div>   
-    
-    
-  
-       
-</section> <!-- content-main end// -->
+<!-- jQuery and Bootstrap JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

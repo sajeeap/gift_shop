@@ -21,9 +21,6 @@ module.exports = {
         const wishlist = await Wishlist.findOne({ user_id: req.session.user }).populate("products");
 
 
-
-
-
         let totalItems = 0;
         let totalPrice = 0;
 
@@ -117,26 +114,22 @@ module.exports = {
             const items = [];
             let totalPrice = 0;
 
+            
+
             for (let i = 0; i < userCart.items.length; i++) {
+                
                 const item = userCart.items[i];
                 const itemTotal = item.price * item.quantity;
                 items.push({
                     product_id: item.product_id,
                     quantity: item.quantity,
-
-                    productDetails: {                       
-                        
-                        quantity: item.quantity,
-                        price: item.price,
-                    },
-                    name: item.product_name,
                     price: item.price,
                     itemTotal: itemTotal,
                     order_id: `${userId}-${Date.now()}-${i}`, // Generating a unique order_id
                 });
                 totalPrice += itemTotal;
             }
-            console.log("items...................................................................", items);
+            
           
             const order = new Order({
                 customer_id: userId,
@@ -190,10 +183,13 @@ module.exports = {
             if (!order) {
                 return res.status(404).send('No orders found for this user.');
             }
+
             res.render("shop/orderConfirm", {
                 order: order, // Pass the full order object
                 user: user // Optionally pass user details if needed in the template
             });
+
+            
 
 
         } catch (error) {
