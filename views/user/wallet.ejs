@@ -1,0 +1,68 @@
+<!-- Wallet -->
+
+<div class="tab-pane fade" id="v-pills-wallet" role="tabpanel" aria-labelledby="v-pills-wallet-tab" tabindex="0">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="wallet-title">
+                <h3 class="text-capitalize">Wallet</h3>
+                <button class="btn bg1 cl0 bor1" onclick="window.location.href='/addmoney'">+ Add Money</button>
+            </div>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mb-3">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h4>Balance: ₹<%= wallet.balance %></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <% if (transactions && transactions.length > 0) { %>
+            <% transactions.forEach(function(transaction) { %>
+                <div class="col-lg-12 mb-3" id="transaction-<%= transaction._id %>">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="transaction-date">
+                                <strong>Date:</strong> <%= new Date(transaction.date).toLocaleString() %>
+                            </div>
+                            <div class="transaction-amount">
+                                <strong>Amount:</strong> ₹<%= transaction.amount %>
+                            </div>
+                            <div class="transaction-type">
+                                <strong>Type:</strong> <%= transaction.type %>
+                            </div>
+                            <% if (transaction.message) { %>
+                                <div class="transaction-message">
+                                    <strong>Message:</strong> <%= transaction.message %>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No transactions found.</p>
+        <% } %>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <% if (totalPages > 1) { %>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>&limit=<%= limit %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+            <% } %>
+        </div>
+    </div>
+</div>

@@ -9,6 +9,7 @@ const shopController = require("../controller/shopController")
 const authMiddleware = require('../middleware/authMiddleware');
 const checkOutController = require("../controller/checkoutController")
 const orderController = require("../controller/orderController")
+const walletController = require("../controller/walletController")
 
 
 //user profile
@@ -55,6 +56,13 @@ router
     .post(userController.setDefaultAddress)
 
 
+//wallet
+router
+    .route("/profile")
+    .get(userController.getWallet)
+
+
+
 //checkout
 router.get("/checkout", checkOutController.getCheckOutPage )
 router.post("/place-order", checkOutController.placeOrder)
@@ -65,7 +73,7 @@ router.get("/success-order", checkOutController.successOrder)
 
 //User order managemnt
 router.get("/profile", orderController.getUserOrders)
-
+router.put('/orders/:orderId/items/:productId/cancel', orderController.cancelOrder);
 
 
 

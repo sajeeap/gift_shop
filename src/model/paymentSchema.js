@@ -1,28 +1,41 @@
 const mongoose = require('mongoose')
 
 const paymentSchema = new mongoose.Schema({
+    payment_id: {
+        type: String,
+        required: true,
+    },
+    amount: {
+        type: Number,
+        required: true,
+    },
+    currency: {
+        type: String,
+        required: true,
+    },
 
     order_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Order',
         required: true
     },
-    amount: {
-        type: Number,
-        required: true
-    },
 
     payment_method: {
         type: String,
-        default: 'COD' 
     },
     status: {
         type: String,
-        default: 'Pending' // Initial status, can be updated to 'Paid' upon confirmation
+        required: true,
     },
-    payment_date: {
-        type: Date
-    }
+    order_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Order',
+        required: true,
+    },
+    created_at: {
+        type: Date,
+        required: true,
+    },
 
 }, {
     timestamps: true,

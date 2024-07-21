@@ -72,9 +72,10 @@ app.use((req, res, next) => {
 app.use(nocache());
 
 app.use("/admin", adminRouter);
+app.use('/user', userRouter);
 app.use('/', authRouter);
 app.use('/', shopRouter);
-app.use('/user', userRouter);
+
 app.use("/", cartRouter)
 
 

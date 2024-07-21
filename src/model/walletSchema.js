@@ -1,40 +1,40 @@
 const mongoose = require("mongoose");
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 const ObjectId = Schema.Types.ObjectId;
 
 const WalletSchema = new Schema({
-    userId : {
+    userId: {
         type: ObjectId,
-        ref : "User",
-        required : true
+        ref: "User",
+        required: true
     },
-    balance : {
-        type : Number,
-        default : 0
+    balance: {
+        type: Number,
+        default: 0
     },
-    transactions : {
-        date : {
-            type : Date,
-            default : Date.now()
-        },
-        amount : {
-            type : Number,
-            required : true
-        },
-        message : {
-            type: String
-        },
-        type : {
-            type : String,
-            required : true,
-            enum : ["Credit", "Debit"]
+    transactions: [
+        {
+            date: {
+                type: Date,
+                default: Date.now
+            },
+            amount: {
+                type: Number,
+                required: true
+            },
+            message: {
+                type: String
+            },
+            type: {
+                type: String,
+                required: true,
+                enum: ["Credit", "Debit"]
+            }
         }
-    }
-},
-{
-    timestamps : true
-})
+    ]
+}, {
+    timestamps: true
+});
 
-module.exports = mongoose.model("Wallet", WalletSchema)
-
+module.exports = mongoose.model("Wallet", WalletSchema);

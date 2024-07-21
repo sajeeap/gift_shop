@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const Address = require("../model/addressSchema")
 const Wishlist = require("../model/whishlistSchema")
 const Orders = require("../model/orderSchema")
+const Wallet = require("../model/walletSchema")
 const Cart = require("../model/cartSchema");
 const { getUserOrders } = require('../controller/orderController');
 
@@ -42,11 +43,16 @@ module.exports = {
             let cart = await Cart.findOne({userId:req.session.user}).populate("items");
             const wishlist = await Wishlist.findOne({ user_id:req.session.user }).populate("products");
 
+             // Get Wallet
+             const wallet = await Wallet.findOne({ userId });
+
             //Get Addresses
             const addresses = await Address.find({
                 customer_id: userId,
                 delete: false
             });
+            
+           
 
             //Get Orders
             const orders = await Orders.find({ 
@@ -68,7 +74,11 @@ module.exports = {
                 addresses,
                 orders,
                 cart,
-                wishlist
+                wishlist,
+                wallet: wallet || { balance: 0, transactions: [] }
+               
+
+                
             });
 
         } catch (error) {
@@ -78,6 +88,8 @@ module.exports = {
         }
 
     },
+
+     
 
     editProfile: async (req, res) => {
         try {
@@ -268,6 +280,48 @@ module.exports = {
         }
     },
 
+    //wallet
+
+     getWallet : async (req, res) => {
+        try {
+            if (!req.session.user || !req.session.user._id) {
+                return res.redirect('/login'); // Redirect to login if session not found
+            }
+    
+            const userId = req.session.user._id;
+            const page = parseInt(req.query.page, 10) || 1;
+            const limit = parseInt(req.query.limit, 10) || 10; // Default to 10 transactions per page
+            const skip = (page - 1) * limit;
+    
+            // Fetch wallet data
+            const wallet = await Wallet.findOne({ userId });
+            const totalTransactions = wallet ? wallet.transactions.length : 0;
+            const transactions = wallet ? wallet.transactions.slice(skip, skip + limit) : [];
+    
+            // Fetch other necessary data
+            let cart = await Cart.findOne({ userId }).populate("items");
+            const wishlist = await Wishlist.findOne({ user_id: userId }).populate("products");
+    
+            const totalPages = Math.ceil(totalTransactions / limit);
+    
+            // Render the wallet page with the data
+            res.render('user/profile', {
+                title: "Wallet",
+                wallet: wallet || { balance: 0, transactions: [] },
+                transactions,
+                currentPage: page,
+                totalPages,
+                limit,
+                user: req.session.user,
+                cart,
+                wishlist
+            });
+        } catch (error) {
+            console.error('Error fetching wallet data:', error);
+            res.status(500).send('Server error');
+        }
+    },
+    
 
 
 
