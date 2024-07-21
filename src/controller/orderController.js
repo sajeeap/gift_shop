@@ -5,6 +5,8 @@ const Cart = require("../model/cartSchema");
 const Wishlist = require("../model/whishlistSchema");
 const adminLayout = "./layouts/adminLayouts";
 const Wallet = require("../model/walletSchema");
+const crypto = require('crypto');
+const razorpayInstance = require("../config/razorPay")
 
 const mongoose = require("mongoose");
 
@@ -70,53 +72,79 @@ module.exports = {
             if (!order) {
                 return res.status(404).json({ error: 'Order not found' });
             }
-
+    
             // Find the item to cancel
             const itemIndex = order.items.findIndex(item => item.product_id._id.toString() === productId);
             if (itemIndex === -1) {
                 return res.status(404).json({ error: 'Product not found in the order' });
             }
-
+    
             const orderProduct = order.items[itemIndex];
-
+    
             // Check if the order status is 'Processing'
             if (order.status !== 'Processing' && order.status !== 'Pending') {
                 return res.status(400).json({ error: 'Only orders in processing status can be cancelled' });
             }
-
+    
             // Update the status of the specific item to 'Cancelled'
             order.items[itemIndex].status = 'Cancelled';
             order.items[itemIndex].cancelled_on = new Date();
-
-            // If the payment method is not COD, update the user's wallet
+    
+            // Convert amount from USD to cents
+            const amountInCents = orderProduct.itemTotal * 100; // Convert dollars to cents
+    
+            // Handle refunds based on payment method
             if (order.paymentMethod !== 'COD') {
-                let user = await User.findById(order.customer_id);
-                if (!user) return res.status(404).json({ error: 'User not found' });
-
-                // Find or create a wallet for the user
-                let wallet = await Wallet.findOne({ userId: user._id });
-                if (!wallet) {
-                    wallet = new Wallet({
-                        userId: user._id,
-                        balance: 0
+                if (order.paymentMethod === 'Razorpay') {
+                    // Refund via Razorpay
+                    const razorpayInstance = new razorpay({
+                        key_id: process.env.RAZOR_PAY_KEY_ID,
+                        key_secret: process.env.RAZOR_PAY_KEY_SECRET
                     });
+    
+                    try {
+                        // Create the refund
+                        await razorpayInstance.refunds.create({
+                            payment_id: order.paymentId, // Replace with the actual payment ID from Razorpay
+                            amount: amountInCents, // Amount should be in paise (1 USD = 100 cents)
+                            notes: 'Order cancellation refund'
+                        });
+                    } catch (error) {
+                        console.error('Error refunding via Razorpay:', error);
+                        return res.status(500).json({ error: 'Error refunding via Razorpay' });
+                    }
+                } else if (order.paymentMethod === 'Wallet') {
+                    // Handle Wallet Refund
+                    let user = await User.findById(order.customer_id);
+                    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+                    // Find or create a wallet for the user
+                    let wallet = await Wallet.findOne({ userId: user._id });
+                    if (!wallet) {
+                        wallet = new Wallet({
+                            userId: user._id,
+                            balance: 0
+                        });
+                    }
+    
+                    wallet.balance += orderProduct.itemTotal;
+    
+                    // Add a transaction record to the wallet
+                    wallet.transactions.push({
+                        amount: orderProduct.itemTotal,
+                        message: 'Order cancellation refund',
+                        type: 'Credit'
+                    });
+    
+                    await wallet.save();
+                } else {
+                    return res.status(400).json({ error: 'Invalid payment method' });
                 }
-
-                wallet.balance += orderProduct.itemTotal;
-
-                // Add a transaction record to the wallet
-                wallet.transactions.push({
-                    amount: orderProduct.itemTotal,
-                    message: 'Order cancellation refund',
-                    type: 'Credit'
-                });
-
-                await wallet.save();
             }
-
+    
             // Save the updated order
             await order.save();
-
+    
             // Respond with success
             return res.status(200).json({ success: true, message: 'Order cancelled successfully' });
         } catch (err) {

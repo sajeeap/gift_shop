@@ -159,20 +159,27 @@
                                         <div class="card mb-3">
                                             <div class="card-body">
 
-                                                <h4>Balance: $ <%= wallet.balance %>
-                                                </h4>
+                                                <h4>Balance: $ <%= wallet.balance %></h4>
+                                                <button class="btn bg1 cl0 bor1 mt-3" data-bs-toggle="modal" data-bs-target="#addMoneyModal">
+                                                    + Add Money
+                                                </button>
                                             </div>
                                         </div>
+                                        
                                     </div>
+                                    
                                 </div>
 
                                 <div class="row">
+                                    <div class="col-lg-12 mb-3" >
+                                    <h4 class="mb-4">Transactions</h4>
+                                    <hr />
                                     <% if (wallet.transactions && wallet.transactions.length> 0) { %>
 
                                         <% wallet.transactions.forEach(function(transaction) { %>
 
-                                            <div class="col-lg-12 mb-3" id="transaction-<%= transaction._id %>">
-                                                <div class="card mb-3">
+                                            
+                                                <div class="card mb-3" id="transaction-<%= transaction._id %>">
                                                     <div class="card-body">
                                                         <div class="transaction-date">
                                                             <strong>Date:</strong>
@@ -196,15 +203,14 @@
                                                             <% } %>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            
                                             <% }); %>
                                                 <% } else { %>
                                                     <p>No transactions found.</p>
                                                     <% } %>
+                                                </div>
                                 </div>
-                                <button class="btn bg1 cl0 bor1" data-bs-toggle="modal" data-bs-target="#addMoneyModal">
-                                    + Add Money
-                                </button>
+                                
                             </div>
 
 

@@ -1,18 +1,19 @@
-<form class="bg0 p-t-75 p-b-85" action="/user/place-order" method="POST">
+<form class="bg0 p-t-75 p-b-85" action="/user/place-order" method="POST" id="placeorderForm">
     <div class="container">
         <div class="row">
             <!-- Delivery Address Section -->
             <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
                 <div class="row">
                     <div class="col-12">
-                        <h5 class="mt-3">Delivery Address</h5>
-                        <div class="card mt-3">
+                        <div class="card">
                             <div class="card-body">
+                                <h4 class="mtext-109 cl2 p-b-30">Delivery Address</h4>
+                                
                                 <!-- Display Address if Available -->
                                 <% if (address) { %>
                                     <div class="default-address">
                                         <address id="address-<%= address._id %>">
-                                            <span class="address_name" ><%= address.name %></span><br>
+                                            <span class="address_name"><%= address.name %></span><br>
                                             <span class="address_type"><%= address.address_type %></span><br>
                                             <span class="zip_code"><%= address.zip_code %></span><br>
                                             <span class="locality"><%= address.locality %></span><br>
@@ -29,30 +30,49 @@
                                 <% } %> 
 
                                 <a href="#" class="btn btn-primary" onclick="openEditModal('<%= address._id %>')">Edit </a>
-                                        
                                 <a href="#" class="btn btn-primary">Change</a>
                             </div>
                         </div>
                     </div>
+
+                    
                   
                     <!-- Payment Options Section -->
-                    <div class="col-12 m-t-40">
-                        <h5>Payment Options</h5>
-                       
-                        <div class="m-l-20 m-t-23">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="paymentoptions" id="payment1" value="COD" checked>
-                                <label class="form-check-label" for="payment1">COD</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="paymentoptions" id="payment2" value="PayPal">
-                                <label class="form-check-label" for="payment2">PayPal</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="paymentoptions" id="payment3" value="Razor Pay">
-                                <label class="form-check-label" for="payment3">Razor Pay</label>
+                    <div class="col-12 m-t-20">
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                
+                                <h4 class="mtext-109 cl2">Payment Options</h4>
+                                
+                                <div class="m-l-20 m-t-23">
+                                    <!-- Use Wallet Balance -->
+                                    
+                                    <div class="form-check m-t-10">
+                                        <input class="form-check-input" type="radio" name="paymentoptions" id="payment1" value="Wallet" checked>
+                                        <label class="form-check-label" for="payment1">Wallet ($<%= walletBalance.toFixed(2) %>)</label>
+                                        <% if (walletBalance<totalPrice) { %>
+                                            <a href="#" class="btn bg1 cl0 bor1 mt-2 mb-3" data-bs-toggle="modal" data-bs-target="#addMoneyModal">
+                                                + Add Money
+                                            </a>
+                                            
+                                        <% } %>
+                                        
+                                    </div>
+
+                                    <div class="form-check m-t-10">
+                                        <input class="form-check-input" type="radio" name="paymentoptions" id="payment2" value="COD">
+                                        <label class="form-check-label" for="payment2">COD</label>
+                                    </div>
+                                    
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentoptions" id="payment3" value="Razor Pay">
+                                        <label class="form-check-label" for="payment3">Razor Pay</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                       
+                        
                     </div>
                 </div>
             </div>
@@ -86,14 +106,10 @@
 
         </div>
     </div>
-
 </form>
 
-
-
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -104,24 +120,16 @@
             </div>
             <form id="address-form" action="/user/add-address" method="POST">
                 <div class="modal-body">
-
                     <input type="hidden" name="addressId" id="addressId">
                     <input type="text" name="name" id="name" placeholder="Name" class="form-control mb-2" required>
-                    <input type="text" name="address_type" id="address_type" placeholder="Address Type"
-                        class="form-control mb-2" required>
-                    <input type="text" name="zip_code" id="zip_code" placeholder="Zip Code" class="form-control mb-2"
-                        required>
-                    <input type="text" name="locality" id="locality" placeholder="Locality" class="form-control mb-2"
-                        required>
-                    <input type="text" name="house_name" id="house_name" placeholder="House Name"
-                        class="form-control mb-2" required>
-                    <input type="text" name="area_street" id="area_street" placeholder="Area/Street"
-                        class="form-control mb-2" required>
+                    <input type="text" name="address_type" id="address_type" placeholder="Address Type" class="form-control mb-2" required>
+                    <input type="text" name="zip_code" id="zip_code" placeholder="Zip Code" class="form-control mb-2" required>
+                    <input type="text" name="locality" id="locality" placeholder="Locality" class="form-control mb-2" required>
+                    <input type="text" name="house_name" id="house_name" placeholder="House Name" class="form-control mb-2" required>
+                    <input type="text" name="area_street" id="area_street" placeholder="Area/Street" class="form-control mb-2" required>
                     <input type="text" name="town" id="town" placeholder="Town" class="form-control mb-2" required>
                     <input type="text" name="state" id="state" placeholder="State" class="form-control mb-2" required>
-                    <input type="text" name="landmark" id="landmark" placeholder="Landmark" class="form-control mb-2"
-                        required>
-
+                    <input type="text" name="landmark" id="landmark" placeholder="Landmark" class="form-control mb-2" required>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -132,7 +140,30 @@
     </div>
 </div>
 
-
+<!-- Add Money Modal -->
+<div class="modal fade" id="addMoneyModal" tabindex="-1" aria-labelledby="addMoneyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addMoneyModalLabel">Add Money to Wallet</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addMoneyForm">
+            <div class="mb-3">
+              <label for="amount" class="form-label">Amount (USD)</label>
+              <input type="number" class="form-control" id="amount" name="amount" value="<%= totalPrice.toFixed(2)-walletBalance.toFixed(2) %>" required>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="button" class="btn btn-primary" id="payButton">Add Money</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
     
@@ -231,3 +262,147 @@
 
     
 </script>
+
+<script>
+    document.getElementById('payButton').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const amountUSD = parseFloat(document.getElementById('amount').value);
+        if (isNaN(amountUSD) || amountUSD <= 0) {
+            alert('Please enter a valid amount.');
+            return;
+        }
+
+         // Example conversion rate
+
+        fetch('/user/add-money', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount: amountUSD, currency: 'USD' })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data || !data.orderId || !data.amount) {
+                throw new Error('Invalid server response.');
+            }
+
+            var options = {
+                "key": "<%= process.env.RAZOR_PAY_KEY_ID %>", // Your Razorpay Key ID
+                "amount": data.amount, // Amount in INR
+                "currency": "USD",
+                "order_id": data.orderId,
+                "name": "Wallet Top-up",
+                "description": "Add money to wallet",
+                "handler": function (response) {
+                    fetch('/user/verify-payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderId: data.orderId,
+                            paymentId: response.razorpay_payment_id,
+                            signature: response.razorpay_signature,
+                            amount: amountUSD // Pass amount for wallet update
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Payment successful!');
+                            location.reload(); // Reload to update wallet balance
+
+                        } else {
+                            alert('Payment verification failed!');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error verifying payment:', error);
+                        alert('Failed to verify payment.');
+                    });
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to process payment.');
+        });
+    });
+</script>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+        e.preventDefault(); // Prevent the form from submitting immediately
+    
+        const selectedPaymentMethod = document.querySelector('input[name="paymentoptions"]:checked').value;
+        const totalPrice = parseFloat('<%= totalPrice.toFixed(2) %>');
+        const walletBalance = parseFloat('<%= walletBalance.toFixed(2) %>');
+    
+        if (selectedPaymentMethod === 'Wallet') {
+            if (walletBalance < totalPrice) {
+                alert('Insufficient wallet balance. Please add more money to proceed.');
+                // Optionally, open the Add Money modal
+                $('#addMoneyModal').modal('show');
+            } else {
+                // Proceed with the wallet payment
+                this.submit(); // Submit the form as wallet balance is sufficient
+            }
+        } else if (selectedPaymentMethod === 'Razor Pay') {
+            // Trigger Razorpay UI
+            
+            const amountUSD = totalPrice;
+    
+            var options = {
+                "key": "<%= process.env.RAZOR_PAY_KEY_ID %>", // Your Razorpay Key ID
+                "amount": amountUSD * 100, 
+                "currency": "USD",
+                "name": "Order Payment",
+                "description": "Payment for order",
+                "handler": function (response) {
+                    fetch('/user/verify-orderpayment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            paymentId: response.razorpay_payment_id,                            
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            
+                            document.querySelector('form').submit();
+                        } else {
+                            alert('Payment verification failed!');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error verifying payment:', error);
+                        alert('Failed to verify payment.');
+                    });
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+    
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        } else if (selectedPaymentMethod === 'COD') {
+            // Proceed with COD payment
+            this.submit(); // Submit the form
+        } else {
+            alert('Please select a payment method.');
+        }
+    });
+    </script>
+    

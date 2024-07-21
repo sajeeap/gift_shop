@@ -375,12 +375,6 @@ module.exports = {
                 .update(orderId + "|" + paymentId)
                 .digest('hex');
 
-            
-
-            
-           
-
-            
 
             if (generatedSignature === signature) {
                 // Payment verified, update wallet balance

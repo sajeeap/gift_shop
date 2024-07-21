@@ -68,6 +68,8 @@ router
     .route('/verify-payment')
     .post(userController.verifyPayment)
 
+    
+
 
 
 
@@ -76,6 +78,9 @@ router
 router.get("/checkout", checkOutController.getCheckOutPage )
 router.post("/place-order", checkOutController.placeOrder)
 router.get("/success-order", checkOutController.successOrder)
+router
+    .route('/verify-orderpayment')
+    .post(checkOutController.verifyPayment)
 
 // router.get('/order-details/:orderId', orderController.getOrderDetails)
 // router.get('/profile', orderController.getOrderDetails)
