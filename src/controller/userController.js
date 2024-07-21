@@ -5,9 +5,11 @@ const bcrypt = require('bcrypt');
 const Address = require("../model/addressSchema")
 const Wishlist = require("../model/whishlistSchema")
 const Orders = require("../model/orderSchema")
-const Wallet = require("../model/walletSchema")
+const Wallet = require("../model/walletSchema");
 const Cart = require("../model/cartSchema");
 const { getUserOrders } = require('../controller/orderController');
+const crypto = require('crypto');
+const razorpayInstance = require("../config/razorPay");
 
 
 
@@ -30,6 +32,8 @@ const setDefaultAddress = async (req, res) => {
 
 module.exports = {
 
+    //profile
+
     getProfile: async (req, res) => {
 
         try {
@@ -40,30 +44,31 @@ module.exports = {
                 return res.status(404).send('User not found');
             }
 
-            let cart = await Cart.findOne({userId:req.session.user}).populate("items");
-            const wishlist = await Wishlist.findOne({ user_id:req.session.user }).populate("products");
+            let cart = await Cart.findOne({ userId: req.session.user }).populate("items");
+            const wishlist = await Wishlist.findOne({ user_id: req.session.user }).populate("products");
 
-             // Get Wallet
-             const wallet = await Wallet.findOne({ userId });
+            // Get Wallet
+            const wallet = await Wallet.findOne({ userId });
 
             //Get Addresses
             const addresses = await Address.find({
                 customer_id: userId,
                 delete: false
             });
-            
-           
+
+
 
             //Get Orders
-            const orders = await Orders.find({ 
-                customer_id: userId }).populate('items.product_id')
+            const orders = await Orders.find({
+                customer_id: userId
+            }).populate('items.product_id')
                 .sort({ createdAt: -1 })
                 .exec();
 
-                 // Get Orders using the getUserOrders function
-        // const orders = await getUserOrders(userId);
+            // Get Orders using the getUserOrders function
+            // const orders = await getUserOrders(userId);
 
-                
+
 
             if (!addresses) {
                 throw new Error('No addresses found for the user.');
@@ -76,9 +81,8 @@ module.exports = {
                 cart,
                 wishlist,
                 wallet: wallet || { balance: 0, transactions: [] }
-               
 
-                
+
             });
 
         } catch (error) {
@@ -88,8 +92,6 @@ module.exports = {
         }
 
     },
-
-     
 
     editProfile: async (req, res) => {
         try {
@@ -104,7 +106,7 @@ module.exports = {
 
             // Update user's profile 
             const { firstName, lastName } = req.body;
-           
+
             user.firstName = firstName || user.firstName;
             user.lastName = lastName || user.lastName;
 
@@ -197,7 +199,7 @@ module.exports = {
             }
 
             const wishlist = await Wishlist.findOne({ user_id: user._id }).populate("products");
-            let cart = await Cart.findOne({userId:req.session.user}).populate("items");
+            let cart = await Cart.findOne({ userId: req.session.user }).populate("items");
 
 
             let products;
@@ -226,9 +228,9 @@ module.exports = {
     addToWishlist: async (req, res) => {
         try {
 
-            
 
-            const userId = req.session.user._id|| req.session.user
+
+            const userId = req.session.user._id || req.session.user
             if (!userId) {
                 return res.status(401).json({ success: false, message: "User not logged in or session expired" });
             }
@@ -282,28 +284,30 @@ module.exports = {
 
     //wallet
 
-     getWallet : async (req, res) => {
+    getWallet: async (req, res) => {
         try {
             if (!req.session.user || !req.session.user._id) {
                 return res.redirect('/login'); // Redirect to login if session not found
             }
-    
+
             const userId = req.session.user._id;
             const page = parseInt(req.query.page, 10) || 1;
             const limit = parseInt(req.query.limit, 10) || 10; // Default to 10 transactions per page
             const skip = (page - 1) * limit;
-    
+
             // Fetch wallet data
             const wallet = await Wallet.findOne({ userId });
+
+
             const totalTransactions = wallet ? wallet.transactions.length : 0;
             const transactions = wallet ? wallet.transactions.slice(skip, skip + limit) : [];
-    
+
             // Fetch other necessary data
             let cart = await Cart.findOne({ userId }).populate("items");
             const wishlist = await Wishlist.findOne({ user_id: userId }).populate("products");
-    
+
             const totalPages = Math.ceil(totalTransactions / limit);
-    
+
             // Render the wallet page with the data
             res.render('user/profile', {
                 title: "Wallet",
@@ -321,7 +325,93 @@ module.exports = {
             res.status(500).send('Server error');
         }
     },
-    
+
+    addMoney: async (req, res) => {
+        const { amount, currency } = req.body;
+
+        if (!amount || !currency) {
+            return res.status(400).json({ error: 'Invalid request' });
+        }
+
+
+
+        try {
+
+            
+
+            const options = {
+                amount: amount * 100, // Convert to paise or cents
+                currency: currency, // Use currency from request
+                receipt: 'receipt_order_' + new Date().getTime(),
+                payment_capture: '1'
+            };
+
+
+            const order = await razorpayInstance.orders.create(options);
+            res.json({
+                amount: order.amount,
+                orderId: order.id,
+                currency: order.currency
+            });
+        } catch (error) {
+            console.error('Error creating Razorpay order:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+
+    verifyPayment: async (req, res) => {
+        try {
+            const { orderId, paymentId, signature, amount } = req.body;
+
+            const userId = req.session.user._id;
+
+            if (!orderId || !paymentId || !signature || !amount) {
+                return res.status(400).json({ error: 'Invalid request' });
+            }
+
+
+            // Generate signature
+            const generatedSignature = crypto.createHmac('sha256', process.env.RAZOR_PAY_KEY_SECRET)
+                .update(orderId + "|" + paymentId)
+                .digest('hex');
+
+            
+
+            
+           
+
+            
+
+            if (generatedSignature === signature) {
+                // Payment verified, update wallet balance
+                let wallet = await Wallet.findOne({ userId });
+                if (!wallet) {
+                    wallet = new Wallet({ userId, balance: 0, transactions: [] });
+                    await wallet.save();
+                }
+
+                if (wallet) {
+                    wallet.balance += parseFloat(amount);
+                    wallet.transactions.push({
+                        amount: parseFloat(amount),
+                        date: new Date(),
+                        type: 'Credit',
+                        orderId: orderId,
+                        paymentId: paymentId
+                    });
+                    await wallet.save();
+                }
+
+                res.json({ success: true });
+            } else {
+                res.json({ success: false });
+            }
+        } catch (error) {
+            console.error('Error verifying payment:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    },
+
 
 
 

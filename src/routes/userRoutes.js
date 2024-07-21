@@ -60,6 +60,15 @@ router
 router
     .route("/profile")
     .get(userController.getWallet)
+    router
+    .route("/add-money")
+    .post(userController.addMoney)
+
+    router
+    .route('/verify-payment')
+    .post(userController.verifyPayment)
+
+
 
 
 

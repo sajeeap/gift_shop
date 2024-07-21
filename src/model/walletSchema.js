@@ -23,13 +23,16 @@ const WalletSchema = new Schema({
                 type: Number,
                 required: true
             },
-            message: {
+            paymentId: {
                 type: String
             },
             type: {
                 type: String,
                 required: true,
                 enum: ["Credit", "Debit"]
+            },
+            orderId: {
+                type: String,
             }
         }
     ]
