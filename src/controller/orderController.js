@@ -67,46 +67,43 @@ module.exports = {
         const { orderId, productId } = req.params;
 
         try {
-            // Fetch the order by ID and populate relevant fields
+
             const order = await Order.findById(orderId).populate('items.product_id');
             if (!order) {
                 return res.status(404).json({ error: 'Order not found' });
             }
-    
+
             // Find the item to cancel
             const itemIndex = order.items.findIndex(item => item.product_id._id.toString() === productId);
             if (itemIndex === -1) {
                 return res.status(404).json({ error: 'Product not found in the order' });
             }
-    
+
             const orderProduct = order.items[itemIndex];
-    
-            // Check if the order status is 'Processing'
+
+
             if (order.status !== 'Processing' && order.status !== 'Pending') {
-                return res.status(400).json({ error: 'Only orders in processing status can be cancelled' });
+                return res.status(400).json({ error: 'Only orders in processing or pending status can be cancelled' });
             }
-    
-            // Update the status of the specific item to 'Cancelled'
+
+
             order.items[itemIndex].status = 'Cancelled';
             order.items[itemIndex].cancelled_on = new Date();
-    
-            // Convert amount from USD to cents
-            const amountInCents = orderProduct.itemTotal * 100; // Convert dollars to cents
-    
-            // Handle refunds based on payment method
+
+
             if (order.paymentMethod !== 'COD') {
                 if (order.paymentMethod === 'Razorpay') {
-                    // Refund via Razorpay
+
                     const razorpayInstance = new razorpay({
                         key_id: process.env.RAZOR_PAY_KEY_ID,
                         key_secret: process.env.RAZOR_PAY_KEY_SECRET
                     });
-    
+
                     try {
-                        // Create the refund
+                        // razor refund
                         await razorpayInstance.refunds.create({
-                            payment_id: order.paymentId, // Replace with the actual payment ID from Razorpay
-                            amount: amountInCents, // Amount should be in paise (1 USD = 100 cents)
+                            payment_id: order.paymentId,
+                            amount: orderProduct.itemTotal * 100,
                             notes: 'Order cancellation refund'
                         });
                     } catch (error) {
@@ -114,10 +111,11 @@ module.exports = {
                         return res.status(500).json({ error: 'Error refunding via Razorpay' });
                     }
                 } else if (order.paymentMethod === 'Wallet') {
-                    // Handle Wallet Refund
+
+                    //  Wallet refund
                     let user = await User.findById(order.customer_id);
                     if (!user) return res.status(404).json({ error: 'User not found' });
-    
+
                     // Find or create a wallet for the user
                     let wallet = await Wallet.findOne({ userId: user._id });
                     if (!wallet) {
@@ -126,25 +124,25 @@ module.exports = {
                             balance: 0
                         });
                     }
-    
+
                     wallet.balance += orderProduct.itemTotal;
-    
+
                     // Add a transaction record to the wallet
                     wallet.transactions.push({
                         amount: orderProduct.itemTotal,
                         message: 'Order cancellation refund',
                         type: 'Credit'
                     });
-    
+
                     await wallet.save();
                 } else {
                     return res.status(400).json({ error: 'Invalid payment method' });
                 }
             }
-    
+
             // Save the updated order
             await order.save();
-    
+
             // Respond with success
             return res.status(200).json({ success: true, message: 'Order cancelled successfully' });
         } catch (err) {
@@ -155,18 +153,17 @@ module.exports = {
 
 
 
-
-
     // Admin side
     getOrder: async (req, res) => {
         const locals = {
             title: "Orders",
         };
 
-        let perPage = 12;
-        let page = req.query.page || 1;
 
         try {
+            let perPage = 12;
+            let page = req.query.page || 1;
+
             const orders = await Order.find()
                 .populate('items.product_id')
                 .populate('customer_id')
@@ -174,13 +171,20 @@ module.exports = {
                 .skip((perPage * page) - perPage)
                 .limit(perPage);
 
-            const count = await Order.countDocuments();
+            const count = await Order.find().countDocuments({});
+            const nextPage = parseInt(page) + 1;
+            const hasNextPage = nextPage <= Math.ceil(count / perPage);
+
+
 
             res.render("admin/orders/order", {
                 locals,
                 orders,
                 current: page,
+                perPage,
                 pages: Math.ceil(count / perPage),
+                count,
+                nextPage: hasNextPage ? nextPage : null,
                 layout: adminLayout
             });
         } catch (error) {
@@ -189,9 +193,16 @@ module.exports = {
         }
     },
 
+
     manageOrderStatus: async (req, res) => {
         const orderId = req.params.id;
         const { status } = req.body;
+
+        // Validate status
+        const validStatuses = ['Processing', 'Pending', 'Shipped', 'Delivered', 'Cancelled'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).send('Invalid status');
+        }
 
         try {
             const order = await Order.findById(orderId);
@@ -207,6 +218,7 @@ module.exports = {
             res.status(500).send('Internal Server Error');
         }
     },
+
 
     getAdminOrderDetails: async (req, res) => {
         const locals = {

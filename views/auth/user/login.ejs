@@ -16,28 +16,53 @@
                                 <!-- Email input -->
                                 <div class="form-outline mb-4">
                                     <label for="email" class="form-label text-left">Email</label>
-                                    <input name="email" type="email" class="form-control" id="email" placeholder="example@gmail.com" required>
+                                    <input name="email" type="email" class="form-control" id="email"
+                                        placeholder="example@gmail.com" required>
                                 </div>
 
+                                
                                 <!-- Password input -->
                                 <div class="form-outline mb-4">
                                     <label for="password" class="form-label text-left">Password</label>
-                                    <input name="password" type="password" class="form-control" id="password" required>
+                                    <div class="input-group">
+                                        <input name="password" type="password" class="form-control" id="password"
+                                            required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"
+                                                onclick="togglePasswordVisibility('password')">
+                                                <i class="fa fa-eye"></i>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
+
 
                                 <div class="mt-4 text-left">
                                     <a href="/forgetPass" style="color: #413E65;">Forgot your password?</a>
-                                </div>  
+                                </div>
 
                                 <!-- Submit button -->
                                 <div class="flex-c-m">
-                                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 ">
+                                    <button type="submit"
+                                        class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 ">
                                         login
                                     </button>
-                                </div>      
+                                </div>
                                 <div class="mt-4">
-                                    <p>Don't have an account? <a href="/register" style="color: black;"><u>Create account</u></a></p>
-                                </div>  
+                                    <p>Don't have an account? <a href="/register" style="color: black;"><u>Create
+                                                account</u></a></p>
+
+                                    <p>or sign up with google:</p>
+
+                                    <a href="/google">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-google" viewBox="0 0 16 16">
+                                            <path
+                                                d="M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z" />
+                                        </svg>
+                                    </a>
+
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -88,4 +113,19 @@
             });
         });
     });
+
+
+    function togglePasswordVisibility(fieldId) {
+        const field = document.getElementById(fieldId);
+        const icon = field.nextElementSibling.querySelector('i');
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
 </script>

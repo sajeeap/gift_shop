@@ -27,7 +27,8 @@
                     <tbody>
                         <% orders.forEach((order, index) => { %>
                             <tr>
-                                <td><%= index + 1 %></td>
+                                
+                               <td> <%= (current - 1) * perPage + index + 1 %></td>
                                 <td><%= order._id %></td>
                                 <td><%= order.createdAt.toLocaleDateString('en-GB') %></td>
                                 <td><%= order.customer_id ? `${order.customer_id.firstName} ${order.customer_id.lastName}` : 'Unknown User' %></td>
@@ -92,6 +93,50 @@
         </div>
     </div>
 <% }) %>
+
+<% if (orders.length >0 && nextPage || current == pages) { %>
+    <nav aria-label="Dashboard pagination">
+        <ul class="pagination justify-content-center mt-5">
+            <% if (current ==1) { %>
+                <li class="page-item disabled" ><a href="#" class="page-link">First</a></li>
+            <% }else{  %>
+  
+                <li class="page-item" ><a href="/admin/orders/?page=1" class="page-link">First</a></li>
+                
+             <% } %>
+             <% var i = (Number(current) >5  ? Number(current) - 4 :1) %>
+             <% if(i !==1) { %>
+                <li class="page-item disabled" ><a href="#" class="page-link">....</a></li>
+  
+             <% } %>
+  
+             <% for( ;i <= (Number(current) +4 ) && i <=pages; i++ ) { %>
+                <% if (i==current) { %>
+                    <li class="page-item disabled" ><a href="#" class="page-link"><%= i %></a></li>
+                 
+                <% } else{%>
+                    <li class="page-item " ><a href="/admin/orders?page=<%= i %>" class="page-link"><%= i %></a></li>
+             <% } %>
+             <% if (i ==Number(current) +4 && i < pages) { %>
+                <li class="page-item  disabled" ><a href="#" class="page-link">...</a></li>
+                
+              
+                <% } %>
+             <% } %>
+  
+             <% if (current ==pages) { %>
+                <li class="page-item  disabled" ><a href="#" class="page-link">Last</a></li>
+                
+             <% }  else {%>
+                <li class="page-item  " ><a href="#" class="page-link">Last</a></li>
+  
+                <% } %>
+  
+             
+        </ul>
+    </nav>
+  
+  <% } %>
 
 
 

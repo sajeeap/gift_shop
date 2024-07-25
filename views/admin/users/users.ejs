@@ -19,14 +19,14 @@
                             <th>Joined Date</th>
                             <th>Verified</th>
                             <th class="text-center">Block/UnBlock</th>
-                            >
+                            
                           </tr>
                     </thead>
                     <tbody>
                         <% users.forEach((user,index) => { %>
                             <% if (!user.isAdmin) { %>
                                 <tr>
-                                    <td><%= index+1 %></td>
+                                 <td> <%= (current - 1) * perPage + index + 1 %></td>
                                     <td><%= user.firstName + " " + user.lastName %> </td>
                                     <td><%= user.email %></td>
                                     

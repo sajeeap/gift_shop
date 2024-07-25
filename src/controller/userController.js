@@ -362,20 +362,18 @@ module.exports = {
     verifyPayment: async (req, res) => {
         try {
             const { orderId, paymentId, signature, amount } = req.body;
-
+    
             const userId = req.session.user._id;
-
+    
             if (!orderId || !paymentId || !signature || !amount) {
                 return res.status(400).json({ error: 'Invalid request' });
             }
-
-
+    
             // Generate signature
             const generatedSignature = crypto.createHmac('sha256', process.env.RAZOR_PAY_KEY_SECRET)
                 .update(orderId + "|" + paymentId)
                 .digest('hex');
-
-
+    
             if (generatedSignature === signature) {
                 // Payment verified, update wallet balance
                 let wallet = await Wallet.findOne({ userId });
@@ -383,19 +381,17 @@ module.exports = {
                     wallet = new Wallet({ userId, balance: 0, transactions: [] });
                     await wallet.save();
                 }
-
-                if (wallet) {
-                    wallet.balance += parseFloat(amount);
-                    wallet.transactions.push({
-                        amount: parseFloat(amount),
-                        date: new Date(),
-                        type: 'Credit',
-                        orderId: orderId,
-                        paymentId: paymentId
-                    });
-                    await wallet.save();
-                }
-
+                
+                wallet.balance += parseFloat(amount); // Update balance once
+                wallet.transactions.push({
+                    amount: parseFloat(amount),
+                    date: new Date(),
+                    type: 'Credit',
+                    orderId: orderId,
+                    paymentId: paymentId
+                });
+                await wallet.save();
+    
                 res.json({ success: true });
             } else {
                 res.json({ success: false });
@@ -405,13 +401,12 @@ module.exports = {
             res.status(500).send('Internal Server Error');
         }
     },
+    
 
 
 
 
     //Address
-
-
 
     getAddress: async (req, res) => {
         try {

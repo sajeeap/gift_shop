@@ -7,6 +7,7 @@
     <div>
 
       <a href="/admin/stocks" class="btn btn-primary btn-sm rounded">Manage Stocks</a>
+      <a href="/admin/product-offers" class="btn btn-primary btn-sm rounded">Manage Offers</a>
 
       <a href="/admin/add-product" class="btn btn-primary btn-sm rounded">Add products</a>
     </div>
@@ -33,10 +34,10 @@
           <tbody>
           <tbody>
             <% if (product && product.length> 0) { %>
-              <% product.forEach((product)=> { %>
+              <% product.forEach((product,index)=> { %>
                 <tr>
                   <td>
-                    <%= count-- %>
+                    <%= (current - 1) * perPage + index + 1 %>
                   </td>
                   <td>
                     <img class="img-fluid img-thumbnail"

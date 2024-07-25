@@ -11,7 +11,7 @@ const razorpayInstance = require("../config/razorPay");
 
 module.exports = {
     getCheckOutPage: async (req, res) => {
-        const userId = req.session.user._id;
+        const userId = req.session.user;
 
         const address = await Address.findOne({
             customer_id: userId,
@@ -110,7 +110,7 @@ module.exports = {
                 totalPrice += itemTotal;
             }
 
-            const wallet = await Wallet.findOne({ user_id: userId });
+            const wallet = await Wallet.findOne({ userId: userId });
             let walletBalance = wallet ? wallet.balance : 0;
             let amountToBePaid = totalPrice;
 
@@ -123,7 +123,7 @@ module.exports = {
                     amountToBePaid -= walletBalance;
                     walletBalance = 0;
                 }
-                await Wallet.findOneAndUpdate({ user_id: userId }, { balance: walletBalance });
+                await Wallet.findOneAndUpdate({userId : userId }, { balance: walletBalance });
             }
 
             const order = new Order({
@@ -211,4 +211,3 @@ module.exports = {
 
     
 };
-

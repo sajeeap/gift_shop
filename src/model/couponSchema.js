@@ -12,11 +12,13 @@ const couponSchema = new Schema({
         type: String,
 
     },
-    purchaseAmount: {
+    
+    min_purchase: {
         type: Number,
         default: 0,
     },
-    discountAmount: {
+
+    discount_amount: {
         type: Number,
         default: 0,
     },
@@ -28,11 +30,12 @@ const couponSchema = new Schema({
         type: Boolean,
         default: true,
     },
-    expirationDate: {
+    expiring_date: {
         type: Date,
         default: Date.now(),
         required: true,
     },
+
 
 },{
     timestamps: true

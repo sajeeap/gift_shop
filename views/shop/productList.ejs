@@ -184,7 +184,7 @@
 											%>
 									</a>
 
-									<a href="/dummy">
+									<a href="#">
 
 										<span class="stext-105 cl3">
 											$<%= product.price %>.00
@@ -196,13 +196,18 @@
 								</div>
 
 								<div class="block2-txt-child2 flex-r p-t-3">
-									<a href="#" class="btn-addwish-b2 dis-block pos-relative   add-to-wishlist"
-										data-product-id="<%= product._id %>">
-										<img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png"
-											alt="ICON">
-										<img class="icon-heart2 dis-block trans-04 ab-t-l"
-											src="images/icons/icon-heart-02.png" alt="ICON">
-									</a>
+									<% const isInWishlist = wishlist.products && wishlist.products.some(item => item._id.toString() === product._id.toString()); %>
+									<% if (isInWishlist) { %>
+										<a href="#" class="btn-addwish-b2 dis-block pos-relative add-to-wishlist" data-product-id="<%= product._id %>">
+											<img class="icon-heart1 dis-block trans-04" src="/images/icons/icon-heart-02.png" alt="ICON">
+											<img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-01.png" alt="ICON">
+										</a>
+									<% } else { %>
+										<a href="#" class="btn-addwish-b2 dis-block pos-relative add-to-wishlist" data-product-id="<%= product._id %>">
+											<img class="icon-heart1 dis-block trans-04" src="/images/icons/icon-heart-01.png" alt="ICON">
+											<img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
+										</a>
+									<% } %>
 								</div>
 							</div>
 						</div>
@@ -215,9 +220,46 @@
 
 
 
+	<% if (products.length > 0) { %>
+		<nav aria-label="Dashboard pagination">
+			<ul class="pagination justify-content-center mt-5">
+				<% if (current === 1) { %>
+					<li class="page-item disabled"><a href="#" class="page-link">First</a></li>
+				<% } else { %>
+					<li class="page-item"><a href="/product-list/?page=1" class="page-link">First</a></li>
+				<% } %>
+				
+				<% var i = (current > 5 ? current - 4 : 1) %>
+				<% if (i !== 1) { %>
+					<li class="page-item disabled"><a href="#" class="page-link">...</a></li>
+				<% } %>
+				
+				<% for (; i <= (current + 4) && i <= pages; i++) { %>
+					<% if (i === current) { %>
+						<li class="page-item disabled"><a href="#" class="page-link"><%= i %></a></li>
+					<% } else { %>
+						<li class="page-item"><a href="/product-list/?page=<%= i %>" class="page-link"><%= i %></a></li>
+					<% } %>
+					<% if (i === (current + 4) && i < pages) { %>
+						<li class="page-item disabled"><a href="#" class="page-link">...</a></li>
+					<% } %>
+				<% } %>
+				
+				<% if (current === pages) { %>
+					<li class="page-item disabled"><a href="#" class="page-link">Last</a></li>
+				<% } else { %>
+					<li class="page-item"><a href="/product-list/?page=<%= pages %>" class="page-link">Last</a></li>
+				<% } %>
+			</ul>
+		</nav>
+	<% } %>
+	
+	
 
 	
 </div>
+
+
 
 
 <script>

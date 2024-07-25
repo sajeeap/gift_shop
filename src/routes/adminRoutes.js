@@ -7,9 +7,11 @@ const categoryController = require("../controller/categoryController");
 const productController = require("../controller/productController")
 const orderController = require("../controller/orderController")
 const { productUpload, upload } = require("../middleware/multer");
+const coupenController = require("../controller/couponController")
 
 
 const { isAdminLoggedIn } = require("../middleware/authMiddleware");
+const couponController = require('../controller/couponController');
 
 
 router.get('/', isAdminLoggedIn, adminController.getDashboard)
@@ -88,6 +90,31 @@ router
   router
   .route("/view-orders/:id")
   .get(isAdminLoggedIn, orderController.getAdminOrderDetails)
+
+
+  //coupen routes
+
+  router
+  .route("/promocodes")
+  .get(isAdminLoggedIn, coupenController.getCoupon)
+
+  router
+  .route("/add-promocodes")
+  .get(isAdminLoggedIn, coupenController.getAddCoupon)
+  .post(isAdminLoggedIn,coupenController.addCoupon)
+
+  router
+  .route("/edit-promocodes/:id")
+  .get(isAdminLoggedIn, coupenController.getEditCoupon)
+  .post(isAdminLoggedIn,coupenController.editCoupon)
+
+  router.get('/delete-promocodes/:id', isAdminLoggedIn, couponController.deleteCoupon)
+
+
+
+
+
+
 
 
 

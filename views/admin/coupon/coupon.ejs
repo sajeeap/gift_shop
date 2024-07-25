@@ -1,0 +1,143 @@
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">
+                <%= locals.title ? locals.title : "Promocodes" %>
+            </h2>
+        </div>
+        <div>
+            <a href="/admin/add-promocodes" class="btn btn-primary btn-sm rounded">Add Promocodes</a>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Code</th>
+                            <th>Description</th>
+                            <th>Min Purchase Amount</th>
+                            <th>Discount Amount</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <% promocodes.forEach((promocode, index)=> { %>
+
+                            <tr>
+
+                                <td><%- index+1 %></td>
+                                <td> <%- promocode.coupon_code %></td>
+                                <td> <%- promocode.description %></td>
+                                <td> <%- promocode.min_purchase %></td>
+                                <td><%- promocode.discount_amount %></td>
+                                <td>
+                                    <% if (promocode.expiring_date) { %>
+                                        <%- promocode.expiring_date.toLocaleDateString('en-GB') %>
+                                            <% } else { %>
+                                                N/A
+                                                <% } %>
+                                </td>
+                                <td>
+                                    <% if (promocode.isActive) { %>
+                                        <span class="badge bg-success">Active</span>
+                                        <% } else { %>
+                                            <span class="badge bg-danger">Inactive</span>
+                                            <% } %>
+
+                                </td>
+
+                                <td class="text-center">
+
+
+                                    <a href="/admin/edit-promocodes/<%= promocode._id %>"
+                                        class="btn btn-sm font-sm rounded btn-brand">
+                                        <i class="material-icons md-edit"></i> Edit
+                                    </a>
+
+                                    <button class="btn btn-sm font-sm btn-light rounded"
+                                        onclick="deleteCoupon('<%= promocode._id %>')">
+                                        <i class="material-icons md-delete_forever"></i> Delete
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                            <% }) %>
+
+                            <script>
+                                function deleteCoupon(couponId) {
+                                    if (confirm("Are you sure you want to delete this category?")) {
+                                        // Redirect to delete category route
+                                        window.location.href = "/admin/delete-promocodes/" + couponId;
+                                    }
+                                }
+                            </script>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+
+<% if (promocodes.length>0 && nextPage || current == pages) { %>
+    <nav aria-label="Dashboard pagination">
+        <ul class="pagination justify-content-center mt-5">
+            <% if (current==1) { %>
+                <li class="page-item disabled"><a href="#" class="page-link">First</a></li>
+                <% }else{ %>
+
+                    <li class="page-item"><a href="/admin/promocodes/?page=1" class="page-link">First</a></li>
+
+                    <% } %>
+                        <% var i=(Number(current)>5 ? Number(current) - 4 :1) %>
+                            <% if(i !==1) { %>
+                                <li class="page-item disabled"><a href="#" class="page-link">....</a></li>
+
+                                <% } %>
+
+                                    <% for( ;i <=(Number(current) +4 ) && i <=pages; i++ ) { %>
+                                        <% if (i==current) { %>
+                                            <li class="page-item disabled"><a href="#" class="page-link">
+                                                    <%= i %>
+                                                </a></li>
+
+                                            <% } else{%>
+                                                <li class="page-item "><a href="/admin/promocodes?page=<%= i %>"
+                                                        class="page-link">
+                                                        <%= i %>
+                                                    </a></li>
+                                                <% } %>
+                                                    <% if (i==Number(current) +4 && i < pages) { %>
+                                                        <li class="page-item  disabled"><a href="#"
+                                                                class="page-link">...</a></li>
+
+
+                                                        <% } %>
+                                                            <% } %>
+
+                                                                <% if (current==pages) { %>
+                                                                    <li class="page-item  disabled"><a href="#"
+                                                                            class="page-link">Last</a></li>
+
+                                                                    <% } else {%>
+                                                                        <li class="page-item  "><a href="#"
+                                                                                class="page-link">Last</a></li>
+
+                                                                        <% } %>
+
+
+        </ul>
+    </nav>
+
+    <% } %>

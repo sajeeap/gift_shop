@@ -30,6 +30,7 @@ module.exports = {
             current: page,
             pages: Math.ceil(count / perPage),
             nextPage: hasNextPage ? nextPage : null,
+            
         })
 
 
@@ -112,7 +113,7 @@ module.exports = {
 
             res.render('admin/categories/editCategory', {
                 locals,
-                category, // Pass the category data to the view
+                category, 
                 layout: adminLayout,
                 messages: req.flash(),
             });

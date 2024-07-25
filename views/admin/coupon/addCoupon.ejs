@@ -1,0 +1,47 @@
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title"><%= locals.title ? locals.title : 'Add Category' %> </h2>
+            
+        </div>
+        
+    </div>
+    <div class="card col-md-9">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <form  action="/admin/add-promocodes" method="post">
+                        <div class="mb-4">
+                            <label for="coupon_code" class="form-label">Code</label>
+                            <input type="text" placeholder="Type here" name="coupon_code" class="form-control" id="coupon_code" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text" placeholder="description" name="description" class="form-control" id="description" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="min_purchase" class="form-label">Minimum Purchase Amount</label>
+                            <input type="number" placeholder="min_purchase" name="min_purchase" class="form-control" id="min_purchase" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="discount_amount" class="form-label">Discount Value</label>
+                            <input type="number" placeholder="discount_amount" name="discount_amount" class="form-control" id="discount_amount" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="expiring_date" class="form-label">Expiry Date</label>
+                            <input type="date" placeholder="expiring_date" name="expiring_date" class="form-control" id="expiring_date" />
+                        </div>
+
+
+                       
+                    
+                        <div class="d-grid">
+                            <button class="btn btn-primary">Create Coupon</button>
+                        </div>
+                    </form>
+                </div>
+               
+            </div> <!-- .row // -->
+        </div> <!-- card body .// -->
+    </div> <!-- card .// -->
+</section> <!-- content-main end// -->
