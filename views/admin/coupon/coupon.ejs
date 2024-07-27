@@ -38,8 +38,8 @@
                                 <td> <%- promocode.min_purchase %></td>
                                 <td><%- promocode.discount_amount %></td>
                                 <td>
-                                    <% if (promocode.expiring_date) { %>
-                                        <%- promocode.expiring_date.toLocaleDateString('en-GB') %>
+                                    <% if (promocode.expiry_date) { %>
+                                        <%- promocode.expiry_date.toLocaleDateString('en-GB') %>
                                             <% } else { %>
                                                 N/A
                                                 <% } %>

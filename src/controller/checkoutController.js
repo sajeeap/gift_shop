@@ -5,7 +5,8 @@ const User = require("../model/userSchema");
 const Address = require("../model/addressSchema");
 const Wishlist = require("../model/whishlistSchema");
 const Order = require("../model/orderSchema");
-const Wallet = require("../model/walletSchema"); // Assuming the wallet schema is defined
+const Wallet = require("../model/walletSchema"); 
+const Coupon = require("../model/couponSchema");
 const crypto = require('crypto');
 const razorpayInstance = require("../config/razorPay");
 
@@ -26,6 +27,9 @@ module.exports = {
         const wallet = await Wallet.findOne({ userId: userId });
         const walletBalance = wallet ? wallet.balance : 0;
 
+         // Fetch active coupons
+       const coupons = await Coupon.find({ isActive: true, expiry_date: { $gt: new Date() } });
+
         let totalItems = 0;
         let totalPrice = 0;
 
@@ -41,6 +45,7 @@ module.exports = {
                 totalItems += item.quantity;
             }
         }
+        const appliedCouponCode = cart && cart.coupon ? cart.coupon.code : '';
 
         res.render("shop/checkout", {
             user: req.session.user,
@@ -49,7 +54,9 @@ module.exports = {
             wishlist,
             totalPrice,
             totalItems,
-            walletBalance // Pass wallet balance to the view
+            walletBalance ,
+            coupons,
+            appliedCouponCode
         });
     },
 

@@ -1,18 +1,99 @@
 const User = require("../model/userSchema");
 const Coupon = require("../model/couponSchema");
 const adminLayout = "./layouts/adminLayouts";
+const Cart = require("../model/cartSchema");
 
 module.exports = {
+  //user side
 
+  applyCoupon: async (req, res) => {
+    try {
+      let { coupon_code } = req.body;
 
-    //user side
+      const couponCode = await Coupon.findOne({ coupon_code: coupon_code });
+      if (!couponCode) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Coupon not found" });
+      }
 
-    
+      const currentDate = new Date();
+      const expiryDate = new Date(couponCode.expiry_date);
 
+      if (currentDate > expiryDate || !couponCode.isActive) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Coupon expired or inactive." });
+      }
+      const userId = req.session.user || req.session.user._id;
+      const userCart = await Cart.findOne({ userId: userId });
+      if (!userCart) {
+        return res
+          .status(404)
+          .json({ success: false, message: "User Cart not found." });
+      }
 
+      // checking cart total > min_purchase amount
+      const cartTotal = userCart.totalPrice || 0;
+      if (cartTotal < couponCode.min_purchase) {
+        return res.status(404).json({
+          success: false,
+          message: "Your cart total is less than minmum purchase amount.",
+        });
+      }
 
+      //checking coupon already applied or not
+      if (
+        userCart.coupon &&
+        userCart.coupon.toString() === couponCode._id.toString()
+      ) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Coupon already in use." });
+      }
 
+      //calculating amout based on discount rate
+      let discountAmount = cartTotal * (couponCode.discount_amount / 100);
 
+      userCart.couponDiscount = discountAmount;
+      userCart.coupon = couponCode._id;
+      await userCart.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Coupon successfully applied.",
+        coupon: couponCode,
+        discountAmount,
+      });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .json({ success: false, message: "An error occurred." });
+    }
+  },
+
+  removeCoupon: async (req, res) => {
+    try {
+      const userId = req.session.user || req.session.user._id;
+      const cart = await Cart.findOne({ userId: userId });
+
+      if (!cart) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Cart not found." });
+      }
+      cart.coupon = undefined;
+      cart.couponDiscount = 0;
+      await cart.save();
+      return res.status(200).json({ message: "Coupon removed successfully" });
+    } catch (error) {
+      onsole.error("Error removing coupon:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  },
+
+  
 
   //admin
   getCoupon: async (req, res) => {
@@ -74,7 +155,7 @@ module.exports = {
         description,
         min_purchase,
         discount_amount,
-        expiring_date,
+        expiry_date,
       } = req.body;
 
       if (
@@ -82,7 +163,7 @@ module.exports = {
         !description &&
         !min_purchase &&
         !discount_amount &&
-        !expiring_date
+        !expiry_date
       ) {
         req.flash("error", " You need to fill all the requiring fields");
         return res.redirect("/admin/add-promocodes");
@@ -93,14 +174,14 @@ module.exports = {
         req.flash("error", "Coupon already exist");
         return res.redirect("/admin/add-promocodes");
       }
-      const isActive = new Date(expiring_date) > new Date();
+      const isActive = new Date(expiry_date) > new Date();
 
       const addCoupon = new Coupon({
         coupon_code,
         description,
         min_purchase,
         discount_amount,
-        expiring_date,
+        expiry_date,
         isActive,
       });
 
@@ -146,28 +227,23 @@ module.exports = {
         description,
         min_purchase,
         discount_amount,
-        expiring_date,
+        expiry_date,
       } = req.body;
-      console.log(
-        "updating coupon",
-        coupon_code,
-        discount_amount,
-        expiring_date
-      );
+      console.log("updating coupon", coupon_code, discount_amount, expiry_date);
 
       const existingCoupon = await Coupon.findOne({ coupon_code: coupon_code });
       if (existingCoupon && existingCoupon._id.toString() !== req.params.id) {
         req.flash("error", "Coupon already exist");
         return res.redirect(`/admin/edit-promocodes/${req.params.id}`);
       }
-      const isActive = new Date(expiring_date) > new Date();
+      const isActive = new Date(expiry_date) > new Date();
 
       const updatingCoupon = {
         coupon_code: coupon_code,
         description: description,
         min_purchase: min_purchase,
         discount_amount: discount_amount,
-        expiring_date: expiring_date,
+        expiry_date: expiry_date,
         isActive: isActive,
       };
 

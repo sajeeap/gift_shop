@@ -30,11 +30,12 @@ const couponSchema = new Schema({
         type: Boolean,
         default: true,
     },
-    expiring_date: {
+    expiry_date: {
         type: Date,
         default: Date.now(),
         required: true,
     },
+    
 
 
 },{
