@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const userSchema = new Schema({
 
@@ -43,6 +44,29 @@ const userSchema = new Schema({
         default: Date.now,
         immutable: true,
       },
+      referralCode: {
+        type: String,
+      },
+      referralToken: {
+        type: ObjectId,
+      },
+      successfullRefferals: [{
+        date: {
+          type: Date,
+          default: Date.now,
+        },
+        username: {
+          type: String,
+        },
+        status: {
+          type: String,
+        }
+      }],
+      refferalRewards: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
       isVerified: {
         type: Boolean,
         default: false,
@@ -50,7 +74,11 @@ const userSchema = new Schema({
       wallet : {
         type:  mongoose.Schema.Types.ObjectId,
         ref: "Wallet"
-      }
+      },
+      wishlist: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "WishList",
+      },
 },
     {
         timestamps: true,

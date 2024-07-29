@@ -34,7 +34,8 @@
                                 <td><%= order.customer_id ? `${order.customer_id.firstName} ${order.customer_id.lastName}` : 'Unknown User' %></td>
                                 <td><%= order.paymentMethod %></td>
                                 <td><%= order.items.length %></td>
-                                <td><%= order.totalPrice %></td>
+                                <td>$<%= (order.totalPrice - (order.couponDiscount || 0)).toFixed(2) %></td>
+
                                 <td>
                                     <span class="badge rounded-pill
                                         <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Shipped' ? 'alert-warning' : '' %>

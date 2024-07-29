@@ -12,7 +12,7 @@ module.exports = {
         let perPage = 6;
         let page = req.query.page || 1;
 
-        const categories = await Category.find()
+        const categories = await Category.find().sort({ createdAt: -1 })
             .skip(perPage * page - perPage)
             .limit(perPage)
             .exec();
@@ -195,6 +195,26 @@ module.exports = {
             req.flash('error', 'Server error');
             res.redirect('/admin/category');
         }
-    }
+    },
+
+    getCategoryDetails: async (req, res) => {
+        const categoryId = req.params.id
+        try {
+          const category = await Category.findOne({_id: categoryId});
+          
+          if (!category) {
+            return res.status(404).json({ error: "Category not found" });
+          }
+    
+          return res.status(200).json({
+            success: true,
+            category
+          });
+        } catch (error) {
+          console.log("Error:", error);
+          return res.status(500).json({ error: "Internal Server Error" });
+        }
+        
+      },
 
 }

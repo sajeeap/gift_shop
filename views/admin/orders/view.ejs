@@ -107,14 +107,18 @@
                                                 <dt>Subtotal:</dt>
                                                 <dd>$<%= order.items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2) %></dd>
                                             </dl>
+                                            <% if (order.couponDiscount > 0) { %>
                                             <dl class="dlist">
-                                                <dt>Shipping cost:</dt>
-                                                <dd>$10.00</dd>
+                                                <dt>Coupon Discount:</dt>
+                                                <dd>-$<%= order.couponDiscount.toFixed(2) %></dd>
                                             </dl>
+                                            <% } %>
+                                            
                                             <dl class="dlist">
                                                 <dt>Grand total:</dt>
-                                                <dd> <b class="h5">$<%= (order.items.reduce((sum, item) => sum + item.price * item.quantity, 0) + 10).toFixed(2) %></b> </dd>
+                                                <dd> <b class="h5">$<%= (order.totalPrice - (order.couponDiscount || 0)).toFixed(2) %></b> </dd>
                                             </dl>
+                                            
                                             <dl class="dlist">
                                                 <dt class="text-muted">Status:</dt>
                                                 <dd>

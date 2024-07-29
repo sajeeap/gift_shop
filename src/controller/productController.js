@@ -12,7 +12,7 @@ module.exports = {
       title: 'Products'
     }
 
-    let perPage = 3;
+    let perPage = 6;
     let page = req.query.page || 1;
     const product = await Product.find().populate('category').sort({ createdAt: -1 })
       .skip(perPage * page - perPage)
@@ -150,7 +150,10 @@ module.exports = {
       locals,
       layout: adminLayout,
       product,
-      categories
+      categories,
+      
+     
+     
 
     })
   },
@@ -161,6 +164,15 @@ module.exports = {
       const product = await Product.findById(productId);
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
+      }
+
+      const existProduct = await Product.findOne({
+        name: req.body.productName.toLowerCase(),
+      });
+      if (existProduct) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Product already exist" });
       }
 
       // Handle primary image
@@ -294,6 +306,27 @@ module.exports = {
 
 
     }
-  }
+  },
+
+  // get product details for Offer
+  getProdDetails: async (req, res) => {
+    const productId = req.params.id;
+    try {
+      const product = await Product.findOne({ _id: productId });
+
+      if (!product) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Product not found" });
+      }
+
+      return res.status(200).json({ success: true, product });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
+  },
 
 }

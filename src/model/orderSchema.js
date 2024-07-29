@@ -110,9 +110,9 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    coupon: {
-      type: ObjectId,
-      ref: "Coupon",
+    appliedCoupon: { 
+      type: String,
+      default: null
     },
     couponDiscount: {
       type: Number,

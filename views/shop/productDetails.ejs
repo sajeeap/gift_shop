@@ -33,9 +33,25 @@
                         <%= product.product_name.charAt(0).toUpperCase() + product.product_name.slice(1) %>
                     </h4>
 
-                    <span class="mtext-106 cl2">
-                        $<%= product.price %>
-                    </span>
+                    <!-- Category Offer Section -->
+<% if (product.category.onOffer) { %>
+    <div class="alert alert-info mb-4" role="alert">
+        <h4 class="alert-heading">Category Offer!</h4>
+        <p class="mb-0">Items in this category are discounted by <strong><%= product.category.offerDiscountRate %>%</strong>!</p>
+    </div>
+<% } %>
+
+<!-- Product Offer Section -->
+<% if (product.onOffer) { %>
+    <div class="alert alert-success mb-4" role="alert">
+        <h4 class="alert-heading">Special Offer!</h4>
+        <p class="mb-0">Get this product for just <strong>$<%= product.offerDiscountPrice %></strong> (was <del>$<%= product.price %></del>).</p>
+        <p class="mb-0">Save <strong><%= product.offerDiscountRate %>%</strong>!</p>
+    </div>
+<% } else { %>
+    <p class="h4">$<%= product.price %></p>
+<% } %>
+
 
                     <p class="stext-102 cl3 p-t-23">
                         <%= product.description %>

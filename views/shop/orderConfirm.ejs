@@ -13,6 +13,7 @@
             <p class="mt-4">Total Price: $<%= order.totalPrice.toFixed(2) %></p>
             <p>Payment Method: <%= order.paymentMethod %></p>
             <p>Payment Status: <%= order.paymentStatus %></p>
+            <p>Applied Coupon: <%= order.appliedCoupon ? order.appliedCoupon : 'None' %></p>
       
             <a class="btn btn-primary mt-5" href="/">Continue Shopping</a>
           </div>

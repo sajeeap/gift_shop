@@ -64,31 +64,20 @@
             <div class="card mt-3">
               <div class="card-body">
                 <div class="flex-w flex-m m-r-20 m-tb-5">
-                    <input
+                  <input
                     id="couponCode"
                     class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5"
                     type="text"
                     name="coupon"
                     placeholder="Coupon Code"
-                    value="<%= appliedCouponCode || '' %>" 
+                    value="<%= appliedCouponCode || '' %>"
                   />
                   <div
-                  id="applyRemoveCouponBtn"
-                  class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5"
-                >
-                  <% if (appliedCouponCode) { %>
-                    Remove Coupon
-                  <% } else { %>
-                    Apply Coupon
-                  <% } %>
-                </div>
-                  <div
-                    id="availableCouponsBtn"
+                    id="applyRemoveCouponBtn"
                     class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5"
-                    data-toggle="modal"
-                    data-target="#couponsModal"
                   >
-                    Available Coupons
+                    <% if (appliedCouponCode) { %> Remove Coupon <% } else { %>
+                    Apply Coupon <% } %>
                   </div>
                 </div>
               </div>
@@ -121,19 +110,19 @@
                 </div>
                 <div class="modal-body">
                   <ul id="couponsList" class="list-group">
-                    <% if (coupons.length > 0) { %>
-                     <%coupons.forEach(function(coupon) { %>
+                    <% if (coupons.length > 0) { %> <%
+                    coupons.forEach(function(coupon) { %>
                     <li class="list-group-item">
                       <strong><%= coupon.coupon_code %></strong> - <%=
                       coupon.discount_amount %>% off, Min Purchase: <%=
                       coupon.min_purchase %>
                       <a
-                      href="#"
+                        href="#"
                         class="btn btn-primary apply-coupon-btn"
                         data-coupon-code="<%= coupon.coupon_code %>"
                       >
                         Apply
-                    </a>
+                      </a>
                     </li>
                     <% }) %> <% } else { %>
                     <li class="list-group-item">No available coupons</li>
@@ -211,36 +200,61 @@
         </div>
       </div>
       <!-- Cart Totals Section -->
-      <div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
-        <div
-          class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm"
-        >
-          <h4 class="mtext-109 cl2 p-b-30">Cart Totals</h4>
-          <div class="flex-w flex-t bor12 p-b-13">
-            <div class="size-208">
-              <span class="stext-110 cl2">Subtotal:</span>
-            </div>
-            <div class="size-209">
-              <span class="mtext-110 cl2">$<%= totalPrice.toFixed(2) %></span>
-            </div>
-          </div>
-          <div class="flex-w flex-t p-t-27 p-b-33">
-            <div class="size-208">
-              <span class="mtext-101 cl2">Total:</span>
-            </div>
-            <div class="size-209 p-t-1">
-              <span class="mtext-110 cl2">$<%= totalPrice.toFixed(2) %></span>
-            </div>
-          </div>
-          <input type="hidden" id="useWallet" name="useWallet" value="false" />
-          <button
-            type="submit"
-            class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
-          >
-            Pay Now
-          </button>
+<div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
+  <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
+    <h4 class="mtext-109 cl2 p-b-30">Cart Totals</h4>
+    
+    <div class="flex-w flex-t bor12 p-b-13">
+      <div class="size-208">
+        <span class="stext-110 cl2">Subtotal:</span>
+      </div>
+      <div class="size-209">
+        <span class="mtext-110 cl2">$<%= totalPrice.toFixed(2) %></span>
+      </div>
+    </div>
+
+    <!-- Coupon Details -->
+    <% if (appliedCouponCode) { %>
+      <div class="flex-w flex-t bor12 p-b-13">
+        <div class="size-208">
+          <span class="stext-110 cl2">Coupon Code:</span>
+        </div>
+        <div class="size-209">
+          <span class="mtext-110 cl2"><%= appliedCouponCode %></span>
         </div>
       </div>
+      <div class="flex-w flex-t bor12 p-b-13">
+        <div class="size-208">
+          <span class="stext-110 cl2">Discount:</span>
+        </div>
+        <div class="size-209">
+          <span class="mtext-110 cl2">-$<%= couponDiscount.toFixed(2) %></span>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="flex-w flex-t p-t-27 p-b-33">
+      <div class="size-208">
+        <span class="mtext-101 cl2">Total:</span>
+      </div>
+      <div class="size-209 p-t-1">
+        <% 
+          const discountedTotal = totalPrice - (couponDiscount || 0); 
+        %>
+        <span class="mtext-110 cl2">$<%= discountedTotal.toFixed(2) %></span>
+      </div>
+    </div>
+
+    <input type="hidden" id="useWallet" name="useWallet" value="false" />
+    <button
+      type="submit"
+      class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+    >
+      Pay Now
+    </button>
+  </div>
+</div>
+
     </div>
   </div>
 </form>
@@ -653,23 +667,70 @@
 
 <!-- coupon -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const applyRemoveCouponBtn = document.getElementById("applyRemoveCouponBtn");
-      const couponCodeInput = document.getElementById("couponCode");
-  
-      // Event listener for the Apply/Remove Coupon button
-      applyRemoveCouponBtn.addEventListener("click", function () {
-        const action = applyRemoveCouponBtn.textContent.trim();
-        if (action === "Apply Coupon") {
-          const couponCode = couponCodeInput.value;
-          applyCoupon(couponCode);
-        } else if (action === "Remove Coupon") {
-          removeCoupon();
-        }
-      });
-  
-      // Function to apply the coupon
-      function applyCoupon(couponCode) {
+  document.addEventListener("DOMContentLoaded", function () {
+    const applyRemoveCouponBtn = document.getElementById(
+      "applyRemoveCouponBtn"
+    );
+    const couponCodeInput = document.getElementById("couponCode");
+
+    // Handle click on Apply/Remove Coupon Button
+    applyRemoveCouponBtn.addEventListener("click", function () {
+      if (couponCodeInput.value) {
+        swal({
+          title: "Are you sure?",
+          text: "Do you want to remove the coupon code?",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((willDelete) => {
+          if (willDelete) {
+            fetch("/user/remove-coupon", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ coupon_code: couponCodeInput.value }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.success) {
+                  swal("Success", data.message, "success").then(() => {
+                    // Update the UI instead of reloading the page
+                    document.getElementById("couponCode").value = ""; // Clear the coupon code input
+                    document.getElementById(
+                      "applyRemoveCouponBtn"
+                    ).textContent = "Apply Coupon"; // Update button text
+                    document
+                      .getElementById("applyRemoveCouponBtn")
+                      .setAttribute("data-toggle", "modal");
+                    document
+                      .getElementById("applyRemoveCouponBtn")
+                      .setAttribute("data-target", "#couponsModal");
+                  });
+                } else {
+                  swal("Error", data.message, "error");
+                }
+              })
+              .catch((error) => {
+                console.error("Error removing coupon:", error);
+                swal(
+                  "Error",
+                  "An error occurred while removing the coupon.",
+                  "error"
+                );
+              });
+          }
+        });
+      } else {
+        // Show modal if no coupon is applied
+        $("#couponsModal").modal("show");
+      }
+    });
+
+    // Handle click on Apply button in the modal
+    document.querySelectorAll(".apply-coupon-btn").forEach((button) => {
+      button.addEventListener("click", function () {
+        const couponCode = this.getAttribute("data-coupon-code");
         fetch("/user/apply-coupon", {
           method: "POST",
           headers: {
@@ -677,57 +738,27 @@
           },
           body: JSON.stringify({ coupon_code: couponCode }),
         })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            alert("Coupon applied successfully!");
-            applyRemoveCouponBtn.textContent = "Remove Coupon"; // Change button text
-            couponCodeInput.disabled = true; // Optionally disable the input field
-          } else {
-            alert(data.message);
-          }
-        })
-        .catch(error => {
-          console.error("Error applying coupon:", error);
-          alert("An error occurred while applying the coupon.");
-        });
-      }
-  
-      // Function to remove the coupon
-      function removeCoupon() {
-        fetch("/user/remove-coupon", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            alert("Coupon removed successfully!");
-            applyRemoveCouponBtn.textContent = "Apply Coupon"; // Change button text
-            couponCodeInput.value = ""; // Clear the input field
-            couponCodeInput.disabled = false; // Enable the input field
-          } else {
-            alert(data.message);
-          }
-        })
-        .catch(error => {
-          console.error("Error removing coupon:", error);
-          alert("An error occurred while removing the coupon.");
-        });
-      }
-  
-      // Coupon modal apply button handler
-      document.querySelectorAll(".apply-coupon-btn").forEach(button => {
-        button.addEventListener("click", function (event) {
-          event.preventDefault();
-          const couponCode = this.getAttribute("data-coupon-code");
-          couponCodeInput.value = couponCode;
-          $('#couponsModal').modal('hide');
-          applyCoupon(couponCode);
-        });
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              swal("Success", "Coupon applied successfully", "success").then(
+                () => {
+                  location.reload(); // Reload the page to reflect changes
+                }
+              );
+            } else {
+              swal("Error", data.message, "error");
+            }
+          })
+          .catch((error) => {
+            console.error("Error applying coupon:", error);
+            swal(
+              "Error",
+              "An error occurred while applying the coupon.",
+              "error"
+            );
+          });
       });
     });
-  </script>
-  
+  });
+</script>

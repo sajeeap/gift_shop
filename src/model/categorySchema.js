@@ -44,6 +44,16 @@ const catogorySchema = new Schema({
         }
     ],
 
+    onOffer: {
+        type: Boolean,
+        default: false,
+      },
+      offerDiscountRate: {
+        type: Number,
+        min: 0,
+        default: 0,
+      },
+
 },
 {
     timestamps: true

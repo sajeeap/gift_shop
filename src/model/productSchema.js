@@ -9,6 +9,21 @@ const productSchema = new mongoose.Schema({
     price: {
         type: Number
     },
+  
+      onOffer: {
+        type: Boolean,
+        default: false,
+      },
+      offerDiscountPrice: {
+        type: Number,
+        min: 0,
+        default: 0
+      },
+      offerDiscountRate: {
+        type: Number,
+        min: 0,
+        default: 0
+      },
     description: {
         type: String,
         required: true,
@@ -52,7 +67,8 @@ const productSchema = new mongoose.Schema({
     numberOfPurchases: {
         type: Number,
         default: 0
-    }
+    },
+
 
 },
     {

@@ -67,6 +67,11 @@
 .btn {
     border-radius: 23px;
 }
+.btn-btn{
+  border-radius: 23px;
+  background-color: white;
+  
+}
 
 .invalid-feedback {
     color: red;
@@ -148,5 +153,41 @@
   font-size: 1.2em; /* Adjust size as needed */
   color: #6c757d; /* Adjust color as needed */
 }
+
+/* Badge styles */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.5em 0.75em;
+  border-radius: 0.2rem;
+  display: inline-block;
+}
+
+.badge-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.badge-danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/* Price display styles */
+.price-discount {
+  color: #dc3545;
+  font-weight: bold;
+  margin-right: 0.5em;
+}
+
+.price-original {
+  color: #888;
+}
+
+.price-original del {
+  color: #888;
+  text-decoration: line-through;
+}
+
+
 
 

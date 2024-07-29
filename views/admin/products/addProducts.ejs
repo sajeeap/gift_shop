@@ -9,7 +9,7 @@
 
 <!-- Main content section -->
 <section class="content-main">
-    <form id="addProductForm" action="/admin/add-product" method="post" enctype="multipart/form-data">
+    <form id="addProductForm" action="/admin/add-product" method="post" enctype="multipart/form-data" novalidate>
         <div class="row">
             <div class="col-9">
                 <div class="content-header">
@@ -34,6 +34,7 @@
                                     <option value="<%- category._id %>"><%- category.name %></option>
                                 <% }) %>
                             </select>
+                            <div class="invalid-feedback">Category is required.</div>
                         </div>
 
                         <!-- Stock and price inputs -->
@@ -73,6 +74,7 @@
                                             <img id="preview1" src="../assets/imgs/theme/upload.svg" alt="" width="150px">
                                         </label>
                                         <input type="file" class="form-control" id="image1" style="display: none;" name="primaryImage" required>
+                                        <div class="invalid-feedback">Primary image is required.</div>
                                         <button type="button" class="btn btn-md rounded font-sm" onclick="document.getElementById('image1').click();">Upload Image</button>
                                     </div>
                                 </div>
@@ -144,6 +146,7 @@
 
 
 
+
 <!-- Cropper.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.js"></script>
 <script defer>
@@ -152,129 +155,82 @@
     let originalFileNames = {};
 
     document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById('image1').addEventListener('change', function () { prepareImageForCropping('image1', 'preview1'); });
-        document.getElementById('image2').addEventListener('change', function () { prepareImageForCropping('image2', 'preview2'); });
-        document.getElementById('image3').addEventListener('change', function () { prepareImageForCropping('image3', 'preview3'); });
+    document.getElementById('image1').addEventListener('change', function () { prepareImageForCropping('image1', 'preview1'); });
+    document.getElementById('image2').addEventListener('change', function () { prepareImageForCropping('image2', 'preview2'); });
+    document.getElementById('image3').addEventListener('change', function () { prepareImageForCropping('image3', 'preview3'); });
 
-        document.getElementById('cropImageBtn').addEventListener('click', function () {
-            performCropping();
-        });
+    document.getElementById('cropImageBtn').addEventListener('click', function () {
+        performCropping();
+    });
 
-        $('#imageCropModal').on('shown.bs.modal', function () {
-            let image = document.getElementById('imageToCrop');
-            cropper = new Cropper(image, {
-                aspectRatio: 1,
-                viewMode: 1,
-                dragMode: "move",
-                minContainerWidth: 450,
-                minContainerHeight: 500,
-                minCropBoxWidth: 400,
-                minCropBoxHeight: 400,
-                minCanvasHeight: 500,
-                minCanvasWidth: 500,
-            });
-        });
-
-        $('#imageCropModal').on('hidden.bs.modal', function () {
-            if (cropper) {
-                cropper.destroy();
-                cropper = null;
-            }
-        });
-
-        const stockInput = document.querySelector('input[name="productStock"]');
-        const priceInput = document.querySelector('input[name="price"]');
-        const titleInput = document.querySelector('input[name="productName"]');
-        const descriptionInput = document.querySelector('textarea[name="productDespt"]');
-
-        stockInput.addEventListener('input', function () {
-            if (stockInput.value < 0) {
-                stockInput.setCustomValidity('Stock cannot be negative.');
-                stockInput.reportValidity();
-            } else {
-                stockInput.setCustomValidity('');
-            }
-        });
-
-        priceInput.addEventListener('input', function () {
-            if (priceInput.value < 0) {
-                priceInput.setCustomValidity('Price cannot be negative.');
-                priceInput.reportValidity();
-            } else {
-                priceInput.setCustomValidity('');
-            }
-        });
-
-        document.getElementById('addProductForm').addEventListener('submit', function (e) {
-            if (stockInput.value < 0) {
-                e.preventDefault();
-                stockInput.setCustomValidity('Stock cannot be negative.');
-                stockInput.reportValidity();
-            } else {
-                stockInput.setCustomValidity('');
-            }
-
-            if (priceInput.value < 0) {
-                e.preventDefault();
-                priceInput.setCustomValidity('Price cannot be negative.');
-                priceInput.reportValidity();
-            } else {
-                priceInput.setCustomValidity('');
-            }
-
-            if (titleInput.value.trim() === "") {
-                e.preventDefault();
-                titleInput.setCustomValidity('Product title is required.');
-                titleInput.reportValidity();
-            } else {
-                titleInput.setCustomValidity('');
-            }
-
-            if (descriptionInput.value.trim() === "") {
-                e.preventDefault();
-                descriptionInput.setCustomValidity('Product description is required.');
-                descriptionInput.reportValidity();
-            } else {
-                descriptionInput.setCustomValidity('');
-            }
+    $('#imageCropModal').on('shown.bs.modal', function () {
+        let image = document.getElementById('imageToCrop');
+        cropper = new Cropper(image, {
+            aspectRatio: 1,
+            viewMode: 1,
+            dragMode: "move",
+            minContainerWidth: 450,
+            minContainerHeight: 500,
+            minCropBoxWidth: 400,
+            minCropBoxHeight: 400,
+            minCanvasHeight: 500,
+            minCanvasWidth: 500,
         });
     });
 
-    function prepareImageForCropping(inputId, previewId) {
-        currentInputId = inputId;
-        currentPreviewId = previewId;
-        const input = document.getElementById(inputId);
-        const file = input.files[0];
-        const newDate = new Date().getTime();
-        originalFileNames[inputId] = `${file.name}_${newDate}`;
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            document.getElementById('imageToCrop').src = e.target.result;
-            $('#imageCropModal').modal('show');
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function performCropping() {
-        if (!cropper) {
-            console.error("Cropper is not initialized.");
-            return;
+    $('#imageCropModal').on('hidden.bs.modal', function () {
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
         }
+    });
 
-        cropper.getCroppedCanvas().toBlob((blob) => {
-            const previewId = currentPreviewId;
-            const file = new File([blob], originalFileNames[currentInputId], { type: 'image/png' });
+    const addProductForm = document.getElementById('addProductForm');
+    addProductForm.addEventListener('submit', function (e) {
+        if (!addProductForm.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        addProductForm.classList.add('was-validated');
+    });
+});
 
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            document.getElementById(currentInputId).files = dataTransfer.files;
+function prepareImageForCropping(inputId, previewId) {
+    currentInputId = inputId;
+    currentPreviewId = previewId;
+    const input = document.getElementById(inputId);
+    const file = input.files[0];
+    const newDate = new Date().getTime();
+    originalFileNames[inputId] = `${file.name}_${newDate}`;
 
-            const preview = document.getElementById(currentPreviewId);
-            preview.src = URL.createObjectURL(blob);
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        document.getElementById('imageToCrop').src = e.target.result;
+        $('#imageCropModal').modal('show');
+    };
+    reader.readAsDataURL(file);
+}
 
-            croppedImages[currentInputId] = blob;
-            $('#imageCropModal').modal('hide');
-        }, 'image/png');
+function performCropping() {
+    if (!cropper) {
+        console.error("Cropper is not initialized.");
+        return;
     }
+
+    cropper.getCroppedCanvas().toBlob((blob) => {
+        const previewId = currentPreviewId;
+        const file = new File([blob], originalFileNames[currentInputId], { type: 'image/png' });
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        document.getElementById(currentInputId).files = dataTransfer.files;
+
+        const preview = document.getElementById(currentPreviewId);
+        preview.src = URL.createObjectURL(blob);
+
+        croppedImages[currentInputId] = blob;
+        $('#imageCropModal').modal('hide');
+    }, 'image/png');
+}
+
 </script>

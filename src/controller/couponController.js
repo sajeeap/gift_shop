@@ -83,13 +83,13 @@ module.exports = {
           .status(404)
           .json({ success: false, message: "Cart not found." });
       }
-      cart.coupon = undefined;
+      cart.coupon = null;
       cart.couponDiscount = 0;
       await cart.save();
-      return res.status(200).json({ message: "Coupon removed successfully" });
+      return res.status(200).json({  success: true,message: "Coupon removed successfully" });
     } catch (error) {
       onsole.error("Error removing coupon:", error);
-      return res.status(500).json({ message: "Internal server error" });
+      return res.status(500).json({success: false, message: "Internal server error" });
     }
   },
 

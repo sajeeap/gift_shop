@@ -30,6 +30,15 @@ const setDefaultAddress = async (req, res) => {
 
 }
 
+function generateRefferalCode(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let referralCode = '';
+    for (let i = 0; i < length; i++) {
+        referralCode += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return referralCode;
+  }
+
 module.exports = {
 
     //profile
@@ -39,6 +48,18 @@ module.exports = {
         try {
             const userId = req.session.user._id;
             const user = await User.findById(userId);
+
+            
+        if(!user.referralCode){
+            const refferalCode = generateRefferalCode(8);
+      
+            user.referralCode = refferalCode;
+            await user.save();
+          }
+      
+          console.log(user);
+      
+          successfullRefferals = user.successfullRefferals.reverse();
 
             if (!user) {
                 return res.status(404).send('User not found');
@@ -55,6 +76,7 @@ module.exports = {
                 customer_id: userId,
                 delete: false
             });
+
 
 
 
@@ -80,7 +102,9 @@ module.exports = {
                 orders,
                 cart,
                 wishlist,
-                wallet: wallet || { balance: 0, transactions: [] }
+                wallet: wallet || { balance: 0, transactions: [] },
+                refferalCode: user.referralCode,
+          successfullRefferals
 
 
             });
@@ -401,6 +425,11 @@ module.exports = {
             res.status(500).send('Internal Server Error');
         }
     },
+
+
+    //referral
+
+   
     
 
 

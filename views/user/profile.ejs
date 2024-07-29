@@ -28,6 +28,7 @@
                   aria-selected="true"
                   >Account
                 </a>
+                
                 <a
                   href="#"
                   class="nav-link"
@@ -77,6 +78,18 @@
                   aria-selected="false"
                   >Address
                 </a>
+                <a
+                  href="#"
+                  class="nav-link"
+                  id="v-pills-referral-tab"
+                  data-bs-toggle="pill"
+                  data-bs-target="#v-pills-referral"
+                  type="button"
+                  role="tab"
+                  aria-controls="v-pills-referral"
+                  aria-selected="false"
+                  >Refferal
+                </a>
               </div>
             </div>
           </div>
@@ -102,6 +115,7 @@
                           <%= user.firstName %> <%= user.lastName %>
                         </h3>
                         <p>Update Profile</p>
+                        
                       </div>
                       <hr />
                     </div>
@@ -273,7 +287,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-12 mb-3">
+                  <div class="col-lg-12 mb-3">
                     <h4 class="mb-4">Transactions</h4>
                     <hr />
                     <% if (wallet.transactions && wallet.transactions.length> 0)
@@ -343,7 +357,7 @@
                           <th class="column-5">Action</th>
                         </tr>
 
-                        <% orders.forEach(order=> { %>
+                        <% orders.forEach(order => { %>
                         <tr class="table_row">
                           <td class="column-1"><%= order._id %></td>
                           <td class="column-2">
@@ -351,12 +365,13 @@
                           </td>
                           <td class="column-3"><%= order.status %></td>
                           <td class="column-4">
-                            $<%= order.items.reduce((total, item)=> total +
-                            item.itemTotal, 0) %>
+                            $<%= (order.items.reduce((total, item) => total +
+                            item.itemTotal, 0) -
+                            order.couponDiscount).toFixed(2) %>
                           </td>
                           <td class="column-5">
-                            <% if (order.status==='Processing' ||
-                            order.status==='Pending' ) { %>
+                            <% if (order.status === 'Processing' || order.status
+                            === 'Pending') { %>
                             <button
                               type="button"
                               class="btn btn-primary btn-sm"
@@ -406,26 +421,23 @@
                               </div>
                               <div class="modal-body">
                                 <p class="mt-2">
-                                  <strong>Order ID:</strong>
-                                  <%= order._id %>
+                                  <strong>Order ID:</strong> <%= order._id %>
                                 </p>
                                 <p>
-                                  <strong>Date:</strong>
-                                  <%= new Date(order.createdAt).toDateString()
-                                  %>
+                                  <strong>Date:</strong> <%= new
+                                  Date(order.createdAt).toDateString() %>
                                 </p>
                                 <p>
-                                  <strong>Status:</strong>
-                                  <%= order.status %>
+                                  <strong>Status:</strong> <%= order.status %>
                                 </p>
 
                                 <h5 class="mt-5 mb-2">Ordered Items:</h5>
                                 <hr />
-                                <% order.items.forEach(item=> { %>
+                                <% order.items.forEach(item => { %>
                                 <div class="row">
                                   <div class="col">
                                     <% if (item.product_id.primaryImages &&
-                                    item.product_id.primaryImages.length> 0) {
+                                    item.product_id.primaryImages.length > 0) {
                                     %>
                                     <img
                                       src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
@@ -441,9 +453,9 @@
                                   <div class="col"><%= item.quantity %></div>
                                   <div class="col">$<%= item.price %></div>
                                   <div class="col">
-                                    <% if (item.status !=='Cancelled' &&
-                                    (order.status==='Processing' ||
-                                    order.status==='Pending' )) { %>
+                                    <% if (item.status !== 'Cancelled' &&
+                                    (order.status === 'Processing' ||
+                                    order.status === 'Pending')) { %>
                                     <button
                                       class="btn btn-danger cancel-order"
                                       data-order-id="<%= order._id %>"
@@ -459,11 +471,40 @@
                                 <div class="row">
                                   <div class="col"></div>
                                   <div class="col"></div>
+                                  <div class="col">
+                                    <strong>Subtotal</strong>
+                                  </div>
+                                  <div class="col">
+                                    <strong
+                                      >$<%= order.items.reduce((total, item) =>
+                                      total + item.itemTotal, 0).toFixed(2)
+                                      %></strong
+                                    >
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col"></div>
+                                  <div class="col"></div>
+                                  <div class="col">
+                                    <strong>Coupon Discount</strong>
+                                  </div>
+                                  <div class="col">
+                                    <strong
+                                      >-$<%= order.couponDiscount.toFixed(2)
+                                      %></strong
+                                    >
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col"></div>
+                                  <div class="col"></div>
                                   <div class="col"><strong>Total</strong></div>
                                   <div class="col">
                                     <strong
-                                      >$<%= order.items.reduce((total, item)=>
-                                      total + item.itemTotal, 0) %></strong
+                                      >$<%= (order.items.reduce((total, item) =>
+                                      total + item.itemTotal, 0) -
+                                      order.couponDiscount).toFixed(2)
+                                      %></strong
                                     >
                                   </div>
                                 </div>
@@ -480,6 +521,7 @@
                             </div>
                           </div>
                         </div>
+
                         <% }); %>
                       </table>
                     </div>
@@ -569,6 +611,59 @@
                   <% } %>
                 </div>
               </div>
+
+              
+              <div
+                class="tab-pane fade"
+                id="v-pills-referral-tab"
+                role="tabpanel"
+                aria-labelledby="#v-pills-referral"
+                tabindex="0"
+              >
+                <div class="row">
+                  <div class="col-md-12 mb-4">
+                    <div class="form-outline">
+                      <h3 class="text-capitalize">My Orders</h3>
+                    </div>
+                    <hr />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
+                    <div class="wrap-table-shopping-cart">
+                      <table class="table-shopping-cart">
+                        <tr class="table_head">
+                          <th class="column-1">Name</th>
+                          <th class="column-2">Email</th>
+                          <th class="column-3">Joined Date</th>
+                        
+                        </tr>
+                        <% if (successfullRefferals && successfullRefferals.length !== 0 ) { %>
+                        <% successfullRefferals.forEach(element => { %>
+                        <tr class="table_row">
+                          <td class="column-1"><%= element.date.toDateString() %></td>
+                          <td class="column-2"></td>
+                          <td class="column-1"><%- element.status %></td>
+                          
+                      
+                          
+                        </tr>
+
+                      
+
+                        <% }); %>
+                        <% } else { %>
+            <tr>
+              <td colspan="4" class="text-center">No refferals yet</td>
+            </tr>
+            <% } %>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
             </div>
           </div>
         </div>

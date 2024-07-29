@@ -171,7 +171,7 @@ module.exports = {
         const locals = {
             title: "Product Details",
         }
-
+        
         const product = await Product.findById(req.params.id).populate("category");
         const wishlist = await Wishlist.findOne({ user_id:req.session.user }).populate("products");
         let cart = await Cart.findOne({userId:req.session.user}).populate("items");

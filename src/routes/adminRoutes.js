@@ -8,6 +8,8 @@ const productController = require("../controller/productController")
 const orderController = require("../controller/orderController")
 const { productUpload, upload } = require("../middleware/multer");
 const coupenController = require("../controller/couponController")
+const salesReportController = require("../controller/reportController")
+const offerController = require("../controller/offerController")
 
 
 const { isAdminLoggedIn } = require("../middleware/authMiddleware");
@@ -109,6 +111,35 @@ router
   .post(isAdminLoggedIn,coupenController.editCoupon)
 
   router.get('/delete-promocodes/:id', isAdminLoggedIn, couponController.deleteCoupon)
+
+
+  //sales report
+ // Route to get sales report
+router.get('/sales-report', salesReportController.getSalesReport);
+
+// Route to export sales report to Excel
+router.get('/sales-report/export/excel', salesReportController.exportToExcel);
+
+// Route to export sales report to PDF
+router.get('/sales-report/export/pdf', salesReportController.exportToPdf);
+
+
+//offer managemnt
+// Category Offer
+router.get('/category-offers', offerController.getCategoryOffers)
+router.get('/category-details/:id', categoryController.getCategoryDetails)
+router.patch('/category-offer/:id', offerController.addCatOffer)
+router.patch('/toggle-active-category/:id', offerController.toggleActiveCatOffer)
+
+// Product Offer
+router.get('/product-offers', offerController.getProductOffers)
+router.get('/product-details/:id', productController.getProdDetails)
+router.patch('/product-offer/:id', offerController.addProdOffer)
+router.patch('/toggle-active-product/:id', offerController.toggleActiveProdOffer)
+
+module.exports = router;
+  
+
 
 
 
