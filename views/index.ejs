@@ -46,54 +46,82 @@
 
 <!-- New Arrivals -->
 <section class="bg0 p-t-23 p-b-50">
-    <div class="container">
-        <div class="p-b-10">
-            <h3 class="ltext-103 cl5 text-center mt-5 mb-5">
-                New Arrivals
-            </h3>
-        </div>
+	<div class="container">
+		<div class="p-b-10">
+			<h3 class="ltext-103 cl5 text-center mt-5 mb-5">
+				New Arrivals
+			</h3>
+		</div>
 
-        <div class="row isotope-grid">
-            <% products.filter(product => !product.isDeleted).slice(0, 8).forEach(product => { %>
-                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-                    <!-- Block2 -->
-                    <div class="block2">
-                        <div class="block2-pic hov-img0">
-                            <a href="/product-details/<%- product._id %>">
-                                <img src="/uploads/products-images/crp/<%- product.primaryImages[0] ? product.primaryImages[0].name : product.secondaryImages[0].name %>"
-                                     alt="IMG-PRODUCT">
-                            </a>
-                        </div>
+		<!-- Home Page Product Grid -->
+		<div class="row isotope-grid">
+			<% products.forEach(product=> { %>
+				<% if (!product.isDeleted) { %>
+					<div
+						class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item <%= product.category ? product.category.name : 'no-category' %>">
+						<!-- Block2 -->
+						<div class="block2">
+							<div class="block2-pic">
+								<a href="/product-details/<%= product._id %>">
+									<img src="/uploads/products-images/crp/<%= product?.primaryImages[0].name %>"
+										alt="IMG-PRODUCT" width="100%">
+									<% if (product.onOffer) { %>
+										<span class="badge badge-warning">On Offer</span>
+										<% } %>
+								</a>
+							</div>
 
-                        <div class="block2-txt flex-w flex-t p-t-14">
-                            <div class="block2-txt-child1 flex-col-l ">
-                                <p class="stext-109">
-                                    <%= product.category.name.charAt(0).toUpperCase() + product.category.name.slice(1) %>
-									
-                                </p>
-                                <a href="#" class="stext-106 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                    <%= product.product_name.charAt(0).toUpperCase() + product.product_name.slice(1) %>
-                                </a>
+							<div class="block2-txt flex-w flex-t p-t-14">
+								<div class="block2-txt-child1 flex-col-l">
+									<a href="/product-details/<%= product._id %>"
+										class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+										<%= product.product_name.charAt(0).toUpperCase() + product.product_name.slice(1)
+											%>
+									</a>
+									<span class="stext-105 cl3">
+										<% if (product.onOffer) { %>
+											<span class="price-discount">$<%= product.offerDiscountPrice %>.00</span>
+											<span class="price-original"><del>$<%= product.price %>.00</del></span>
+											<% } else { %>
+												$<%= product.price %>.00
+													<% } %>
+									</span>
+								</div>
 
-                                <span class="stext-105 cl3">
-                                    $<%= product.price %>.00
-                                </span>
-                            </div>
+								<div class="block2-txt-child2 flex-r p-t-3">
+									<% const isInWishlist=wishlist && wishlist.products && wishlist.products.some(item=>
+										item._id.toString() === product._id.toString()); %>
+										<% if (isInWishlist) { %>
+											<a href="#" class="btn-addwish-b2 dis-block pos-relative add-to-wishlist"
+												data-product-id="<%= product._id %>">
+												<img class="icon-heart1 dis-block trans-04"
+													src="/images/icons/icon-heart-02.png" alt="ICON">
+												<img class="icon-heart2 dis-block trans-04 ab-t-l"
+													src="/images/icons/icon-heart-01.png" alt="ICON">
+											</a>
+											<% } else { %>
+												<a href="#"
+													class="btn-addwish-b2 dis-block pos-relative add-to-wishlist"
+													data-product-id="<%= product._id %>">
+													<img class="icon-heart1 dis-block trans-04"
+														src="/images/icons/icon-heart-01.png" alt="ICON">
+													<img class="icon-heart2 dis-block trans-04 ab-t-l"
+														src="/images/icons/icon-heart-02.png" alt="ICON">
+												</a>
+												<% } %>
+								</div>
+							</div>
+						</div>
+					</div>
+					<% } %>
+						<% }) %>
+		</div>
 
-                            <div class="block2-txt-child2 flex-r p-t-3">
-                                <a href="#" class="btn-addwish-b2 dis-block pos-relative   add-to-wishlist" data-product-id="<%= product._id %>">
-                                    <img class="icon-heart1 dis-block trans-04" src="/images/icons/icon-heart-01.png"
-                                         alt="ICON">
-                                    <img class="icon-heart2 dis-block trans-04 ab-t-l"
-                                         src="/images/icons/icon-heart-02.png" alt="ICON">
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <% }) %>
-        </div>
-    </div>
+
+
+	</div>
+
+	</div>
 </section>
 
 
@@ -530,29 +558,29 @@
 			},
 			body: JSON.stringify({ productId }),
 		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.success) {
-				Swal.fire({
-					icon: 'success',
-					title: 'Added to Wishlist',
-					text: 'Product added to your wishlist successfully!',
-				});
-			} else {
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					Swal.fire({
+						icon: 'success',
+						title: 'Added to Wishlist',
+						text: 'Product added to your wishlist successfully!',
+					});
+				} else {
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Failed to add product to wishlist: ' + data.message,
+					});
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
 				Swal.fire({
 					icon: 'error',
-					title: 'Error',
-					text: 'Failed to add product to wishlist: ' + data.message,
+					title: 'Server Error',
+					text: 'An error occurred while adding product to wishlist',
 				});
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-			Swal.fire({
-				icon: 'error',
-				title: 'Server Error',
-				text: 'An error occurred while adding product to wishlist',
 			});
-		});
 	}
 </script>

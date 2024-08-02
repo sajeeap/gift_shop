@@ -35,7 +35,7 @@ module.exports = {
 
       // checking cart total > min_purchase amount
       const cartTotal = userCart.totalPrice || 0;
-      if (cartTotal < couponCode.min_purchase) {
+      if (cartTotal > couponCode.min_purchase) {
         return res.status(404).json({
           success: false,
           message: "Your cart total is less than minmum purchase amount.",

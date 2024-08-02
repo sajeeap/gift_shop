@@ -1,94 +1,38 @@
 <!-- Profile form-->
 
 <section class="user-profile-page">
-  <div
-    class="px-4 py-5 px-md-5 text-lg-start"
-    style="background-color: hsl(0, 0%, 96%)"
-  >
+  <div class="px-4 py-5 px-md-5 text-lg-start" style="background-color: hsl(0, 0%, 96%)">
     <div class="row gx-lg-5 justify-content-center">
       <div class="col-lg-3 mb-5 mb-lg-0">
         <div class="card">
           <div class="card-body py-5 px-md-5">
             <div class="d-flex">
-              <div
-                class="nav flex-column nav-pills me-3"
-                id="v-pills-tab"
-                role="tablist"
-                aria-orientation="vertical"
-              >
-                <a
-                  href="#"
-                  class="nav-link active"
-                  id="v-pills-account-tab"
-                  data-bs-toggle="pill"
-                  data-bs-target="#v-pills-account"
-                  type="button"
-                  role="tab"
-                  aria-controls="v-pills-account"
-                  aria-selected="true"
-                  >Account
-                </a>
-                
-                <a
-                  href="#"
-                  class="nav-link"
-                  id="v-pills-password-tab"
-                  data-bs-toggle="pill"
-                  data-bs-target="#v-pills-password"
-                  type="button"
-                  role="tab"
-                  aria-controls="v-pills-password"
-                  aria-selected="false"
-                  >Change Password
-                </a>
-                <a
-                  href="#"
-                  class="nav-link"
-                  id="v-pills-wallet-tab"
-                  data-bs-toggle="pill"
-                  data-bs-target="#v-pills-wallet"
-                  type="button"
-                  role="tab"
-                  aria-controls="v-pills-wallet"
-                  aria-selected="false"
-                  >Wallet
-                </a>
-                <a
-                  href="#"
-                  class="nav-link"
-                  id="v-pills-orders-tab"
-                  data-bs-toggle="pill"
-                  data-bs-target="#v-pills-orders"
-                  type="button"
-                  role="tab"
-                  aria-controls="v-pills-orders"
-                  aria-selected="false"
-                  >Orders
+              <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a href="#" class="nav-link active" id="v-pills-account-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-account" type="button" role="tab" aria-controls="v-pills-account"
+                  aria-selected="true">Account
                 </a>
 
-                <a
-                  href="#"
-                  class="nav-link"
-                  id="v-pills-address-tab"
-                  data-bs-toggle="pill"
-                  data-bs-target="#v-pills-address"
-                  type="button"
-                  role="tab"
-                  aria-controls="v-pills-address"
-                  aria-selected="false"
-                  >Address
+                <a href="#" class="nav-link" id="v-pills-password-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-password" type="button" role="tab" aria-controls="v-pills-password"
+                  aria-selected="false">Change Password
                 </a>
-                <a
-                  href="#"
-                  class="nav-link"
-                  id="v-pills-referral-tab"
-                  data-bs-toggle="pill"
-                  data-bs-target="#v-pills-referral"
-                  type="button"
-                  role="tab"
-                  aria-controls="v-pills-referral"
-                  aria-selected="false"
-                  >Refferal
+                <a href="#" class="nav-link" id="v-pills-wallet-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-wallet" type="button" role="tab" aria-controls="v-pills-wallet"
+                  aria-selected="false">Wallet
+                </a>
+                <a href="#" class="nav-link" id="v-pills-orders-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-orders" type="button" role="tab" aria-controls="v-pills-orders"
+                  aria-selected="false">Orders
+                </a>
+
+                <a href="#" class="nav-link" id="v-pills-address-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-address" type="button" role="tab" aria-controls="v-pills-address"
+                  aria-selected="false">Address
+                </a>
+                <a href="#" class="nav-link" id="v-pills-referral-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-referral" type="button" role="tab" aria-controls="v-pills-referral"
+                  aria-selected="false">Refferal
                 </a>
               </div>
             </div>
@@ -100,22 +44,18 @@
           <div class="card-body py-5 px-md-5">
             <div class="tab-content" id="v-pills-tabContent">
               <!-- Account -->
-              <div
-                class="tab-pane fade show active"
-                id="v-pills-account"
-                role="tabpanel"
-                aria-labelledby="v-pills-home-tab"
-                tabindex="0"
-              >
+              <div class="tab-pane fade show active" id="v-pills-account" role="tabpanel"
+                aria-labelledby="v-pills-home-tab" tabindex="0">
                 <form id="update_profile" action="/user/profile" method="post">
                   <div class="row">
                     <div class="col-md-12 mb-4">
                       <div class="form-outline">
                         <h3 class="text-capitalize" id="username">
-                          <%= user.firstName %> <%= user.lastName %>
+                          <%= user.firstName %>
+                            <%= user.lastName %>
                         </h3>
                         <p>Update Profile</p>
-                        
+
                       </div>
                       <hr />
                     </div>
@@ -124,59 +64,31 @@
                   <div class="row">
                     <div class="col-md-6 mb-4">
                       <div class="form-outline">
-                        <label for="firstName" class="form-label text-left"
-                          >First Name</label
-                        >
-                        <input
-                          name="firstName"
-                          type="text"
-                          class="form-control"
-                          id="firstName"
-                          placeholder="First Name"
-                          value="<%= user.firstName %>"
-                        />
+                        <label for="firstName" class="form-label text-left">First Name</label>
+                        <input name="firstName" type="text" class="form-control" id="firstName" placeholder="First Name"
+                          value="<%= user.firstName %>" />
                         <small class="text-danger"></small>
                       </div>
                     </div>
                     <div class="col-md-6 mb-4">
                       <div class="form-outline">
-                        <label for="lastName" class="form-label text-left"
-                          >Last Name</label
-                        >
-                        <input
-                          name="lastName"
-                          type="text"
-                          class="form-control"
-                          id="lastName"
-                          placeholder="Last Name"
-                          value="<%= user.lastName %>"
-                        />
+                        <label for="lastName" class="form-label text-left">Last Name</label>
+                        <input name="lastName" type="text" class="form-control" id="lastName" placeholder="Last Name"
+                          value="<%= user.lastName %>" />
                         <small class="text-danger"></small>
                       </div>
                     </div>
                   </div>
 
                   <div class="form-outline mb-4">
-                    <label for="email" class="form-label text-left"
-                      >Email</label
-                    >
-                    <input
-                      name="email"
-                      type="email"
-                      class="form-control"
-                      id="email"
-                      value="<%= user.email %>"
-                      placeholder="example@gmail.com"
-                      disabled
-                    />
+                    <label for="email" class="form-label text-left">Email</label>
+                    <input name="email" type="email" class="form-control" id="email" value="<%= user.email %>"
+                      placeholder="example@gmail.com" disabled />
                     <small class="text-danger"></small>
                   </div>
 
                   <div class="flex-c-m">
-                    <button
-                      type="submit"
-                      class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
-                    >
+                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
                       Update
                     </button>
                   </div>
@@ -184,13 +96,8 @@
               </div>
 
               <!-- change password -->
-              <div
-                class="tab-pane fade"
-                id="v-pills-password"
-                role="tabpanel"
-                aria-labelledby="v-pills-profile-tab"
-                tabindex="0"
-              >
+              <div class="tab-pane fade" id="v-pills-password" role="tabpanel" aria-labelledby="v-pills-profile-tab"
+                tabindex="0">
                 <div class="row">
                   <div class="col-md-12 mb-4">
                     <div class="form-outline">
@@ -200,52 +107,21 @@
                   </div>
                 </div>
                 <!-- change password -->
-                <form
-                  id="changePasswordForm"
-                  action="/user/change-password"
-                  method="POST"
-                >
+                <form id="changePasswordForm" action="/user/change-password" method="POST">
                   <div class="form-outline mb-4">
-                    <label for="currentPassword" class="form-label text-left"
-                      >Current Password</label
-                    >
-                    <input
-                      name="currentPassword"
-                      type="password"
-                      class="form-control"
-                      id="currentPassword"
-                      required
-                    />
+                    <label for="currentPassword" class="form-label text-left">Current Password</label>
+                    <input name="currentPassword" type="password" class="form-control" id="currentPassword" required />
                   </div>
                   <div class="form-outline mb-4">
-                    <label for="newPassword" class="form-label text-left"
-                      >New Password</label
-                    >
-                    <input
-                      name="newPassword"
-                      type="password"
-                      class="form-control"
-                      id="newPassword"
-                      required
-                    />
+                    <label for="newPassword" class="form-label text-left">New Password</label>
+                    <input name="newPassword" type="password" class="form-control" id="newPassword" required />
                   </div>
                   <div class="form-outline mb-4">
-                    <label for="confirmPassword" class="form-label text-left"
-                      >Confirm Password</label
-                    >
-                    <input
-                      name="confirmPassword"
-                      type="password"
-                      class="form-control"
-                      id="confirmPassword"
-                      required
-                    />
+                    <label for="confirmPassword" class="form-label text-left">Confirm Password</label>
+                    <input name="confirmPassword" type="password" class="form-control" id="confirmPassword" required />
                   </div>
                   <div class="flex-c-m">
-                    <button
-                      type="submit"
-                      class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
-                    >
+                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
                       Confirm
                     </button>
                   </div>
@@ -253,13 +129,8 @@
               </div>
 
               <!-- Wallet -->
-              <div
-                class="tab-pane fade"
-                id="v-pills-wallet"
-                role="tabpanel"
-                aria-labelledby="v-pills-wallet-tab"
-                tabindex="0"
-              >
+              <div class="tab-pane fade" id="v-pills-wallet" role="tabpanel" aria-labelledby="v-pills-wallet-tab"
+                tabindex="0">
                 <div class="row">
                   <div class="col-md-12 mb-4">
                     <div class="wallet-title">
@@ -273,12 +144,9 @@
                   <div class="col-lg-6 mb-3">
                     <div class="card mb-3">
                       <div class="card-body">
-                        <h4>Balance: $ <%= wallet.balance %></h4>
-                        <button
-                          class="btn bg1 cl0 bor1 mt-3"
-                          data-bs-toggle="modal"
-                          data-bs-target="#addMoneyModal"
-                        >
+                        <h4>Balance: $ <%= wallet.balance %>
+                        </h4>
+                        <button class="btn bg1 cl0 bor1 mt-3" data-bs-toggle="modal" data-bs-target="#addMoneyModal">
                           + Add Money
                         </button>
                       </div>
@@ -291,52 +159,44 @@
                     <h4 class="mb-4">Transactions</h4>
                     <hr />
                     <% if (wallet.transactions && wallet.transactions.length> 0)
-                    { %> <% wallet.transactions.forEach(function(transaction) {
-                    %>
+                      { %> <% wallet.transactions.forEach(function(transaction) { %>
 
-                    <div
-                      class="card mb-3"
-                      id="transaction-<%= transaction._id %>"
-                    >
-                      <div class="card-body">
-                        <div class="transaction-date">
-                          <strong>Date:</strong>
-                          <%= new Date(transaction.date).toLocaleString() %>
+                        <div class="card mb-3" id="transaction-<%= transaction._id %>">
+                          <div class="card-body">
+                            <div class="transaction-date">
+                              <strong>Date:</strong>
+                              <%= new Date(transaction.date).toLocaleString() %>
+                            </div>
+
+                            <div class="transaction-amount">
+                              <strong>Amount:</strong> $<%= transaction.amount %>
+                            </div>
+
+                            <div class="transaction-type">
+                              <strong>Type:</strong>
+                              <%= transaction.type %>
+                            </div>
+
+                            <% if (transaction.message) { %>
+                              <div class="transaction-message">
+                                <strong>Message:</strong>
+                                <%= transaction.message %>
+                              </div>
+                              <% } %>
+                          </div>
                         </div>
 
-                        <div class="transaction-amount">
-                          <strong>Amount:</strong> $<%= transaction.amount %>
-                        </div>
-
-                        <div class="transaction-type">
-                          <strong>Type:</strong>
-                          <%= transaction.type %>
-                        </div>
-
-                        <% if (transaction.message) { %>
-                        <div class="transaction-message">
-                          <strong>Message:</strong>
-                          <%= transaction.message %>
-                        </div>
-                        <% } %>
-                      </div>
-                    </div>
-
-                    <% }); %> <% } else { %>
-                    <p>No transactions found.</p>
-                    <% } %>
+                        <% }); %>
+                          <% } else { %>
+                            <p>No transactions found.</p>
+                            <% } %>
                   </div>
                 </div>
               </div>
 
               <!-- Orders -->
-              <div
-                class="tab-pane fade"
-                id="v-pills-orders"
-                role="tabpanel"
-                aria-labelledby="v-pills-profile-tab"
-                tabindex="0"
-              >
+              <div class="tab-pane fade" id="v-pills-orders" role="tabpanel" aria-labelledby="v-pills-profile-tab"
+                tabindex="0">
                 <div class="row">
                   <div class="col-md-12 mb-4">
                     <div class="form-outline">
@@ -357,172 +217,146 @@
                           <th class="column-5">Action</th>
                         </tr>
 
-                        <% orders.forEach(order => { %>
-                        <tr class="table_row">
-                          <td class="column-1"><%= order._id %></td>
-                          <td class="column-2">
-                            <%= new Date(order.createdAt).toDateString() %>
-                          </td>
-                          <td class="column-3"><%= order.status %></td>
-                          <td class="column-4">
-                            $<%= (order.items.reduce((total, item) => total +
-                            item.itemTotal, 0) -
-                            order.couponDiscount).toFixed(2) %>
-                          </td>
-                          <td class="column-5">
-                            <% if (order.status === 'Processing' || order.status
-                            === 'Pending') { %>
-                            <button
-                              type="button"
-                              class="btn btn-primary btn-sm"
-                              data-toggle="modal"
-                              data-target="#orderModal_<%= order._id %>"
-                            >
-                              View
-                            </button>
-                            <% } else { %>
-                            <button
-                              type="button"
-                              class="btn btn-secondary btn-sm"
-                              disabled
-                            >
-                              View
-                            </button>
-                            <% } %>
-                          </td>
-                        </tr>
-
-                        <!-- Order Modal -->
-                        <div
-                          class="modal fade"
-                          id="orderModal_<%= order._id %>"
-                          tabindex="-1"
-                          role="dialog"
-                          aria-labelledby="orderModalLabel_<%= order._id %>"
-                          aria-hidden="true"
-                        >
-                          <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5
-                                  class="modal-title"
-                                  id="orderModalLabel_<%= order._id %>"
-                                >
-                                  Order Details
-                                </h5>
-                                <button
-                                  type="button"
-                                  class="close"
-                                  data-dismiss="modal"
-                                  aria-label="Close"
-                                >
-                                  <span aria-hidden="true">&times;</span>
+                        <% orders.forEach(order=> { %>
+                          <tr class="table_row">
+                            <td class="column-1">
+                              <%= order._id %>
+                            </td>
+                            <td class="column-2">
+                              <%= new Date(order.createdAt).toDateString() %>
+                            </td>
+                            <td class="column-3">
+                              <%= order.status %>
+                            </td>
+                            <td class="column-4">
+                              $<%= (order.items.reduce((total, item)=> total +
+                                item.itemTotal, 0) -
+                                order.couponDiscount).toFixed(2) %>
+                            </td>
+                            <td class="column-5">
+                              <% if (order.status==='Processing' || order.status==='Pending' ) { %>
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                  data-target="#orderModal_<%= order._id %>">
+                                  View
                                 </button>
-                              </div>
-                              <div class="modal-body">
-                                <p class="mt-2">
-                                  <strong>Order ID:</strong> <%= order._id %>
-                                </p>
-                                <p>
-                                  <strong>Date:</strong> <%= new
-                                  Date(order.createdAt).toDateString() %>
-                                </p>
-                                <p>
-                                  <strong>Status:</strong> <%= order.status %>
-                                </p>
+                                <% } else { %>
+                                  <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                    View
+                                  </button>
+                                  <% } %>
+                            </td>
+                          </tr>
 
-                                <h5 class="mt-5 mb-2">Ordered Items:</h5>
-                                <hr />
-                                <% order.items.forEach(item => { %>
-                                <div class="row">
-                                  <div class="col">
-                                    <% if (item.product_id.primaryImages &&
-                                    item.product_id.primaryImages.length > 0) {
-                                    %>
-                                    <img
-                                      src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
-                                      class="card-img-top"
-                                      alt="<%= item.product_id.product_name %>"
-                                      style="width: 100%; height: auto"
-                                    />
-                                    <% } %>
-                                  </div>
-                                  <div class="col">
-                                    <%= item.product_id.product_name %>
-                                  </div>
-                                  <div class="col"><%= item.quantity %></div>
-                                  <div class="col">$<%= item.price %></div>
-                                  <div class="col">
-                                    <% if (item.status !== 'Cancelled' &&
-                                    (order.status === 'Processing' ||
-                                    order.status === 'Pending')) { %>
-                                    <button
-                                      class="btn btn-danger cancel-order"
-                                      data-order-id="<%= order._id %>"
-                                      data-product-id="<%= item.product_id._id %>"
-                                    >
-                                      Cancel
-                                    </button>
-                                    <% } %>
-                                  </div>
+                          <!-- Order Modal -->
+                          <div class="modal fade" id="orderModal_<%= order._id %>" tabindex="-1" role="dialog"
+                            aria-labelledby="orderModalLabel_<%= order._id %>" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="orderModalLabel_<%= order._id %>">
+                                    Order Details
+                                  </h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
                                 </div>
-                                <hr />
-                                <% }); %>
-                                <div class="row">
-                                  <div class="col"></div>
-                                  <div class="col"></div>
-                                  <div class="col">
-                                    <strong>Subtotal</strong>
-                                  </div>
-                                  <div class="col">
-                                    <strong
-                                      >$<%= order.items.reduce((total, item) =>
-                                      total + item.itemTotal, 0).toFixed(2)
-                                      %></strong
-                                    >
-                                  </div>
+                                <div class="modal-body">
+                                  <p class="mt-2">
+                                    <strong>Order ID:</strong>
+                                    <%= order._id %>
+                                  </p>
+                                  <p>
+                                    <strong>Date:</strong>
+                                    <%= new Date(order.createdAt).toDateString() %>
+                                  </p>
+                                  <p>
+                                    <strong>Status:</strong>
+                                    <%= order.status %>
+                                  </p>
+
+                                  <h5 class="mt-5 mb-2">Ordered Items:</h5>
+                                  <hr />
+                                  <% order.items.forEach(item=> { %>
+                                    <div class="row">
+                                      <div class="col">
+                                        <% const hasImages=item.product_id && item.product_id.primaryImages &&
+                                          item.product_id.primaryImages.length> 0; %>
+                                          <% if (hasImages) { %>
+                                            <img
+                                              src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
+                                              class="card-img-top" alt="<%= item.product_id.product_name %>"
+                                              style="width: 100%; height: auto" />
+                                            <% } else { %>
+                                            
+                                              <img src="/path/to/default-image.jpg" class="card-img-top"
+                                                alt="Default Image" style="width: 100%; height: auto" />
+                                              <% } %>
+                                      </div>
+
+                                      <div class="col">
+                                        <%= item.product_id.product_name %>
+                                      </div>
+                                      <div class="col">
+                                        <%= item.quantity %>
+                                      </div>
+                                      <div class="col">$<%= item.price %>
+                                      </div>
+                                      <div class="col">
+                                        <% if (item.status !=='Cancelled' && (order.status==='Processing' ||
+                                          order.status==='Pending' )) { %>
+                                          <button class="btn btn-danger cancel-order" data-order-id="<%= order._id %>"
+                                            data-product-id="<%= item.product_id._id %>">
+                                            Cancel
+                                          </button>
+                                          <% } %>
+                                      </div>
+                                    </div>
+                                    <hr />
+                                    <% }); %>
+                                      <div class="row">
+                                        <div class="col"></div>
+                                        <div class="col"></div>
+                                        <div class="col">
+                                          <strong>Subtotal</strong>
+                                        </div>
+                                        <div class="col">
+                                          <strong>$<%= order.items.reduce((total, item)=>
+                                              total + item.itemTotal, 0).toFixed(2)
+                                              %></strong>
+                                        </div>
+                                      </div>
+                                      <div class="row">
+                                        <div class="col"></div>
+                                        <div class="col"></div>
+                                        <div class="col">
+                                          <strong>Coupon Discount</strong>
+                                        </div>
+                                        <div class="col">
+                                          <strong>-$<%= order.couponDiscount.toFixed(2) %></strong>
+                                        </div>
+                                      </div>
+                                      <div class="row">
+                                        <div class="col"></div>
+                                        <div class="col"></div>
+                                        <div class="col"><strong>Total</strong></div>
+                                        <div class="col">
+                                          <strong>$<%= (order.items.reduce((total, item)=>
+                                              total + item.itemTotal, 0) -
+                                              order.couponDiscount).toFixed(2)
+                                              %></strong>
+                                        </div>
+                                      </div>
                                 </div>
-                                <div class="row">
-                                  <div class="col"></div>
-                                  <div class="col"></div>
-                                  <div class="col">
-                                    <strong>Coupon Discount</strong>
-                                  </div>
-                                  <div class="col">
-                                    <strong
-                                      >-$<%= order.couponDiscount.toFixed(2)
-                                      %></strong
-                                    >
-                                  </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    Close
+                                  </button>
                                 </div>
-                                <div class="row">
-                                  <div class="col"></div>
-                                  <div class="col"></div>
-                                  <div class="col"><strong>Total</strong></div>
-                                  <div class="col">
-                                    <strong
-                                      >$<%= (order.items.reduce((total, item) =>
-                                      total + item.itemTotal, 0) -
-                                      order.couponDiscount).toFixed(2)
-                                      %></strong
-                                    >
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="modal-footer">
-                                <button
-                                  type="button"
-                                  class="btn btn-secondary"
-                                  data-dismiss="modal"
-                                >
-                                  Close
-                                </button>
                               </div>
                             </div>
                           </div>
-                        </div>
 
-                        <% }); %>
+                          <% }); %>
                       </table>
                     </div>
                   </div>
@@ -531,22 +365,13 @@
 
               <!-- Address -->
 
-              <div
-                class="tab-pane fade"
-                id="v-pills-address"
-                role="tabpanel"
-                aria-labelledby="v-pills-profile-tab"
-                tabindex="0"
-              >
+              <div class="tab-pane fade" id="v-pills-address" role="tabpanel" aria-labelledby="v-pills-profile-tab"
+                tabindex="0">
                 <div class="row">
                   <div class="col-md-12 mb-4">
                     <div class="address-title">
                       <h3 class="text-capitalize">Address</h3>
-                      <button
-                        class="btn bg1 cl0 bor1"
-                        data-toggle="modal"
-                        data-target="#exampleModal"
-                      >
+                      <button class="btn bg1 cl0 bor1" data-toggle="modal" data-target="#exampleModal">
                         + New Address
                       </button>
                     </div>
@@ -555,71 +380,63 @@
                 </div>
 
                 <div class="row">
-                  <% if (addresses && addresses.length> 0) { %> <%
-                  addresses.forEach(function(address) { %>
-                  <div class="col-lg-6 mb-3" id="address-<%= address._id %>">
-                    <div class="card mb-3 mb-lg-0 mb-3">
-                      <div class="card-body">
-                        <address>
-                          <span class="name"> <%= address.name %> </span><br />
-                          <span class="address_type">
-                            <%= address.address_type %> </span
-                          ><br />
-                          <span class="zip_code"> <%= address.zip_code %> </span
-                          ><br />
-                          <span class="locality"> <%= address.locality %> </span
-                          ><br />
-                          <span class="house_name">
-                            <%= address.house_name %> </span
-                          ><br />
-                          <span class="area_street">
-                            <%= address.area_street %> </span
-                          ><br />
-                          <span class="town"> <%= address.town %> </span><br />
-                          <span class="state"> <%= address.state %> </span
-                          ><br />
-                          <span class="landmark">
-                            <%= address.landmark %>
-                          </span>
-                        </address>
-                        <div class="mt-2">
-                          <button
-                            class="btn btn-primary"
-                            onclick="openEditModal('<%= address._id %>')"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            class="btn btn-danger"
-                            onclick="deleteAddress('<%= address._id %>')"
-                          >
-                            Delete
-                          </button>
-                          <button
-                            class="btn btn-success"
-                            onclick="setDefaultAddress('<%= address._id %>')"
-                          >
-                            <% if (address.default) { %> Default Address <% }
-                            else { %> Set as Default <% } %>
-                          </button>
+                  <% if (addresses && addresses.length> 0) { %> <% addresses.forEach(function(address) { %>
+                      <div class="col-lg-6 mb-3" id="address-<%= address._id %>">
+                        <div class="card mb-3 mb-lg-0 mb-3">
+                          <div class="card-body">
+                            <address>
+                              <span class="name">
+                                <%= address.name %>
+                              </span><br />
+                              <span class="address_type">
+                                <%= address.address_type %>
+                              </span><br />
+                              <span class="zip_code">
+                                <%= address.zip_code %>
+                              </span><br />
+                              <span class="locality">
+                                <%= address.locality %>
+                              </span><br />
+                              <span class="house_name">
+                                <%= address.house_name %>
+                              </span><br />
+                              <span class="area_street">
+                                <%= address.area_street %>
+                              </span><br />
+                              <span class="town">
+                                <%= address.town %>
+                              </span><br />
+                              <span class="state">
+                                <%= address.state %>
+                              </span><br />
+                              <span class="landmark">
+                                <%= address.landmark %>
+                              </span>
+                            </address>
+                            <div class="mt-2">
+                              <button class="btn btn-primary" onclick="openEditModal('<%= address._id %>')">
+                                Edit
+                              </button>
+                              <button class="btn btn-danger" onclick="deleteAddress('<%= address._id %>')">
+                                Delete
+                              </button>
+                              <button class="btn btn-success" onclick="setDefaultAddress('<%= address._id %>')">
+                                <% if (address.default) { %> Default Address <% } else { %> Set as Default <% } %>
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  <% }); %> <% } else { %>
-                  <p>No addresses found.</p>
-                  <% } %>
+                      <% }); %>
+                        <% } else { %>
+                          <p>No addresses found.</p>
+                          <% } %>
                 </div>
               </div>
 
-              
-              <div
-                class="tab-pane fade"
-                id="v-pills-referral-tab"
-                role="tabpanel"
-                aria-labelledby="#v-pills-referral"
-                tabindex="0"
-              >
+
+              <div class="tab-pane fade" id="v-pills-referral-tab" role="tabpanel" aria-labelledby="#v-pills-referral"
+                tabindex="0">
                 <div class="row">
                   <div class="col-md-12 mb-4">
                     <div class="form-outline">
@@ -636,27 +453,29 @@
                           <th class="column-1">Name</th>
                           <th class="column-2">Email</th>
                           <th class="column-3">Joined Date</th>
-                        
-                        </tr>
-                        <% if (successfullRefferals && successfullRefferals.length !== 0 ) { %>
-                        <% successfullRefferals.forEach(element => { %>
-                        <tr class="table_row">
-                          <td class="column-1"><%= element.date.toDateString() %></td>
-                          <td class="column-2"></td>
-                          <td class="column-1"><%- element.status %></td>
-                          
-                      
-                          
-                        </tr>
 
-                      
+                        </tr>
+                        <% if (successfullRefferals && successfullRefferals.length !==0 ) { %>
+                          <% successfullRefferals.forEach(element=> { %>
+                            <tr class="table_row">
+                              <td class="column-1">
+                                <%= element.date.toDateString() %>
+                              </td>
+                              <td class="column-2"></td>
+                              <td class="column-1"><%- element.status %></td>
 
-                        <% }); %>
-                        <% } else { %>
-            <tr>
-              <td colspan="4" class="text-center">No refferals yet</td>
-            </tr>
-            <% } %>
+
+
+                            </tr>
+
+
+
+                            <% }); %>
+                              <% } else { %>
+                                <tr>
+                                  <td colspan="4" class="text-center">No refferals yet</td>
+                                </tr>
+                                <% } %>
                       </table>
                     </div>
                   </div>
@@ -673,102 +492,31 @@
 </section>
 
 <!-- add/edit address Modal -->
-<div
-  class="modal fade"
-  id="exampleModal"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Add/Edit Address</h5>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <form id="address-form" action="/user/add-address" method="POST">
         <div class="modal-body">
           <input type="hidden" name="addressId" id="addressId" />
-          <input
-            type="text"
-            name="name"
-            id="name"
-            placeholder="Name"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="address_type"
-            id="address_type"
-            placeholder="Address Type"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="zip_code"
-            id="zip_code"
-            placeholder="Zip Code"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="locality"
-            id="locality"
-            placeholder="Locality"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="house_name"
-            id="house_name"
-            placeholder="House Name"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="area_street"
-            id="area_street"
-            placeholder="Area/Street"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="town"
-            id="town"
-            placeholder="Town"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="state"
-            id="state"
-            placeholder="State"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="landmark"
-            id="landmark"
-            placeholder="Landmark"
-            class="form-control mb-2"
-            required
-          />
+          <input type="text" name="name" id="name" placeholder="Name" class="form-control mb-2" required />
+          <input type="text" name="address_type" id="address_type" placeholder="Address Type" class="form-control mb-2"
+            required />
+          <input type="text" name="zip_code" id="zip_code" placeholder="Zip Code" class="form-control mb-2" required />
+          <input type="text" name="locality" id="locality" placeholder="Locality" class="form-control mb-2" required />
+          <input type="text" name="house_name" id="house_name" placeholder="House Name" class="form-control mb-2"
+            required />
+          <input type="text" name="area_street" id="area_street" placeholder="Area/Street" class="form-control mb-2"
+            required />
+          <input type="text" name="town" id="town" placeholder="Town" class="form-control mb-2" required />
+          <input type="text" name="state" id="state" placeholder="State" class="form-control mb-2" required />
+          <input type="text" name="landmark" id="landmark" placeholder="Landmark" class="form-control mb-2" required />
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -782,35 +530,18 @@
 </div>
 
 <!-- Add Money Modal -->
-<div
-  class="modal fade"
-  id="addMoneyModal"
-  tabindex="-1"
-  aria-labelledby="addMoneyModalLabel"
-  aria-hidden="true"
->
+<div class="modal fade" id="addMoneyModal" tabindex="-1" aria-labelledby="addMoneyModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="addMoneyModalLabel">Add Money to Wallet</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="addMoneyForm">
           <div class="mb-3">
             <label for="amount" class="form-label">Amount (USD)</label>
-            <input
-              type="number"
-              class="form-control"
-              id="amount"
-              name="amount"
-              required
-            />
+            <input type="number" class="form-control" id="amount" name="amount" required />
           </div>
           <div class="d-flex justify-content-end">
             <button type="button" class="btn btn-primary" id="payButton">

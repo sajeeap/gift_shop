@@ -1,16 +1,13 @@
 <!-- Shopping Cart Section -->
-<!-- Shopping Cart Section -->
 <section class="bg0 p-t-75 p-b-85">
     <div class="container">
         <div class="row">
             <div class="col-xl-7 col-sm-2 m-lr-auto m-b-50">
-                
                 <div class=" m-r--38 m-lr-0-xl">
                     <div class="wrap-table-shopping-cart">
                         <table class="table-shopping-cart">
                             <thead>
                                 <tr class="table_head">
-                                    
                                     <th class="column-1">Product</th>
                                     <th class="column-2">Name</th>
                                     <th class="column-3">Price</th>
@@ -22,9 +19,7 @@
                             <tbody>
                                 <% if (cart.items && cart.items.length > 0) { %>
                                     <% cart.items.forEach((item, index) => { %>
-                                     
                                         <tr class="table_row" data-item-id="<%= item._id %>">
-                                           
                                             <td class="column-1">
                                                 <div class="how-itemcart1">
                                                     <% if (item.product_id && item.product_id.primaryImages && item.product_id.primaryImages.length > 0) { %>
@@ -34,25 +29,34 @@
                                                     <% } %>
                                                 </div>
                                             </td>
-                                            
                                             <td class="column-2"><%= item.product_id && item.product_id.product_name.charAt(0).toUpperCase() +  item.product_id.product_name.slice(1) %></td>
-                                            <td class="column-3 item-price">$ <%= item.product_id && item.product_id.price %></td>
+                                            <td class="column-3 item-price">
+                                                <% if (item.discountedPrice !== undefined) { %>
+                                                    <% if (item.discountedPrice < item.product_id.price) { %>
+                                                        <span class="discounted-price">$ <%= item.discountedPrice.toFixed(2) %></span>
+                                                    <% } %>
+                                                   
+                                                <% } else { %>
+                                                    $ <%= item.product_id.price.toFixed(2) %>
+                                                <% } %>
+                                            </td>
                                             <td class="column-4">
                                                 <div class="input-group">
-                                                    <button class="btn btn-outline-secondary" type="button"  onclick="updateQuantity('<%= item._id %>', -1)">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity('<%= item._id %>', -1)">
                                                         <i class="fs-16 zmdi zmdi-minus"></i>
                                                     </button>
-                                                    <input type="text" class="form-control" name="num-product<%= index + 1 %>" id="quantity_<%= item._id %>" value="<%= item.quantity %>">
-                                                    <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity('<%= item._id %>', 1)">
+                                                    <input type="text" class="form-control" name="num-product<%= index + 1 %>" id="quantity_<%= item._id %>" value="<%= item.quantity %>" readonly>
+                                                    <button class="btn btn-outline-secondary btn-plus" type="button" onclick="updateQuantity('<%= item._id %>', 1)" <% if (item.quantity >= item.product_id.stock) { %> disabled <% } %>>
                                                         <i class="fs-16 zmdi zmdi-plus"></i>
                                                     </button>
                                                 </div>
                                             </td>
+                                            
                                             <td class="column-4 item-total">
-                                                <% if (item.product_id && item.product_id.price && item.quantity) { %>
-                                                    $ <%= (item.product_id.price * item.quantity).toFixed(2) %>
+                                                <% if (item.discountedPrice !== undefined && item.discountedPrice > 0) { %>
+                                                    $ <%= (item.discountedPrice * item.quantity).toFixed(2) %>
                                                 <% } else { %>
-                                                    $ 0.00 
+                                                    $ <%= (item.product_id.price * item.quantity).toFixed(2) %>
                                                 <% } %>
                                             </td>
                                             <td class="column-5">
@@ -94,7 +98,6 @@
 
                         <div class="size-209">
                             <!-- Calculate Subtotal -->
-                            
                             $ <span id="cart-subtotal"><%= cart.totalPrice.toFixed(2) %></span>
                         </div>
                     </div>
@@ -123,6 +126,7 @@
 </section>
 
 
+
 <script>
     function confirmRemove(itemId) {
         Swal.fire({
@@ -143,20 +147,21 @@
 </script>
 
 <script>
-
-    
     function updateQuantity(itemId, change) {
         const quantityElement = document.getElementById('quantity_' + itemId);
+        console.log("quantityElement:", quantityElement);
+        
         let currentQuantity = parseInt(quantityElement.value);
+        if (isNaN(currentQuantity)) {
+            currentQuantity = 1; // Default to 1 if parsing fails
+        }
+        
+        console.log("currentQuantity:", currentQuantity);
 
         let newQuantity = currentQuantity + change;
         if (newQuantity < 1) {
             newQuantity = 1;
         }
-
-        quantityElement.value = newQuantity;
-
-        console.log(`Updating quantity for item ${itemId} to ${newQuantity}`);
 
         fetch('/update-quantity', {
             method: 'POST',
@@ -170,31 +175,38 @@
             if (data.success) {
                 console.log('Quantity updated successfully');
                 updateCartDisplay(data.cart);
+                quantityElement.value = newQuantity; // Update the quantity in the input field
             } else {
-                throw new Error('Failed to update quantity');
+                throw new Error(data.error || 'Failed to update quantity');
             }
         })
         .catch(error => {
             console.error('Error updating quantity:', error);
+            alert(error.message); // Show the error message to the user
         });
     }
-    
+
     function updateCartDisplay(cart) {
-        
         cart.items.forEach(item => {
             const totalElement = document.querySelector(`[data-item-id="${item._id}"] .item-total`);
-            const newTotal = item.product_id.price * item.quantity;
-            totalElement.textContent = `$ ${newTotal.toFixed(2)}`;
+            const newTotal = item.price * item.quantity; // Use the item's price
+            totalElement.textContent = `$${newTotal.toFixed(2)}`;
+
+            const plusButton = document.querySelector(`[onclick="updateQuantity('${item._id}', 1)"]`);
+            if (item.quantity >= item.product_id.stock) {
+                plusButton.disabled = true;
+            } else {
+                plusButton.disabled = false;
+            }
         });
 
         const subtotalElement = document.getElementById('cart-subtotal');
         const totalElement = document.getElementById('cart-total');
-        subtotalElement.textContent = ` ${cart.totalPrice.toFixed(2)}`;
-        totalElement.textContent = ` ${cart.totalPrice.toFixed(2)}`;
+        subtotalElement.textContent = `$${cart.totalPrice.toFixed(2)}`;
+        totalElement.textContent = `$${cart.totalPrice.toFixed(2)}`;
     }
-
-  
 </script>
+
 
 
 

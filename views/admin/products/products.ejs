@@ -50,8 +50,9 @@
                     <%= product.product_name %>
                   </td>
                   <td>
-                    <%= product.category.name %>
-                  </td>
+                   
+                    <%= product.category ? product.category.name : 'No Category' %>
+                </td>
                   
                   <td>
                     

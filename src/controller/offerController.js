@@ -29,121 +29,125 @@ const adminLayout = "./layouts/adminLayouts";
           layout: adminLayout
         });
       },
-      addProdOffer : async (req, res) => {
+      addProdOffer: async (req, res) => {
         const productId = req.params.id;
         const { offerDiscountRate } = req.body;
-      
+    
         if (!productId || offerDiscountRate === undefined) {
-          return res.status(400).json({ success: false, message: "Missing parameters" });
+            return res.status(400).json({ success: false, message: "Missing parameters" });
         }
-      
-        if (isNaN(offerDiscountRate) || offerDiscountRate <= 0 || offerDiscountRate > 95) {
-          return res.status(400).json({
-            success: false,
-            message: "Discount rate should be a positive number between 1 and 95",
-          });
+    
+        const discountRate = Number(offerDiscountRate);
+        if (isNaN(discountRate) || discountRate <= 0 || discountRate > 95) {
+            return res.status(400).json({
+                success: false,
+                message: "Discount rate should be a positive number between 1 and 95",
+            });
         }
-      
+    
         try {
-          const product = await Product.findById(productId);
-      
-          if (!product) {
-            return res.status(404).json({ success: false, message: "Product not found" });
-          }
-      
-          let discountAmount = Math.ceil((product.sellingPrice * offerDiscountRate) / 100);
-      
-          product.offerDiscountPrice = product.sellingPrice - discountAmount;
-          product.offerDiscountRate = offerDiscountRate;
-          product.onOffer = true;
-      
-          await product.save();
-      
-          return res.status(200).json({ success: true, message: "Offer added successfully" });
+            const product = await Product.findById(productId);
+    
+            if (!product) {
+                return res.status(404).json({ success: false, message: "Product not found" });
+            }
+    
+            const sellingPrice = Number(product.price);
+            console.log('Product ID:', productId);
+            console.log('Product selling price:', product.sellingPrice);
+
+            
+    
+            if (isNaN(sellingPrice) || sellingPrice <= 0) {
+                return res.status(400).json({ success: false, message: "Invalid product selling price" });
+            }
+    
+            const discountAmount = Math.ceil((sellingPrice * discountRate) / 100);
+            const offerDiscountPrice = sellingPrice - discountAmount;
+    
+            if (isNaN(offerDiscountPrice) || offerDiscountPrice < 0) {
+                return res.status(400).json({ success: false, message: "Invalid discount calculation" });
+            }
+    
+            product.offerDiscountPrice = offerDiscountPrice;
+            product.offerDiscountRate = discountRate;
+            product.onOffer = true;
+    
+            await product.save();
+    
+            return res.status(200).json({ success: true, message: "Offer added successfully" });
         } catch (error) {
-          console.error('Error in addProdOffer:', error);
-          return res.status(500).json({ success: false, message: "Internal Server Error", error });
+            console.error('Error in addProdOffer:', error);
+            return res.status(500).json({ success: false, message: "Internal Server Error", error });
         }
-      },
-      
+    },
+    
 
       
     
-      addCatOffer: async (req, res) => {
-        const categoryId = req.params.id;
-        const { offerDiscountRate } = req.body;
-    
-        if (!categoryId || !offerDiscountRate) {
-          return res
-            .status(400)
-            .json({ success: false, message: "Missing parameters" });
-        }
-    
-        if (isNaN(offerDiscountRate) || offerDiscountRate < 0) {
-          return res
-            .status(400)
-            .json({ success: false, message: "Discount rate should be positive" });
-        }
-        if (offerDiscountRate <= 0 || offerDiscountRate > 95) {
+    addCatOffer: async (req, res) => {
+      const categoryId = req.params.id;
+      const { offerDiscountRate } = req.body;
+  
+      if (!categoryId || offerDiscountRate === undefined) {
+          return res.status(400).json({ success: false, message: "Missing parameters" });
+      }
+  
+      const discountRate = Number(offerDiscountRate);
+      if (isNaN(discountRate) || discountRate <= 0 || discountRate > 95) {
           return res.status(400).json({
-            success: false,
-            message: "Discount rate should be a positive number between 1 and 95",
+              success: false,
+              message: "Discount rate should be a positive number between 1 and 95",
           });
-        }
-    
-        try {
+      }
+  
+      try {
           const category = await Category.findById(categoryId);
           if (!category) {
-            return res
-              .status(404)
-              .json({ success: false, message: "Category not found" });
+              return res.status(404).json({ success: false, message: "Category not found" });
           }
-    
+  
           const productsInCategory = await Product.find({ category: categoryId });
-          if (!productsInCategory) {
-            return res.status(404).json({
-              success: false,
-              message: "Products not found in this category",
-            });
+          if (!productsInCategory || productsInCategory.length === 0) {
+              return res.status(404).json({ success: false, message: "No products found in this category" });
           }
-    
-          if (productsInCategory.length === 0) {
-            return res.status(404).json({
-              success: false,
-              message: "No products found in this category",
-            });
-          }
-    
-          category.offerDiscountRate = offerDiscountRate;
-          // category.onOffer = true;
-    
+  
+          category.offerDiscountRate = discountRate;
+          category.onOffer = true;
+  
           for (const product of productsInCategory) {
-            if (!product.onOffer) {
-              const discountAmount = Math.ceil(
-                (product.sellingPrice * offerDiscountRate) / 100
-              );
-              const offerPrice = Math.ceil(product.sellingPrice - discountAmount);
-              product.offerDiscountPrice = offerPrice;
-              product.offerDiscountRate = offerDiscountRate;
-              product.onOffer = true;
-    
-              await product.save();
-            }
+              if (!product.onOffer) {
+                  const sellingPrice = Number(product.price);
+                  if (isNaN(sellingPrice) || sellingPrice <= 0) {
+                      console.error(`Invalid selling price for product ID: ${product._id}`);
+                      continue;
+                  }
+  
+                  const discountAmount = Math.ceil((sellingPrice * discountRate) / 100);
+                  const offerPrice = sellingPrice - discountAmount;
+                  
+                  if (isNaN(offerPrice) || offerPrice < 0) {
+                      console.error(`Invalid offer price calculation for product ID: ${product._id}`);
+                      continue;
+                  }
+  
+                  product.offerDiscountPrice = offerPrice;
+                  product.offerDiscountRate = discountRate;
+                  product.onOffer = true;
+  
+                  await product.save();
+              }
           }
-    
+  
           await category.save();
-    
-          return res
-            .status(200)
-            .json({ success: true, message: "Offer added successfully" });
-        } catch (error) {
+  
+          return res.status(200).json({ success: true, message: "Offer added successfully" });
+      } catch (error) {
           console.error(error);
-          return res
-            .status(500)
-            .json({ success: false, message: "Internal Server Error", error });
-        }
-      },
-    
+          return res.status(500).json({ success: false, message: "Internal Server Error", error });
+      }
+  },
+  
       toggleActiveCatOffer: async (req, res) => {
         const categoryId = req.params.id;
     
@@ -203,36 +207,36 @@ const adminLayout = "./layouts/adminLayouts";
       },
     
     
-     toggleActiveProdOffer : async (req, res) => {
+      toggleActiveProdOffer: async (req, res) => {
         const productId = req.params.id;
-      
+    
         try {
-          const product = await Product.findById(productId);
-      
-          if (!product) {
-            return res.status(404).json({ success: false, message: "Product not found" });
-          }
-      
-          if (product.offerDiscountRate <= 0) {
-            return res.status(400).json({
-              success: false,
-              message: "Discount rate should be a positive number between 1 and 95",
+            const product = await Product.findById(productId);
+    
+            if (!product) {
+                return res.status(404).json({ success: false, message: "Product not found" });
+            }
+    
+            if (isNaN(product.offerDiscountRate) || product.offerDiscountRate <= 0 || product.offerDiscountRate > 95) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Discount rate should be a positive number between 1 and 95",
+                });
+            }
+    
+            product.onOffer = !product.onOffer;
+    
+            await product.save();
+    
+            return res.status(200).json({
+                success: true,
+                message: product.onOffer ? "Offer enabled" : "Offer disabled",
             });
-          }
-      
-          product.onOffer = !product.onOffer;
-      
-          await product.save();
-      
-          return res.status(200).json({
-            success: true,
-            message: product.onOffer ? "Offer enabled" : "Offer disabled",
-          });
         } catch (error) {
-          console.error('Error in toggleActiveProdOffer:', error);
-          return res.status(500).json({ success: false, message: "Internal Server Error", error });
+            console.error('Error in toggleActiveProdOffer:', error);
+            return res.status(500).json({ success: false, message: "Internal Server Error", error });
         }
-      },
-
+    },
+    
     }
       
