@@ -98,9 +98,11 @@ const orderSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
-    payable: {
+    discountedTotalPrice: {
       type: Number,
+      default: 0,
     },
+  
     paymentStatus: {
       type: String,
       enum: ["Paid", "Pending", "COD", "Failed", "Refunded", "Cancelled"],

@@ -9,56 +9,51 @@ module.exports = {
   applyCoupon: async (req, res) => {
     try {
       let { coupon_code } = req.body;
-
+      
+  
       const couponCode = await Coupon.findOne({ coupon_code: coupon_code });
+      console.log("coupon:::::::::::::::::::::::::::::", couponCode);
       if (!couponCode) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Coupon not found" });
+        return res.status(404).json({ success: false, message: "Coupon not found" });
       }
-
+  
       const currentDate = new Date();
       const expiryDate = new Date(couponCode.expiry_date);
-
+  
       if (currentDate > expiryDate || !couponCode.isActive) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Coupon expired or inactive." });
+        return res.status(400).json({ success: false, message: "Coupon expired or inactive." });
       }
-      const userId = req.session.user || req.session.user._id;
+  
+      const userId = req.session.user?._id || req.session.user;
       const userCart = await Cart.findOne({ userId: userId });
       if (!userCart) {
-        return res
-          .status(404)
-          .json({ success: false, message: "User Cart not found." });
+        return res.status(404).json({ success: false, message: "User Cart not found." });
       }
-
-      // checking cart total > min_purchase amount
-      const cartTotal = userCart.totalPrice || 0;
-      if (cartTotal > couponCode.min_purchase) {
-        return res.status(404).json({
+      console.log("cart,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",userCart);
+  
+    // Calculate cart total dynamically
+    const cartTotal = userCart.items.reduce((acc, item) => acc + item.itemTotal, 0);
+      
+      console.log("total,///////////////////", cartTotal);
+      if (cartTotal < couponCode.min_purchase) {
+        return res.status(400).json({
           success: false,
-          message: "Your cart total is less than minmum purchase amount.",
+          message: "Your cart total is less than the minimum purchase amount.",
         });
       }
+      
+  
+      console.log(`Cart Total///////////////////: ${cartTotal}, Min Purchase;;;;;;;;;;;;;;;;;;;;: ${couponCode.min_purchase}`);
 
-      //checking coupon already applied or not
-      if (
-        userCart.coupon &&
-        userCart.coupon.toString() === couponCode._id.toString()
-      ) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Coupon already in use." });
+      if (userCart.coupon && userCart.coupon.toString() === couponCode._id.toString()) {
+        return res.status(400).json({ success: false, message: "Coupon already in use." });
       }
-
-      //calculating amout based on discount rate
+  
       let discountAmount = cartTotal * (couponCode.discount_amount / 100);
-
       userCart.couponDiscount = discountAmount;
       userCart.coupon = couponCode._id;
       await userCart.save();
-
+  
       return res.status(200).json({
         success: true,
         message: "Coupon successfully applied.",
@@ -67,31 +62,28 @@ module.exports = {
       });
     } catch (error) {
       console.log(error);
-      return res
-        .status(500)
-        .json({ success: false, message: "An error occurred." });
+      return res.status(500).json({ success: false, message: "An error occurred." });
     }
   },
-
+  
   removeCoupon: async (req, res) => {
     try {
-      const userId = req.session.user || req.session.user._id;
+      const userId = req.session.user?._id || req.session.user;
       const cart = await Cart.findOne({ userId: userId });
-
+  
       if (!cart) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Cart not found." });
+        return res.status(404).json({ success: false, message: "Cart not found." });
       }
       cart.coupon = null;
       cart.couponDiscount = 0;
       await cart.save();
-      return res.status(200).json({  success: true,message: "Coupon removed successfully" });
+      return res.status(200).json({ success: true, message: "Coupon removed successfully" });
     } catch (error) {
-      onsole.error("Error removing coupon:", error);
-      return res.status(500).json({success: false, message: "Internal server error" });
+      console.error("Error removing coupon:", error);
+      return res.status(500).json({ success: false, message: "Internal server error" });
     }
   },
+  
 
   
 

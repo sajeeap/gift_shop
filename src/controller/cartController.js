@@ -131,17 +131,7 @@ module.exports = {
                 cart = new Cart({ userId, items: [] });
             }
     
-            console.log("cart:", cart);
-    
-            const productIdString = productId.toString();
-            console.log('Product ID:', productIdString);
-    
-            cart.items.forEach(item => {
-                console.log('Item Product ID:', item.product_id._id.toString());
-            });
-    
-            const existingItem = cart.items.find(item => item.product_id._id.toString() === productIdString);
-            console.log("Existing Item:", existingItem);
+            const existingItem = cart.items.find(item => item.product_id._id.toString() === productId.toString());
     
             if (existingItem) {
                 const updatedQuantity = existingItem.quantity + quantity;
@@ -152,8 +142,26 @@ module.exports = {
     
                 existingItem.quantity = updatedQuantity;
     
-                return res.status(200).json({ success: true, message: "Item quantity updated in the cart." });
+                // Update itemTotal
+                const category = await Category.findById(product.category);
+    
+                let productPrice = product.price;
+                if (category?.onOffer && category.offerDiscountRate > 0) {
+                    productPrice -= (productPrice * category.offerDiscountRate / 100);
+                }
+    
+                if (product.onOffer) {
+                    if (product.offerDiscountRate > 0) {
+                        productPrice -= (productPrice * product.offerDiscountRate / 100);
+                    } else if (product.offerDiscountPrice > 0) {
+                        productPrice -= product.offerDiscountPrice;
+                    }
+                }
+    
+                existingItem.price = productPrice;
+                existingItem.itemTotal = existingItem.quantity * productPrice;
             } else {
+                // Add new item
                 let productPrice = product.price;
                 const category = await Category.findById(product.category);
     
@@ -173,6 +181,7 @@ module.exports = {
                 cart.items.push({ product_id: product._id, quantity, price: productPrice, itemTotal });
             }
     
+            // Update totals
             cart.items = cart.items.map(item => {
                 item.itemTotal = item.quantity * item.price;
                 return item;
@@ -319,7 +328,7 @@ module.exports = {
             if (!Number.isInteger(newQuantity) || newQuantity < 1) {
                 return res.status(400).json({ error: 'Invalid quantity.' });
             }
-            
+    
             let cart = await Cart.findOne({ userId: req.session.user._id || req.session.user }).populate("items.product_id");
     
             if (!cart) {
@@ -356,6 +365,7 @@ module.exports = {
             res.status(500).json({ error: 'Failed to update cart item quantity.' });
         }
     }
+    
     
     
     

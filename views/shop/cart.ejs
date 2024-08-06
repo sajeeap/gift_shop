@@ -50,7 +50,22 @@
                                                         <i class="fs-16 zmdi zmdi-plus"></i>
                                                     </button>
                                                 </div>
+
+                                                <% if (item.product_id.stock - item.quantity === 0) { %>
+                                                    <div id="stock-left-<%= item._id %>" class="text text-danger">
+                                                        Out of stock
+                                                    </div>
+                                                <% } else if (item.product_id.stock - item.quantity > 0) { %>
+                                                    <div id="stock-left-<%= item._id %>" class="text text-success">
+                                                        <%= item.product_id.stock - item.quantity %> left in stock
+                                                    </div>
+                                                <% } %>
+                                                
+                                               
+                                                
                                             </td>
+                                            
+                                            
                                             
                                             <td class="column-4 item-total">
                                                 <% if (item.discountedPrice !== undefined && item.discountedPrice > 0) { %>
@@ -146,65 +161,86 @@
     }
 </script>
 
+
 <script>
-    function updateQuantity(itemId, change) {
-        const quantityElement = document.getElementById('quantity_' + itemId);
-        console.log("quantityElement:", quantityElement);
-        
-        let currentQuantity = parseInt(quantityElement.value);
-        if (isNaN(currentQuantity)) {
-            currentQuantity = 1; // Default to 1 if parsing fails
-        }
-        
-        console.log("currentQuantity:", currentQuantity);
-
-        let newQuantity = currentQuantity + change;
-        if (newQuantity < 1) {
-            newQuantity = 1;
-        }
-
-        fetch('/update-quantity', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ itemId: itemId, newQuantity: newQuantity }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log('Quantity updated successfully');
-                updateCartDisplay(data.cart);
-                quantityElement.value = newQuantity; // Update the quantity in the input field
-            } else {
-                throw new Error(data.error || 'Failed to update quantity');
-            }
-        })
-        .catch(error => {
-            console.error('Error updating quantity:', error);
-            alert(error.message); // Show the error message to the user
-        });
+   function updateQuantity(itemId, change) {
+    const quantityElement = document.getElementById('quantity_' + itemId);
+    let currentQuantity = parseInt(quantityElement.value);
+    if (isNaN(currentQuantity)) {
+        currentQuantity = 1; // Default to 1 if parsing fails
     }
 
-    function updateCartDisplay(cart) {
-        cart.items.forEach(item => {
-            const totalElement = document.querySelector(`[data-item-id="${item._id}"] .item-total`);
-            const newTotal = item.price * item.quantity; // Use the item's price
-            totalElement.textContent = `$${newTotal.toFixed(2)}`;
-
-            const plusButton = document.querySelector(`[onclick="updateQuantity('${item._id}', 1)"]`);
-            if (item.quantity >= item.product_id.stock) {
-                plusButton.disabled = true;
-            } else {
-                plusButton.disabled = false;
-            }
-        });
-
-        const subtotalElement = document.getElementById('cart-subtotal');
-        const totalElement = document.getElementById('cart-total');
-        subtotalElement.textContent = `$${cart.totalPrice.toFixed(2)}`;
-        totalElement.textContent = `$${cart.totalPrice.toFixed(2)}`;
+    let newQuantity = currentQuantity + change;
+    if (newQuantity < 1) {
+        newQuantity = 1;
     }
+
+    fetch('/update-quantity', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ itemId: itemId, newQuantity: newQuantity }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Quantity updated successfully');
+            updateCartDisplay(data.cart);
+            quantityElement.value = newQuantity; // Update the quantity in the input field
+            
+            const stockLeftElement = document.getElementById(`stock-left-${itemId}`);
+            const stockLeft = data.cart.items.find(item => item._id === itemId).product_id.stock - newQuantity;
+            if (stockLeft === 0) {
+                stockLeftElement.className = "text text-danger";
+                stockLeftElement.textContent = "Out of stock";
+            } else {
+                stockLeftElement.className = "text text-success";
+                stockLeftElement.textContent = `${stockLeft} left in stock`;
+            }
+        } else {
+            throw new Error(data.error || 'Failed to update quantity');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating quantity:', error);
+        alert(error.message); // Show the error message to the user
+    });
+}
+
+function updateCartDisplay(cart) {
+    cart.items.forEach(item => {
+        const totalElement = document.querySelector(`[data-item-id="${item._id}"] .item-total`);
+        const newTotal = item.price * item.quantity;
+        totalElement.textContent = `$${newTotal.toFixed(2)}`;
+
+        const quantityElement = document.getElementById('quantity_' + item._id);
+        if (quantityElement) {
+            quantityElement.value = item.quantity;
+        }
+
+        const stockLeftElement = document.getElementById(`stock-left-${item._id}`);
+        const stockLeft = item.product_id.stock - item.quantity;
+        if (stockLeft === 0) {
+            stockLeftElement.className = "text text-danger";
+            stockLeftElement.textContent = "Out of stock";
+        } else {
+            stockLeftElement.className = "text text-success";
+            stockLeftElement.textContent = `${stockLeft} left in stock`;
+        }
+
+        const plusButton = document.querySelector(`[onclick="updateQuantity('${item._id}', 1)"]`);
+        if (plusButton) {
+            plusButton.disabled = item.quantity >= item.product_id.stock;
+        }
+    });
+
+    const subtotalElement = document.getElementById('cart-subtotal');
+    const totalElement = document.getElementById('cart-total');
+    subtotalElement.textContent = `$${cart.totalPrice.toFixed(2)}`;
+    totalElement.textContent = `$${cart.totalPrice.toFixed(2)}`;
+}
+
 </script>
 
 

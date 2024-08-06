@@ -1,9 +1,4 @@
-<form
-  class="bg0 p-t-75 p-b-85"
-  action="/user/place-order"
-  method="POST"
-  id="placeorderForm"
->
+<form class="bg0 p-t-75 p-b-85" action="/user/place-order" method="POST" id="placeorderForm">
   <div class="container">
     <div class="row">
       <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
@@ -15,45 +10,45 @@
                 <h4 class="mtext-109 cl2 p-b-30">Delivery Address</h4>
                 <!-- Display Address if Available -->
                 <% if (address && address._id) { %>
-                <div class="default-address">
-                  <address id="address-<%= address._id %>">
-                    <span class="address_name"> <%= address.name %> </span
-                    ><br />
-                    <span class="address_type">
-                      <%= address.address_type %> </span
-                    ><br />
-                    <span class="zip_code"> <%= address.zip_code %> </span
-                    ><br />
-                    <span class="locality"> <%= address.locality %> </span
-                    ><br />
-                    <span class="house_name"> <%= address.house_name %> </span
-                    ><br />
-                    <span class="area_street"> <%= address.area_street %> </span
-                    ><br />
-                    <span class="town"> <%= address.town %> </span><br />
-                    <span class="state"> <%= address.state %> </span><br />
-                    <span class="landmark"> <%= address.landmark %> </span>
-                  </address>
-                </div>
-                <input
-                  type="hidden"
-                  name="address"
-                  value="<%= address._id %>"
-                />
-                <a
-                  href="#"
-                  class="btn btn-primary"
-                  onclick="openEditModal('<%= address._id %>')"
-                  >Edit</a
-                >
-                <a href="#" class="btn btn-primary">Change</a>
-                <% } else { %>
-                <p>No default address found. Please set a default address.</p>
-                <a href="/user/profile" class="btn btn-primary mt-3"
-                  >Add New Address +</a
-                >
+                  <div class="default-address">
+                    <address id="address-<%= address._id %>">
+                      <span class="address_name">
+                        <%= address.name %>
+                      </span><br />
+                      <span class="address_type">
+                        <%= address.address_type %>
+                      </span><br />
+                      <span class="zip_code">
+                        <%= address.zip_code %>
+                      </span><br />
+                      <span class="locality">
+                        <%= address.locality %>
+                      </span><br />
+                      <span class="house_name">
+                        <%= address.house_name %>
+                      </span><br />
+                      <span class="area_street">
+                        <%= address.area_street %>
+                      </span><br />
+                      <span class="town">
+                        <%= address.town %>
+                      </span><br />
+                      <span class="state">
+                        <%= address.state %>
+                      </span><br />
+                      <span class="landmark">
+                        <%= address.landmark %>
+                      </span>
+                    </address>
+                  </div>
+                  <input type="hidden" name="address" value="<%= address._id %>" />
+                  <a href="#" class="btn btn-primary" onclick="openEditModal('<%= address._id %>')">Edit</a>
+                  <a href="#" class="btn btn-primary">Change</a>
+                  <% } else { %>
+                    <p>No default address found. Please set a default address.</p>
+                    <a href="/user/profile" class="btn btn-primary mt-3">Add New Address +</a>
 
-                <% } %>
+                    <% } %>
               </div>
             </div>
           </div>
@@ -64,20 +59,12 @@
             <div class="card mt-3">
               <div class="card-body">
                 <div class="flex-w flex-m m-r-20 m-tb-5">
-                  <input
-                    id="couponCode"
-                    class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5"
-                    type="text"
-                    name="coupon"
-                    placeholder="Coupon Code"
-                    value="<%= appliedCouponCode || '' %>"
-                  />
-                  <div
-                    id="applyRemoveCouponBtn"
-                    class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5"
-                  >
+                  <input id="couponCode" class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text"
+                    name="coupon" placeholder="Coupon Code" value="<%= appliedCouponCode || '' %>" />
+                  <div id="applyRemoveCouponBtn"
+                    class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
                     <% if (appliedCouponCode) { %> Remove Coupon <% } else { %>
-                    Apply Coupon <% } %>
+                        Apply Coupon <% } %>
                   </div>
                 </div>
               </div>
@@ -85,62 +72,51 @@
           </div>
 
           <!-- Coupons Modal -->
-          <div
-            class="modal fade"
-            id="couponsModal"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="couponsModalLabel"
-            aria-hidden="true"
-          >
+          <div class="modal fade" id="couponsModal" tabindex="-1" role="dialog" aria-labelledby="couponsModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title" id="couponsModalLabel">
                     Available Coupons
                   </h5>
-                  <button
-                    type="button"
-                    class="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
-                  >
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
                   <ul id="couponsList" class="list-group">
-                    <% if (coupons.length > 0) { %> <%
-                    coupons.forEach(function(coupon) { %>
-                    <li class="list-group-item">
-                      <strong><%= coupon.coupon_code %></strong> - <%=
-                      coupon.discount_amount %>% off, Min Purchase: <%=
-                      coupon.min_purchase %>
-                      <a
-                        href="#"
-                        class="btn btn-primary apply-coupon-btn"
-                        data-coupon-code="<%= coupon.coupon_code %>"
-                      >
-                        Apply
-                      </a>
-                    </li>
-                    <% }) %> <% } else { %>
-                    <li class="list-group-item">No available coupons</li>
-                    <% } %>
+                    <% if (coupons.length> 0) { %> <% coupons.forEach(function(coupon) { %>
+                        <li class="list-group-item mt-2">
+                          <strong>
+                            <%= coupon.coupon_code %>
+                          </strong><br>
+                          <div class="text text-warning">
+                            <%= coupon.discount_amount %>% off
+                          </div>
+
+                          Min Purchase: <%= coupon.min_purchase %>
+                            <br>
+                            <a href="#" class="btn btn-primary apply-coupon-btn mt-2"
+                              data-coupon-code="<%= coupon.coupon_code %>">
+                              Apply
+                            </a>
+                        </li>
+                        <% }) %>
+                          <% } else { %>
+                            <li class="list-group-item">No available coupons</li>
+                            <% } %>
                   </ul>
                 </div>
                 <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-dismiss="modal"
-                  >
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">
                     Close
                   </button>
                 </div>
               </div>
             </div>
           </div>
+
 
           <!-- Payment Options Section -->
           <div class="col-12 m-t-20">
@@ -150,48 +126,22 @@
                 <div class="m-l-20 m-t-23">
                   <!-- Use Wallet Balance -->
                   <div class="form-check m-t-10">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="paymentoptions"
-                      id="payment1"
-                      value="Wallet"
-                      checked
-                    />
-                    <label class="form-check-label" for="payment1"
-                      >Wallet ($<%= walletBalance.toFixed(2) %>)</label
-                    >
+                    <input class="form-check-input" type="radio" name="paymentoptions" id="payment1" value="Wallet"
+                      checked />
+                    <label class="form-check-label" for="payment1">Wallet ($<%= walletBalance.toFixed(2) %>)</label>
                     <% if (walletBalance < totalPrice) { %>
-                    <a
-                      href="#"
-                      class="btn bg1 cl0 bor1 mt-2 mb-3"
-                      data-bs-toggle="modal"
-                      data-bs-target="#addMoneyModal"
-                      >+ Add Money</a
-                    >
-                    <% } %>
+                      <a href="#" class="btn bg1 cl0 bor1 mt-2 mb-3" data-bs-toggle="modal"
+                        data-bs-target="#addMoneyModal">+ Add Money</a>
+                      <% } %>
                   </div>
                   <div class="form-check m-t-10">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="paymentoptions"
-                      id="payment2"
-                      value="COD"
-                    />
+                    <input class="form-check-input" type="radio" name="paymentoptions" id="payment2" value="COD" />
                     <label class="form-check-label" for="payment2">COD</label>
                   </div>
                   <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="paymentoptions"
-                      id="payment3"
-                      value="Razor Pay"
-                    />
-                    <label class="form-check-label" for="payment3"
-                      >Razor Pay</label
-                    >
+                    <input class="form-check-input" type="radio" name="paymentoptions" id="payment3"
+                      value="Razor Pay" />
+                    <label class="form-check-label" for="payment3">Razor Pay</label>
                   </div>
                 </div>
               </div>
@@ -199,163 +149,131 @@
           </div>
         </div>
       </div>
+
+      <!-- cart details -->
+       
       <!-- Cart Totals Section -->
-<div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
-  <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
-    <h4 class="mtext-109 cl2 p-b-30">Cart Totals</h4>
-    
-    <div class="flex-w flex-t bor12 p-b-13">
-      <div class="size-208">
-        <span class="stext-110 cl2">Subtotal:</span>
-      </div>
-      <div class="size-209">
-        <span class="mtext-110 cl2">$<%= totalPrice.toFixed(2) %></span>
-      </div>
-    </div>
+      <div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
+        <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
+          <h4 class="mtext-109 cl2 p-b-30">Cart Totals</h4>
 
-    <!-- Coupon Details -->
-    <% if (appliedCouponCode) { %>
-      <div class="flex-w flex-t bor12 p-b-13">
-        <div class="size-208">
-          <span class="stext-110 cl2">Coupon Code:</span>
-        </div>
-        <div class="size-209">
-          <span class="mtext-110 cl2"><%= appliedCouponCode %></span>
-        </div>
-      </div>
-      <div class="flex-w flex-t bor12 p-b-13">
-        <div class="size-208">
-          <span class="stext-110 cl2">Discount:</span>
-        </div>
-        <div class="size-209">
-          <span class="mtext-110 cl2">-$<%= couponDiscount.toFixed(2) %></span>
-        </div>
-      </div>
-    <% } %>
+          <div class="flex-w flex-t bor12 p-b-13">
+            <div class="size-208">
+              <span class="stext-110 cl2">Subtotal:</span>
+            </div>
+            <div class="size-209">
+              <span class="mtext-110 cl2">$<%= totalPrice.toFixed(2) %></span>
+            </div>
+          </div>
 
-    <div class="flex-w flex-t p-t-27 p-b-33">
-      <div class="size-208">
-        <span class="mtext-101 cl2">Total:</span>
-      </div>
-      <div class="size-209 p-t-1">
-        <% 
-          const discountedTotal = totalPrice - (couponDiscount || 0); 
-        %>
-        <span class="mtext-110 cl2">$<%= discountedTotal.toFixed(2) %></span>
-      </div>
-    </div>
+          <!-- Coupon Details -->
+          <% if (appliedCouponCode) { %>
+            <div class="flex-w flex-t bor12 p-b-13">
+              <div class="size-208">
+                <span class="stext-110 cl2">Coupon Code:</span>
+              </div>
+              <div class="size-209">
+                <span class="mtext-110 cl2">
+                  <%= appliedCouponCode %>
+                </span>
+              </div>
+            </div>
+            <div class="flex-w flex-t bor12 p-b-13">
+              <div class="size-208">
+                <span class="stext-110 cl2">Discount:</span>
+              </div>
+              <div class="size-209">
+                <span class="mtext-110 cl2">-$<%= couponDiscount.toFixed(2) %> (<%= couponDiscountPercentage %>%)</span>
+              </div>
+            </div>
+            <% } %>
 
-    <input type="hidden" id="useWallet" name="useWallet" value="false" />
-    <button
-      type="submit"
-      class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
-    >
-      Pay Now
-    </button>
-  </div>
-</div>
+              <!-- Wallet Balance -->
+              <% if (walletBalance> 0) { %>
+                <div class="flex-w flex-t bor12 p-b-13">
+                  <div class="size-208">
+                    <span class="stext-110 cl2">Wallet Balance:</span>
+                  </div>
+                  <div class="size-209">
+                    <span class="mtext-110 cl2">$<%= walletBalance.toFixed(2) %></span>
+                  </div>
+                </div>
+                <% } %>
+
+                  <div class="flex-w flex-t p-t-27 p-b-33">
+                    <div class="size-208">
+                      <span class="mtext-101 cl2">Total:</span>
+                    </div>
+                    <div class="size-209 p-t-1">
+                      <% const discountedTotal=totalPrice - (couponDiscount || 0); %>
+                        <span class="mtext-110 cl2">$<%= discountedTotal.toFixed(2) %></span>
+                    </div>
+                  </div>
+
+                  <!-- Final Total after Wallet Balance -->
+                  <% const finalTotal=useWallet ? Math.max(discountedTotal - walletBalance, 0) : discountedTotal; %>
+                    <div class="flex-w flex-t p-t-27 p-b-33">
+                      <div class="size-208">
+                        <span class="mtext-101 cl2">Final Total:</span>
+                      </div>
+                      <div class="size-209 p-t-1">
+                        <span class="mtext-110 cl2">$<%= finalTotal.toFixed(2) %></span>
+                      </div>
+                    </div>
+
+                    <!-- Use Wallet Checkbox -->
+                    <% if (walletBalance> 0) { %>
+                      <div class="flex-w flex-t p-t-27 p-b-33">
+                        <div class="size-208">
+                          <label class="stext-110 cl2" for="useWallet">Use Wallet Balance:</label>
+                        </div>
+                        <div class="size-209 p-t-1">
+                          <input type="checkbox" id="useWallet" name="useWallet" value="true" <%=useWallet ? 'checked'
+                            : '' %> />
+                        </div>
+                      </div>
+                      <% } %>
+
+                        <button type="submit"
+                          class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+                          Pay Now
+                        </button>
+        </div>
+      </div>
+
+
+
 
     </div>
   </div>
 </form>
 
 <!-- Modal -->
-<div
-  class="modal fade"
-  id="exampleModal"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Add/Edit Address</h5>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <form id="address-form" action="/user/add-address" method="POST">
         <div class="modal-body">
           <input type="hidden" name="addressId" id="addressId" />
-          <input
-            type="text"
-            name="name"
-            id="name"
-            placeholder="Name"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="address_type"
-            id="address_type"
-            placeholder="Address Type"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="zip_code"
-            id="zip_code"
-            placeholder="Zip Code"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="locality"
-            id="locality"
-            placeholder="Locality"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="house_name"
-            id="house_name"
-            placeholder="House Name"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="area_street"
-            id="area_street"
-            placeholder="Area/Street"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="town"
-            id="town"
-            placeholder="Town"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="state"
-            id="state"
-            placeholder="State"
-            class="form-control mb-2"
-            required
-          />
-          <input
-            type="text"
-            name="landmark"
-            id="landmark"
-            placeholder="Landmark"
-            class="form-control mb-2"
-            required
-          />
+          <input type="text" name="name" id="name" placeholder="Name" class="form-control mb-2" required />
+          <input type="text" name="address_type" id="address_type" placeholder="Address Type" class="form-control mb-2"
+            required />
+          <input type="text" name="zip_code" id="zip_code" placeholder="Zip Code" class="form-control mb-2" required />
+          <input type="text" name="locality" id="locality" placeholder="Locality" class="form-control mb-2" required />
+          <input type="text" name="house_name" id="house_name" placeholder="House Name" class="form-control mb-2"
+            required />
+          <input type="text" name="area_street" id="area_street" placeholder="Area/Street" class="form-control mb-2"
+            required />
+          <input type="text" name="town" id="town" placeholder="Town" class="form-control mb-2" required />
+          <input type="text" name="state" id="state" placeholder="State" class="form-control mb-2" required />
+          <input type="text" name="landmark" id="landmark" placeholder="Landmark" class="form-control mb-2" required />
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -369,36 +287,19 @@
 </div>
 
 <!-- Add Money Modal -->
-<div
-  class="modal fade"
-  id="addMoneyModal"
-  tabindex="-1"
-  aria-labelledby="addMoneyModalLabel"
-  aria-hidden="true"
->
+<div class="modal fade" id="addMoneyModal" tabindex="-1" aria-labelledby="addMoneyModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="addMoneyModalLabel">Add Money to Wallet</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="addMoneyForm">
           <div class="mb-3">
             <label for="amount" class="form-label">Amount (USD)</label>
-            <input
-              type="number"
-              class="form-control"
-              id="amount"
-              name="amount"
-              value="<%= totalPrice.toFixed(2)-walletBalance.toFixed(2) %>"
-              required
-            />
+            <input type="number" class="form-control" id="amount" name="amount"
+              value="<%= totalPrice.toFixed(2)-walletBalance.toFixed(2) %>" required />
           </div>
           <div class="d-flex justify-content-end">
             <button type="button" class="btn btn-primary" id="payButton">
@@ -668,12 +569,9 @@
 <!-- coupon -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const applyRemoveCouponBtn = document.getElementById(
-      "applyRemoveCouponBtn"
-    );
+    const applyRemoveCouponBtn = document.getElementById("applyRemoveCouponBtn");
     const couponCodeInput = document.getElementById("couponCode");
 
-    // Handle click on Apply/Remove Coupon Button
     applyRemoveCouponBtn.addEventListener("click", function () {
       if (couponCodeInput.value) {
         swal({
@@ -689,23 +587,15 @@
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ coupon_code: couponCodeInput.value }),
             })
               .then((response) => response.json())
               .then((data) => {
                 if (data.success) {
                   swal("Success", data.message, "success").then(() => {
-                    // Update the UI instead of reloading the page
-                    document.getElementById("couponCode").value = ""; // Clear the coupon code input
-                    document.getElementById(
-                      "applyRemoveCouponBtn"
-                    ).textContent = "Apply Coupon"; // Update button text
-                    document
-                      .getElementById("applyRemoveCouponBtn")
-                      .setAttribute("data-toggle", "modal");
-                    document
-                      .getElementById("applyRemoveCouponBtn")
-                      .setAttribute("data-target", "#couponsModal");
+                    couponCodeInput.value = "";
+                    applyRemoveCouponBtn.textContent = "Apply Coupon";
+                    applyRemoveCouponBtn.setAttribute("data-toggle", "modal");
+                    applyRemoveCouponBtn.setAttribute("data-target", "#couponsModal");
                   });
                 } else {
                   swal("Error", data.message, "error");
@@ -713,21 +603,15 @@
               })
               .catch((error) => {
                 console.error("Error removing coupon:", error);
-                swal(
-                  "Error",
-                  "An error occurred while removing the coupon.",
-                  "error"
-                );
+                swal("Error", "An error occurred while removing the coupon.", "error");
               });
           }
         });
       } else {
-        // Show modal if no coupon is applied
         $("#couponsModal").modal("show");
       }
     });
 
-    // Handle click on Apply button in the modal
     document.querySelectorAll(".apply-coupon-btn").forEach((button) => {
       button.addEventListener("click", function () {
         const couponCode = this.getAttribute("data-coupon-code");
@@ -741,24 +625,28 @@
           .then((response) => response.json())
           .then((data) => {
             if (data.success) {
-              swal("Success", "Coupon applied successfully", "success").then(
-                () => {
-                  location.reload(); // Reload the page to reflect changes
-                }
-              );
+              swal("Success", "Coupon applied successfully", "success").then(() => {
+                location.reload();
+              });
             } else {
               swal("Error", data.message, "error");
             }
           })
           .catch((error) => {
             console.error("Error applying coupon:", error);
-            swal(
-              "Error",
-              "An error occurred while applying the coupon.",
-              "error"
-            );
+            swal("Error", "An error occurred while applying the coupon.", "error");
           });
       });
+    });
+  });
+
+</script>
+
+<script>
+  $(document).ready(function () {
+    $('#couponsModal').modal({
+      backdrop: 'static',
+      keyboard: false
     });
   });
 </script>

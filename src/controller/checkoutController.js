@@ -12,105 +12,115 @@ const razorpayInstance = require("../config/razorPay");
 
 module.exports = {
   getCheckOutPage: async (req, res) => {
-    const userId = req.session.user;
-
-    const address = await Address.findOne({
-      customer_id: userId,
-      default: true,
-      delete: false,
-    });
-
-    let cart = await Cart.findOne({ userId }).populate("items.product_id");
-    const wishlist = await Wishlist.findOne({
-      user_id: req.session.user,
-    }).populate("products");
-
-    // Fetch wallet balance
-    const wallet = await Wallet.findOne({ userId: userId });
-    const walletBalance = wallet ? wallet.balance : 0;
-
-    // Fetch active coupons
-    const coupons = await Coupon.find({
-      isActive: true,
-      expiry_date: { $gt: new Date() },
-    });
-
-    let totalItems = 0;
-    let totalPrice = 0;
-    let couponDiscount = 0;
-
-    if (cart) {
-      for (const item of cart.items) {
-        let total = 0;
-        if (!item.itemTotal) {
-          total = item.price * item.quantity;
-        } else {
-          total = item.itemTotal;
+    try {
+      const userId = req.session.user._id;
+  
+      const address = await Address.findOne({
+        customer_id: userId,
+        default: true,
+        delete: false,
+      });
+  
+      let cart = await Cart.findOne({ userId }).populate("items.product_id");
+      const wishlist = await Wishlist.findOne({
+        user_id: req.session.user,
+      }).populate("products");
+  
+      // Fetch wallet balance
+      const wallet = await Wallet.findOne({ userId: userId });
+      const walletBalance = wallet ? wallet.balance : 0;
+  
+      // Fetch active coupons
+      const coupons = await Coupon.find({
+        isActive: true,
+        expiry_date: { $gt: new Date() },
+      });
+  
+      let totalItems = 0;
+      let totalPrice = 0;
+      let couponDiscount = 0;
+      let couponDiscountPercentage = 0;
+  
+      if (cart) {
+        for (const item of cart.items) {
+          let total = 0;
+          if (!item.itemTotal) {
+            total = item.price * item.quantity;
+          } else {
+            total = item.itemTotal;
+          }
+          totalPrice += total;
+          totalItems += item.quantity;
         }
-        totalPrice += total;
-        totalItems += item.quantity;
       }
-    }
-    // Fetch applied coupon code
-    let appliedCouponCode = "";
-    if (cart && cart.coupon) {
-      const coupon = await Coupon.findById(cart.coupon);
-      if (coupon) {
-        appliedCouponCode = coupon.coupon_code;
-        couponDiscount = coupon.discount_amount;
+  
+      // Fetch applied coupon code
+      let appliedCouponCode = "";
+      if (cart && cart.coupon) {
+        const coupon = await Coupon.findById(cart.coupon);
+        if (coupon) {
+          appliedCouponCode = coupon.coupon_code;
+          couponDiscountPercentage = coupon.discount_amount;
+          couponDiscount = (totalPrice * coupon.discount_amount) / 100; // Calculate percentage discount
+        }
       }
+  
+      // Calculate discounted total price
+      const discountedTotalPrice = totalPrice - couponDiscount;
+  
+      res.render("shop/checkout", {
+        user: req.session.user,
+        address,
+        cart,
+        wishlist,
+        totalPrice,
+        discountedTotalPrice,
+        totalItems,
+        walletBalance,
+        coupons,
+        appliedCouponCode,
+        couponDiscount,
+        couponDiscountPercentage,
+        useWallet: false, // Default value for the wallet checkbox
+      });
+    } catch (error) {
+      console.error("Error getting checkout page:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to get checkout page",
+        error: error.message,
+      });
     }
-
-        // Calculate discounted total price
-        const discountedTotalPrice = totalPrice - couponDiscount;
-
-    res.render("shop/checkout", {
-      user: req.session.user,
-      address,
-      cart,
-      wishlist,
-      totalPrice,
-      discountedTotalPrice,
-      totalItems,
-      walletBalance,
-      coupons,
-      appliedCouponCode,
-      couponDiscount
-    });
   },
+  
+  
+  
 
   placeOrder: async (req, res) => {
     try {
       const { paymentoptions, address, useWallet } = req.body;
-
+      const useWalletValue = useWallet === "true"; // Convert to boolean
+  
       if (!paymentoptions) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Please select a payment method" });
+        return res.status(400).json({ success: false, message: "Please select a payment method" });
       }
       if (!address) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Please select an address" });
+        return res.status(400).json({ success: false, message: "Please select an address" });
       }
-
+  
       let shippingAddress = await Address.findById(address);
       if (!shippingAddress) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Shipping address not found" });
+        return res.status(404).json({ success: false, message: "Shipping address not found" });
       }
-
+  
       const userId = req.session.user._id;
       const user = await User.findById(userId);
       const userCart = await Cart.findOne({ userId });
-
+  
       if (!user || !userCart) {
-        return res
-          .status(404)
-          .json({ success: false, message: "User or cart not found" });
+        return res.status(404).json({ success: false, message: "User or cart not found" });
       }
-
+  
       shippingAddress = {
         name: shippingAddress.name,
         house_name: shippingAddress.house_name,
@@ -124,13 +134,13 @@ module.exports = {
         address: shippingAddress.address,
         formattedAddress: `${shippingAddress.name}, ${shippingAddress.house_name}(H), ${shippingAddress.locality}, ${shippingAddress.town}, ${shippingAddress.state}, PIN: ${shippingAddress.zip_code}`,
       };
-
+  
       const status = paymentoptions === "COD" ? "Confirmed" : "Pending";
       const paymentStatus = paymentoptions === "COD" ? "Pending" : "Paid";
-
+  
       const items = [];
       let totalPrice = 0;
-
+  
       for (let i = 0; i < userCart.items.length; i++) {
         const item = userCart.items[i];
         const itemTotal = item.price * item.quantity;
@@ -143,59 +153,61 @@ module.exports = {
         });
         totalPrice += itemTotal;
       }
-
+      console.log("ordrid.......................................................................", items.ord);
+  
       // Fetch the applied coupon code from the cart
       let appliedCouponCode = null;
       let couponDiscount = 0;
+      let couponDiscountPercentage = 0;
       if (userCart.coupon) {
         const coupon = await Coupon.findById(userCart.coupon);
         if (coupon) {
           appliedCouponCode = coupon.coupon_code;
-          couponDiscount = coupon.discount_amount; // Update the discount amount
+          couponDiscountPercentage = coupon.discount_amount; // Update the discount percentage
+          couponDiscount = (coupon.discount_amount / 100) * totalPrice; // Calculate discount amount
         }
       }
-
+  
+      // Calculate the discounted total price
+      const discountedTotalPrice = totalPrice - couponDiscount;
+  
       const wallet = await Wallet.findOne({ userId: userId });
       let walletBalance = wallet ? wallet.balance : 0;
-      let amountToBePaid = totalPrice;
-
+      let amountToBePaid = discountedTotalPrice;
+  
       // Use wallet balance if selected
-      if (useWallet && walletBalance > 0) {
-        if (walletBalance >= totalPrice) {
-          walletBalance -= totalPrice;
+      if (useWalletValue && walletBalance > 0) {
+        if (walletBalance >= discountedTotalPrice) {
+          walletBalance -= discountedTotalPrice;
           amountToBePaid = 0;
         } else {
           amountToBePaid -= walletBalance;
           walletBalance = 0;
         }
-        await Wallet.findOneAndUpdate(
-          { userId: userId },
-          { balance: walletBalance }
-        );
+        await Wallet.findOneAndUpdate({ userId: userId }, { balance: walletBalance });
       }
-
+  
       const order = new Order({
         customer_id: userId,
         items: items,
         totalPrice: totalPrice,
+        discountedTotalPrice: discountedTotalPrice,
         paymentMethod: paymentoptions,
         paymentStatus: paymentStatus,
         status: status,
         shippingAddress: shippingAddress,
-        amountPaid: totalPrice - amountToBePaid,
-        remainingAmount: amountToBePaid,
-        appliedCoupon: appliedCouponCode, 
-      couponDiscount: couponDiscount,
+        appliedCoupon: appliedCouponCode,
+        couponDiscount: couponDiscount,
+        couponDiscountPercentage: couponDiscountPercentage,
       });
-
+      console.log("Order::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::", order);
+  
       await order.save();
       await Cart.findOneAndDelete({ userId });
-
-      const wishlist = await Wishlist.findOne({
-        user_id: req.session.user,
-      }).populate("products");
+  
+      const wishlist = await Wishlist.findOne({ user_id: req.session.user }).populate("products");
       let cart = "cart is empty";
-
+  
       return res.status(201).render("shop/orderConfirm", {
         user: req.session.user,
         order,
@@ -211,6 +223,8 @@ module.exports = {
       });
     }
   },
+  
+  
 
   successOrder: async (req, res) => {
     try {
@@ -228,6 +242,7 @@ module.exports = {
       if (!order) {
         return res.status(404).send("No orders found for this user.");
       }
+      console.log("order............................................................",order);
 
       res.render("shop/orderConfirm", {
         order: order, // Pass the full order object

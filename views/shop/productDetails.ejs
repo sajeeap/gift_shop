@@ -66,61 +66,63 @@
                                             <%= product.description %>
                                         </p>
 
-                                        <!-- Add to Cart Section -->
-                                        <div class="flex-w flex-r-m p-b-10">
-                                            <div class="size-204 flex-w flex-m respon6-next">
-                                                <div class="wrap-num-product flex-w m-r-20 m-tb-10">
-                                                    <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                                                        <i class="fs-16 zmdi zmdi-minus"></i>
-                                                    </div>
-
-                                                    <input class="mtext-104 cl3 txt-center num-product" type="number"
-                                                        name="num-product" value="1" min="1">
-
-                                                    <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                                        <i class="fs-16 zmdi zmdi-plus"></i>
-                                                    </div>
-                                                </div>
-
-                                                <button id="addToCartBtn" class="btn btn-primary"
-                                                    data-product-id="<%= product._id %>" <% if (product.stock===0) { %>
-                                                    disabled <% } %>>
-                                                        Add to Cart
-                                                </button>
-                                                <% if (product.stock===0) { %>
-                                                    <p style="color: red;">This product is out of stock.</p>
-                                                    <% } %>
-                                            </div>
-                                        </div>
-
-                </div>
-
-                <!-- Social Media Links -->
-                <div class="flex-w flex-m p-l-100 p-t-40 respon7">
-                    <div class="flex-m bor9 p-r-10 m-r-11">
-                        <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100"
-                            data-tooltip="Add to Wishlist">
-                            <i class="zmdi zmdi-favorite"></i>
-                        </a>
+                                       <!-- Add to Cart Section -->
+        <div class="flex-w flex-r-m p-b-10">
+            <div class="size-204 flex-w flex-m respon6-next">
+                <div class="wrap-num-product flex-w m-r-20 m-tb-10">
+                    <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                        <i class="fs-16 zmdi zmdi-minus"></i>
                     </div>
 
-                    <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
-                        data-tooltip="Facebook">
-                        <i class="fa fa-facebook"></i>
-                    </a>
+                    <input id="num-product" class="mtext-104 cl3 txt-center num-product" type="number" name="num-product" value="1" min="1">
 
-                    <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
-                        data-tooltip="Twitter">
-                        <i class="fa fa-twitter"></i>
-                    </a>
-
-                    <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
-                        data-tooltip="Google Plus">
-                        <i class="fa fa-google-plus"></i>
-                    </a>
+                    <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                        <i class="fs-16 zmdi zmdi-plus"></i>
+                    </div>
                 </div>
+
+                <button id="addToCartBtn" class="btn btn-primary" data-product-id="<%= product._id %>" <% if (product.stock === 0) { %> disabled <% } %>>
+                    Add to Cart
+                </button>
+                <% if (product.stock === 0) { %>
+                    <p id="stock-status" style="color: red;">This product is out of stock.</p>
+                <% } else { %>
+                    <p id="stock-status" class="text text-success"><%= product.stock %> left in stock</p>
+                <% } %>
             </div>
         </div>
+    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Social Media Links -->
+            <div class="flex-w flex-m p-l-100 p-t-40 respon7">
+                <div class="flex-m bor9 p-r-10 m-r-11">
+                    <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100"
+                        data-tooltip="Add to Wishlist">
+                        <i class="zmdi zmdi-favorite"></i>
+                    </a>
+                </div>
+
+                <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
+                    data-tooltip="Facebook">
+                    <i class="fa fa-facebook"></i>
+                </a>
+
+                <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
+                    data-tooltip="Twitter">
+                    <i class="fa fa-twitter"></i>
+                </a>
+
+                <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
+                    data-tooltip="Google Plus">
+                    <i class="fa fa-google-plus"></i>
+                </a>
+            </div>
+        </div>
+    </div>
     </div>
 
     <div class="bor10 m-t-50 p-t-43 p-b-40">
@@ -599,12 +601,55 @@
 </script>
 
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
     $(document).ready(function () {
-        $('#addToCartBtn').click(function () {
-            var quantity = parseInt($('.num-product').val(), 10);
-            var productId = $(this).data('product-id');
+        // Function to update stock status
+        function updateStock() {
+            const quantityInput = $('#num-product');
+            const quantity = parseInt(quantityInput.val(), 10);
+            const productId = $('#addToCartBtn').data('product-id');
+
+            $.get(`/product-stock/${productId}`, function (data) {
+                const stockStatus = $('#stock-status');
+                const addToCartBtn = $('#addToCartBtn');
+                if (quantity > data.stock) {
+                    stockStatus.removeClass('text-success').addClass('text-danger').text('Quantity exceeds available stock.');
+                    addToCartBtn.prop('disabled', true);
+                } else {
+                    stockStatus.removeClass('text-danger').addClass('text-success').text(`${data.stock - quantity} left in stock`);
+                    addToCartBtn.prop('disabled', false);
+                }
+            }).fail(function (error) {
+                console.error('Error fetching stock:', error);
+            });
+        }
+
+        // Check stock when the page loads
+        updateStock();
+
+        // Event listeners for quantity buttons
+        $('.btn-num-product-down').on('click', function () {
+            const quantityInput = $('#num-product');
+            const currentValue = parseInt(quantityInput.val(), 10);
+            quantityInput.val(Math.max(1, currentValue ));
+            updateStock();
+        });
+
+        $('.btn-num-product-up').on('click', function () {
+            const quantityInput = $('#num-product');
+            const currentValue = parseInt(quantityInput.val(), 10);
+            quantityInput.val(currentValue);
+            updateStock();
+        });
+
+        $('#num-product').on('change', updateStock);
+
+        $('#addToCartBtn').on('click', function () {
+            const quantity = parseInt($('#num-product').val(), 10);
+            const productId = $(this).data('product-id');
 
             if (isNaN(quantity) || quantity < 1) {
                 Swal.fire({
@@ -616,12 +661,11 @@
                 return;
             }
 
-            console.log('Product ID:', productId, 'Quantity:', quantity);
-
             $.ajax({
                 url: '/add-to-cart/cart',
                 method: 'POST',
-                data: { productId: productId, quantity: quantity },
+                contentType: 'application/json',
+                data: JSON.stringify({ productId: productId, quantity: quantity }),
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({

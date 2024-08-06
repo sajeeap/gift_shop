@@ -11,6 +11,7 @@
       
             <h3 class="mt-4">Order Summary</h3>
             <p class="mt-4">Total Price: $<%= order.totalPrice.toFixed(2) %></p>
+            <p> Discounted Price: $<%= order.discountedTotalPrice.toFixed(2) %></p>
             <p>Payment Method: <%= order.paymentMethod %></p>
             <p>Payment Status: <%= order.paymentStatus %></p>
             <p>Applied Coupon: <%= order.appliedCoupon ? order.appliedCoupon : 'None' %></p>

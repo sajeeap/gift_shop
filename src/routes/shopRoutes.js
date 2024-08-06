@@ -18,6 +18,7 @@ router.get("/product-list",shopController.getProductList )
 
 //prduct details
 router.get("/product-details/:id", shopController.getProductDetails)
+router.get("/product-stock/:id", shopController.stockcheck)
 
 router.post("/product/:productId/review", )
 

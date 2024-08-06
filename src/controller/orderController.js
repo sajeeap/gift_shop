@@ -197,6 +197,7 @@ module.exports = {
     manageOrderStatus: async (req, res) => {
         const orderId = req.params.id;
         const { status } = req.body;
+        
 
         // Validate status
         const validStatuses = ['Processing', 'Pending', 'Shipped', 'Delivered', 'Cancelled'];

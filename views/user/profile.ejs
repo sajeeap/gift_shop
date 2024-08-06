@@ -210,7 +210,8 @@
                     <div class="wrap-table-shopping-cart">
                       <table class="table-shopping-cart">
                         <tr class="table_head">
-                          <th class="column-1">Order ID</th>
+                          <th class="column-1"></th>
+                          <th class="column-2 text-center">Items</th>
                           <th class="column-2">Date</th>
                           <th class="column-3">Status</th>
                           <th class="column-4">Total</th>
@@ -219,8 +220,26 @@
 
                         <% orders.forEach(order=> { %>
                           <tr class="table_row">
+                            
                             <td class="column-1">
-                              <%= order._id %>
+
+
+                              <% const hasImages=order.items[0].product_id && order.items[0].product_id.primaryImages &&
+                                order.items[0].product_id.primaryImages.length> 0; %>
+                                <% if (hasImages) { %>
+                                  <img
+                                    src="/uploads/products-images/crp/<%= order.items[0].product_id.primaryImages[0].name %>"
+                                    class="card-img-top" alt="<%= order.items[0].product_id.product_name %>"
+                                    style="width: 120px; height: auto" />
+                                  <% } else { %>
+
+                                    <img src="/path/to/default-image.jpg" class="card-img-top" alt="Default Image"
+                                      style="width: 100%; height: auto" />
+                                    <% } %>
+
+                            </td>
+                            <td class="column-2 text-center">
+                              <%= order.items.length %>
                             </td>
                             <td class="column-2">
                               <%= new Date(order.createdAt).toDateString() %>
@@ -234,7 +253,8 @@
                                 order.couponDiscount).toFixed(2) %>
                             </td>
                             <td class="column-5">
-                              <% if (order.status==='Processing' || order.status==='Pending' ) { %>
+                              <% if (order.status==='Processing' || order.status==='Pending' ||
+                                order.status==="Confirmed" ) { %>
                                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
                                   data-target="#orderModal_<%= order._id %>">
                                   View
@@ -256,6 +276,7 @@
                                   <h5 class="modal-title" id="orderModalLabel_<%= order._id %>">
                                     Order Details
                                   </h5>
+                                 
                                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                   </button>
@@ -287,7 +308,7 @@
                                               class="card-img-top" alt="<%= item.product_id.product_name %>"
                                               style="width: 100%; height: auto" />
                                             <% } else { %>
-                                            
+
                                               <img src="/path/to/default-image.jpg" class="card-img-top"
                                                 alt="Default Image" style="width: 100%; height: auto" />
                                               <% } %>
