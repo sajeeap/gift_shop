@@ -108,6 +108,8 @@ const orderSchema = new mongoose.Schema(
       enum: ["Paid", "Pending", "COD", "Failed", "Refunded", "Cancelled"],
       required: true,
     },
+   
+   
     status: {
       type: String,
       required: true,
@@ -120,7 +122,16 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    cancelledBy: { type: String, 
+      enum: ['User', 'Admin'],
+       default: null }, 
+       
+    paymentId: {
+        type: String,
+        required: false,
+      },
   },
+  
   {
     timestamps: true
   }

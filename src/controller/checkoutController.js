@@ -135,9 +135,6 @@ module.exports = {
         formattedAddress: `${shippingAddress.name}, ${shippingAddress.house_name}(H), ${shippingAddress.locality}, ${shippingAddress.town}, ${shippingAddress.state}, PIN: ${shippingAddress.zip_code}`,
       };
   
-      const status = paymentoptions === "COD" ? "Confirmed" : "Pending";
-      const paymentStatus = paymentoptions === "COD" ? "Pending" : "Paid";
-  
       const items = [];
       let totalPrice = 0;
   
@@ -149,13 +146,11 @@ module.exports = {
           quantity: item.quantity,
           price: item.price,
           itemTotal: itemTotal,
-          order_id: `${userId}-${Date.now()}-${i}`, // Generating a unique order_id
+          order_id: `${userId}-${Date.now()}-${i}` // Generate a unique order ID for each item
         });
         totalPrice += itemTotal;
       }
-      console.log("ordrid.......................................................................", items.ord);
   
-      // Fetch the applied coupon code from the cart
       let appliedCouponCode = null;
       let couponDiscount = 0;
       let couponDiscountPercentage = 0;
@@ -168,14 +163,23 @@ module.exports = {
         }
       }
   
-      // Calculate the discounted total price
       const discountedTotalPrice = totalPrice - couponDiscount;
+  
+      // Check if COD is selected and the order total exceeds $1000
+      if (paymentoptions === "COD" && discountedTotalPrice > 1000) {
+        return res.status(400).json({
+          success: false,
+          message: "Cash on Delivery is not available for orders above $1000. Please choose another payment method.",
+        });
+      }
+  
+      const status = paymentoptions === "COD" ? "Confirmed" : "Pending";
+      const paymentStatus = paymentoptions === "COD" ? "Pending" : "Paid";
   
       const wallet = await Wallet.findOne({ userId: userId });
       let walletBalance = wallet ? wallet.balance : 0;
       let amountToBePaid = discountedTotalPrice;
   
-      // Use wallet balance if selected
       if (useWalletValue && walletBalance > 0) {
         if (walletBalance >= discountedTotalPrice) {
           walletBalance -= discountedTotalPrice;
@@ -199,8 +203,8 @@ module.exports = {
         appliedCoupon: appliedCouponCode,
         couponDiscount: couponDiscount,
         couponDiscountPercentage: couponDiscountPercentage,
+        paymentId: null // Initialize paymentId as null
       });
-      console.log("Order::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::", order);
   
       await order.save();
       await Cart.findOneAndDelete({ userId });
@@ -226,46 +230,61 @@ module.exports = {
   
   
 
-  successOrder: async (req, res) => {
-    try {
-      const userId = req.session.user || req.session.user._id;
-      const user = await User.findOne({ userId });
-      if (!user) {
-        return res.status(404).send("User not found.");
-      }
-
-      const order = await Order.findOne({ customer_id: user._id })
-        .sort({ createdAt: -1 })
-        .populate("items.product_id") // Assuming you want to populate product details in items
-        .lean();
-
-      if (!order) {
-        return res.status(404).send("No orders found for this user.");
-      }
-      console.log("order............................................................",order);
-
-      res.render("shop/orderConfirm", {
-        order: order, // Pass the full order object
-        user: user, // Optionally pass user details if needed in the template
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Failed to retrieve order.");
-    }
-  },
-
   verifyPayment: async (req, res) => {
     try {
       const payment_id = req.body.paymentId;
-
+      console.log("paymentId.................................... 1", payment_id);
+      
+  
       if (payment_id) {
-        res.json({ success: true });
+        // Find the order that is being paid for (you might need to pass the order ID in the request as well)
+        const order = await Order.findOne({ customer_id: req.session.user._id, status: "Pending" });
+  
+        if (order) {
+          // Update the order with the payment ID
+          order.paymentId = payment_id;
+          order.paymentStatus = "Paid"; // Update the payment status as well
+          await order.save();
+  
+          res.json({ success: true });
+        } else {
+          res.status(404).json({ success: false, message: "Order not found" });
+        }
       } else {
-        res.json({ success: false });
+        res.status(400).json({ success: false, message: "Payment ID is missing" });
       }
     } catch (error) {
       console.error("Error verifying payment:", error);
       res.status(500).send("Internal Server Error");
     }
   },
+  
+
+  // successOrder: async (req, res) => {
+  //   try {
+  //     const userId = req.session.user || req.session.user._id;
+  //     const user = await User.findOne({ userId });
+  //     if (!user) {
+  //       return res.status(404).send("User not found.");
+  //     }
+
+  //     const order = await Order.findOne({ customer_id: user._id })
+  //       .sort({ createdAt: -1 })
+  //       .populate("items.product_id") // Assuming you want to populate product details in items
+  //       .lean();
+
+  //     if (!order) {
+  //       return res.status(404).send("No orders found for this user.");
+  //     }
+  //     console.log("order............................................................",order);
+
+  //     res.render("shop/orderConfirm", {
+  //       order: order, // Pass the full order object
+  //       user: user, // Optionally pass user details if needed in the template
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).send("Failed to retrieve order.");
+  //   }
+  // },
 };

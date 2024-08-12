@@ -151,7 +151,7 @@
       </div>
 
       <!-- cart details -->
-       
+
       <!-- Cart Totals Section -->
       <div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
         <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
@@ -248,7 +248,7 @@
   </div>
 </form>
 
-<!-- Modal -->
+<!-- Modal address -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
   aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -421,7 +421,7 @@
   }
 </script>
 
-<!-- pay button -->
+<!-- add money pay button -->
 <script>
   document.getElementById("payButton").addEventListener("click", function (e) {
     e.preventDefault();
@@ -496,7 +496,7 @@
   });
 </script>
 
-<!-- wallet  -->
+<!-- payment -->
 <script>
   document.querySelector("form").addEventListener("submit", function (e) {
     e.preventDefault(); // Prevent the form from submitting immediately
@@ -540,6 +540,7 @@
             .then((response) => response.json())
             .then((data) => {
               if (data.success) {
+                // Proceed to submit the order form
                 document.querySelector("form").submit();
               } else {
                 alert("Payment verification failed!");
@@ -550,6 +551,7 @@
               alert("Failed to verify payment.");
             });
         },
+
         theme: {
           color: "#3399cc",
         },
