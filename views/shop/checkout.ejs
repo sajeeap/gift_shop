@@ -1,4 +1,5 @@
-<form class="bg0 p-t-75 p-b-85" action="/user/place-order" method="POST" id="placeorderForm">
+<form class="bg0 p-t-75 p-b-85"   id="orderForm">
+
   <div class="container">
     <div class="row">
       <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
@@ -287,7 +288,7 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <!-- address form  -->
-<script>
+<!-- <script>
   function openEditModal(addressId) {
     const address = document.getElementById("address-" + addressId);
     const name = address.querySelector(".address_name").innerText;
@@ -390,7 +391,7 @@
   function editAddress(addressId) {
     openEditModal(addressId);
   }
-</script>
+</script> -->
 
 <!-- add money pay button -->
 <script>
@@ -467,12 +468,621 @@
   });
 </script>
 
-
-
-
-<!-- payme -->
-
 <script>
+  function openEditModal(addressId) {
+    const address = document.getElementById("address-" + addressId);
+    // Extract values from the selected address
+    const name = address.querySelector(".address_name").innerText;
+    const addressType = address.querySelector(".address_type").innerText;
+    const zipCode = address.querySelector(".zip_code").innerText;
+    const locality = address.querySelector(".locality").innerText;
+    const houseName = address.querySelector(".house_name").innerText;
+    const areaStreet = address.querySelector(".area_street").innerText;
+    const town = address.querySelector(".town").innerText;
+    const state = address.querySelector(".state").innerText;
+    const landmark = address.querySelector(".landmark").innerText;
+
+    // Set values in the modal form
+    document.getElementById("addressId").value = addressId;
+    document.getElementById("name").value = name;
+    document.getElementById("address_type").value = addressType;
+    document.getElementById("zip_code").value = zipCode;
+    document.getElementById("locality").value = locality;
+    document.getElementById("house_name").value = houseName;
+    document.getElementById("area_street").value = areaStreet;
+    document.getElementById("town").value = town;
+    document.getElementById("state").value = state;
+    document.getElementById("landmark").value = landmark;
+
+    // Show the modal
+    $("#exampleModal").modal("show");
+  }
+
+  document.getElementById("address-form").addEventListener("submit", function (e) {
+    e.preventDefault(); // Prevent form submission
+
+    // Extract values from the form
+    const name = document.getElementById("name").value;
+    const addressType = document.getElementById("address_type").value;
+    const zipCode = document.getElementById("zip_code").value;
+    const locality = document.getElementById("locality").value;
+    const houseName = document.getElementById("house_name").value;
+    const areaStreet = document.getElementById("area_street").value;
+    const town = document.getElementById("town").value;
+    const state = document.getElementById("state").value;
+    const landmark = document.getElementById("landmark").value;
+    const addressId = document.getElementById("addressId").value;
+
+    let url = "/user/add-address";
+    let method = "POST";
+
+    if (addressId) {
+      url = "/user/edit-address";
+      method = "POST";
+    }
+
+    // Send data via fetch
+    fetch(url, {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        addressId,
+        name,
+        addressType,
+        zipCode,
+        locality,
+        houseName,
+        areaStreet,
+        town,
+        state,
+        landmark,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: data.message,
+          }).then(() => {
+            window.location.href = "/user/checkout"; // Redirect to the checkout page
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: data.message,
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Server Error",
+          text: "An error occurred while processing the address",
+        });
+      });
+  });
+
+  // Handle order form submission
+  document.getElementById("orderForm").addEventListener("submit", async function (e) {
+    e.preventDefault(); // Prevent the form from submitting immediately
+
+    try {
+      const selectedPaymentMethod = document.querySelector('input[name="paymentoptions"]:checked').value;
+      const totalPrice = parseFloat("<%= discountedTotalPrice.toFixed(2) %>");
+      const walletBalance = parseFloat("<%= walletBalance.toFixed(2) %>");
+
+      const response = await fetch('/user/place-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          paymentoptions: selectedPaymentMethod,
+          totalPrice: totalPrice,
+          walletBalance: walletBalance
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const orderId = data.orderId;
+
+        if (selectedPaymentMethod === "Wallet") {
+          if (walletBalance < totalPrice) {
+            Swal.fire({
+              icon: "error",
+              title: "Insufficient Wallet Balance",
+              text: "You have two options:",
+              showCancelButton: true,
+              confirmButtonText: "Add Money",
+              cancelButtonText: "Use Wallet & Pay Rest",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                $("#addMoneyModal").modal("show");
+              } else {
+                const remainingAmount = totalPrice - walletBalance;
+
+                Swal.fire({
+                  title: "Select Additional Payment Method",
+                  input: 'select',
+                  inputOptions: {
+                    'Razor Pay': 'Razor Pay',
+                    'COD': 'Cash on Delivery',
+                  },
+                  inputPlaceholder: 'Select payment method',
+                  showCancelButton: true,
+                  confirmButtonText: "Proceed",
+                  cancelButtonText: "Cancel",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    const additionalPaymentMethod = result.value;
+                    if (additionalPaymentMethod === "Razor Pay") {
+                      var options = {
+                        key: "<%= process.env.RAZOR_PAY_KEY_ID %>",
+                        amount: remainingAmount * 100,
+                        currency: "INR",
+                        name: "Order Payment",
+                        description: "Payment for order",
+                        handler: function (response) {
+                          fetch("/user/verify-orderpayment", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                              paymentId: response.razorpay_payment_id,
+                              orderId: orderId 
+                            }),
+                          })
+                            .then((response) => response.json())
+                            .then((data) => {
+                              if (data.success) {
+                                Swal.fire({
+                                  icon: "success",
+                                  title: "Payment Verified",
+                                  text: "Proceeding with order submission.",
+                                  showConfirmButton: false,
+                                  timer: 1500,
+                                }).then(() => {
+                                  document.getElementById("orderForm").submit();
+                                });
+                              } else {
+                                Swal.fire({
+                                  icon: "error",
+                                  title: "Payment Verification Failed",
+                                  text: "Please try again.",
+                                });
+                              }
+                            })
+                            .catch((error) => {
+                              console.error("Error verifying payment:", error);
+                              Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: "Failed to verify payment.",
+                              });
+                            });
+                        },
+                        theme: {
+                          color: "#3399cc",
+                        },
+                      };
+
+                      var rzp1 = new Razorpay(options);
+                      rzp1.open();
+                    } else if (additionalPaymentMethod === "COD") {
+                      if (remainingAmount > 1000) {
+                        Swal.fire({
+                          icon: "error",
+                          title: "COD Not Available",
+                          text: "Cash on Delivery is not available for orders above $1000. Please choose another payment method.",
+                        });
+                      } else {
+                        Swal.fire({
+                          icon: "info",
+                          title: "Cash on Delivery",
+                          text: "Proceeding with COD payment.",
+                          showConfirmButton: false,
+                          timer: 1500,
+                        }).then(() => {
+                          document.getElementById("orderForm").submit();
+                        });
+                      }
+                    }
+                  }
+                });
+              }
+            });
+          } else {
+            Swal.fire({
+              title: "Confirm Payment",
+              text: "Are you sure you want to use your wallet balance for this order?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Yes, Pay with Wallet",
+              cancelButtonText: "Cancel",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                document.getElementById("orderForm").submit();
+              }
+            });
+          }
+        } else if (selectedPaymentMethod === "Razor Pay") {
+          var options = {
+            key: "<%= process.env.RAZOR_PAY_KEY_ID %>",
+            amount: totalPrice * 100,
+            currency: "INR",
+            name: "Order Payment",
+            description: "Payment for order",
+            handler: function (response) {
+              fetch("/user/verify-orderpayment", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  paymentId: response.razorpay_payment_id,
+                  orderId: orderId 
+                }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.success) {
+                    Swal.fire({
+                      icon: "success",
+                      title: "Payment Verified",
+                      text: "Proceeding with order submission.",
+                      showConfirmButton: false,
+                      timer: 1500,
+                    }).then(() => {
+                      document.getElementById("orderForm").submit();
+                    });
+                  } else {
+                    Swal.fire({
+                      icon: "error",
+                      title: "Payment Verification Failed",
+                      text: "Please try again.",
+                    });
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error verifying payment:", error);
+                  Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Failed to verify payment.",
+                  });
+                });
+            },
+            theme: {
+              color: "#3399cc",
+            },
+          };
+
+          var rzp1 = new Razorpay(options);
+          rzp1.open();
+        } else if (selectedPaymentMethod === "COD") {
+          if (totalPrice > 1000) {
+            Swal.fire({
+              icon: "error",
+              title: "COD Not Available",
+              text: "Cash on Delivery is not available for orders above $1000. Please choose another payment method.",
+            });
+          } else {
+            Swal.fire({
+              icon: "info",
+              title: "Cash on Delivery",
+              text: "Proceeding with COD payment.",
+              showConfirmButton: false,
+              timer: 1500,
+            }).then(() => {
+              document.getElementById("orderForm").submit();
+            });
+          }
+        }
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Order Placement Failed",
+          text: data.message,
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred while placing the order.",
+      });
+    }
+  });
+</script>
+
+
+
+<!-- pay 1-->
+ <!-- <script>
+  document.querySelector("form").addEventListener("submit", async function (e) {
+  e.preventDefault(); // Prevent the form from submitting immediately
+
+  try {
+    const selectedPaymentMethod = document.querySelector('input[name="paymentoptions"]:checked').value;
+    const totalPrice = parseFloat("<%= discountedTotalPrice.toFixed(2) %>");
+    const walletBalance = parseFloat("<%= walletBalance.toFixed(2) %>");
+
+    // Make a request to place the order and get the orderId
+    const response = await fetch('/user/place-order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        paymentoptions: selectedPaymentMethod,
+        totalPrice: totalPrice,
+        walletBalance: walletBalance
+      })
+    });
+
+    const data = await response.json();
+
+    console.log("data", data);
+    
+
+    if (data.success) {
+      const orderId = data.orderId; // Retrieve the orderId from the server response
+
+      if (selectedPaymentMethod === "Wallet") {
+        if (walletBalance < totalPrice) {
+          Swal.fire({
+            icon: "error",
+            title: "Insufficient Wallet Balance",
+            text: "You have two options:",
+            showCancelButton: true,
+            confirmButtonText: "Add Money",
+            cancelButtonText: "Use Wallet & Pay Rest",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Open the Add Money modal
+              $("#addMoneyModal").modal("show");
+            } else {
+              const remainingAmount = totalPrice - walletBalance;
+
+              Swal.fire({
+                title: "Select Additional Payment Method",
+                input: 'select',
+                inputOptions: {
+                  'Razor Pay': 'Razor Pay',
+                  'COD': 'Cash on Delivery',
+                },
+                inputPlaceholder: 'Select payment method',
+                showCancelButton: true,
+                confirmButtonText: "Proceed",
+                cancelButtonText: "Cancel",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const additionalPaymentMethod = result.value;
+                  if (additionalPaymentMethod === "Razor Pay") {
+                    var options = {
+                      key: "<%= process.env.RAZOR_PAY_KEY_ID %>",
+                      amount: remainingAmount * 100,
+                      currency: "INR",
+                      name: "Order Payment",
+                      description: "Payment for order",
+                      handler: function (response) {
+                        fetch("/user/verify-orderpayment", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            paymentId: response.razorpay_payment_id,
+                            orderId: orderId // Use the orderId here
+                          }),
+                        })
+                          .then((response) => response.json())
+                          .then((data) => {
+                            if (data.success) {
+                              Swal.fire({
+                                icon: "success",
+                                title: "Payment Verified",
+                                text: "Proceeding with order submission.",
+                                showConfirmButton: false,
+                                timer: 1500,
+                              }).then(() => {
+                                document.querySelector("form").submit();
+                              });
+                            } else {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Payment Verification Failed",
+                                text: "Please try again.",
+                              });
+                            }
+                          })
+                          .catch((error) => {
+                            console.error("Error verifying payment:", error);
+                            Swal.fire({
+                              icon: "error",
+                              title: "Error",
+                              text: "Failed to verify payment.",
+                            });
+                          });
+                      },
+                      theme: {
+                        color: "#3399cc",
+                      },
+                    };
+
+                    var rzp1 = new Razorpay(options);
+                    rzp1.open();
+                  } else if (additionalPaymentMethod === "COD") {
+                    if (remainingAmount > 1000) {
+                      Swal.fire({
+                        icon: "error",
+                        title: "COD Not Available",
+                        text: "Cash on Delivery is not available for orders above $1000. Please choose another payment method.",
+                      });
+                    } else {
+                      Swal.fire({
+                        icon: "info",
+                        title: "Cash on Delivery",
+                        text: "Proceeding with COD payment.",
+                        showConfirmButton: false,
+                        timer: 1500,
+                      }).then(() => {
+                        document.querySelector("form").submit(); // Submit the form for COD
+                      });
+                    }
+                  }
+                }
+              });
+            }
+          });
+        } else {
+          Swal.fire({
+            title: "Confirm Payment",
+            text: "Your wallet balance is sufficient. Do you want to proceed with the payment?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Proceed",
+            cancelButtonText: "Cancel",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire({
+                icon: "success",
+                title: "Payment Successful",
+                text: "Proceeding with payment.",
+                showConfirmButton: false,
+                timer: 1500,
+              }).then(() => {
+                document.querySelector("form").submit();
+              });
+            }
+          });
+        }
+
+      } else if (selectedPaymentMethod === "Razor Pay") {
+        var options = {
+          key: "<%= process.env.RAZOR_PAY_KEY_ID %>",
+          amount: totalPrice * 100,
+          currency: "INR",
+          name: "Order Payment",
+          description: "Payment for order",
+          handler: function (response) {
+            fetch("/user/verify-orderpayment", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                paymentId: response.razorpay_payment_id,
+                orderId: orderId // Use the orderId here
+              }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.success) {
+                  Swal.fire({
+                    icon: "success",
+                    title: "Payment Verified",
+                    text: "Proceeding with order submission.",
+                    showConfirmButton: false,
+                    timer: 1500,
+                  }).then(() => {
+                    document.querySelector("form").submit();
+                  });
+                } else {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Payment Verification Failed",
+                    text: "Please try again.",
+                  });
+                }
+              })
+              .catch((error) => {
+                console.error("Error verifying payment:", error);
+                Swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Failed to verify payment.",
+                });
+              });
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+      } else if (selectedPaymentMethod === "COD") {
+        Swal.fire({
+          title: "Confirm Payment",
+          text: "Are you sure you want to proceed with Cash on Delivery?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes, Proceed",
+          cancelButtonText: "Cancel",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            if (totalPrice > 1000) {
+              Swal.fire({
+                icon: "error",
+                title: "COD Not Available",
+                text: "Cash on Delivery is not available for orders above $1000. Please choose another payment method.",
+              });
+            } else {
+              Swal.fire({
+                icon: "info",
+                title: "Cash on Delivery",
+                text: "Proceeding with COD payment.",
+                showConfirmButton: false,
+                timer: 1500,
+              }).then(() => {
+                document.querySelector("form").submit(); // Submit the form for COD
+              });
+            }
+          }
+        });
+      } else {
+        Swal.fire({
+          icon: "warning",
+          title: "No Payment Method Selected",
+          text: "Please select a payment method.",
+        });
+      }
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: data.message || "Failed to place order.",
+      });
+    }
+  } catch (error) {
+    console.error("Error placing order:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Failed to place order. Please try again.",
+    });
+  }
+});
+
+ </script> -->
+
+
+<!-- payment -->
+
+
+
+<!-- <script>
   document.querySelector("form").addEventListener("submit", function (e) {
     e.preventDefault(); // Prevent the form from submitting immediately
 
@@ -613,6 +1223,7 @@
           }
         });
       }
+
     } else if (selectedPaymentMethod === "Razor Pay") {
       // Trigger Razorpay UI
       var options = {
@@ -704,7 +1315,7 @@
       });
     }
   });
-</script>
+</script> -->
 
 
 

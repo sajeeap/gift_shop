@@ -1,0 +1,113 @@
+<section class="return-form page-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-wrapper">
+                    <h3>Return Order</h3>
+                    <form id="returnForm" method="POST" action="/user/returns">
+                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                        <% order.items.forEach((item, index) => { %>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" name="items[<%= index %>][selected]" value="true">
+                                 <% const itemHasImages=item.product_id && item.product_id.primaryImages &&
+                                item.product_id.primaryImages.length> 0; %>
+                                <% if (itemHasImages) { %>
+                                  <img
+                                    src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
+                                    class="card-img-top" alt="<%= item.product_id.product_name %>"
+                                    style="width: 20%; height: auto" />
+                                  <% } else { %>
+                                    <img src="/path/to/default-image.jpg" class="card-img-top"
+                                      alt="Default Image" style="width: 100%; height: auto" />
+                                    <% } %>
+                                <%= item.product_id.product_name %> 
+                            </label>
+                            <input type="hidden" name="items[<%= index %>][product]" value="<%= item.product_id._id %>">
+                            <input type="hidden" name="items[<%= index %>][quantity]" value="<%= item.quantity %>">
+                            <input type="hidden" name="items[<%= index %>][price]" value="<%= item.price %>">
+                        </div>
+                        <% }); %>
+                        <div class="form-group">
+                            <label for="reason">Reason for Return:</label>
+                            <select name="reason" id="reason" class="form-control" required>
+                                <option value="">Select a reason</option>
+                                <option value="product_damage">Product Damage</option>
+                                <option value="parcel_damage">Parcel Damage</option>
+                                <option value="not_fitted">Product Not Fitted</option>
+                                <option value="wrong_item">Wrong Item Delivered</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="note">Additional Note:</label>
+                            <textarea name="note" id="note" class="form-control" placeholder="Elaborate on the issue (optional)"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-main">Submit Return Request</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.getElementById('returnForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const form = this;
+    const formData = new FormData(form);
+    const data = {
+        orderId: formData.get('orderId'), // Get the orderId directly
+        items: []
+    };
+
+    // Iterate over the formData to structure items correctly
+    formData.forEach((value, key) => {
+        if (key.startsWith('items[')) {
+            const index = key.match(/\d+/)[0]; // Extract the index number from the key
+            const field = key.match(/\]\[(.*?)\]/)[1]; // Extract the field name
+
+            // Initialize the item object if it doesn't exist
+            if (!data.items[index]) {
+                data.items[index] = {};
+            }
+
+            // Add the field to the item object
+            if (field === 'selected' && value === 'true') {
+                data.items[index].selected = true;
+            } else if (field !== 'selected') {
+                data.items[index][field] = value;
+            }
+        } else {
+            data[key] = value; // Add other non-item fields like reason and note
+        }
+    });
+
+    // Filter out items that were not selected
+    data.items = data.items.filter(item => item.selected);
+
+    // Send the object as JSON
+    fetch('/user/returns', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    }).then(response => response.json())
+      .then(result => {
+          if (result.success) {
+              Swal.fire('Return Request Created!', result.message, 'success').then(() => {
+                  window.location.href = '/user/profile'; // Redirect after successful submission
+              });
+          } else {
+              Swal.fire('Error!', result.message || 'There was a problem creating your return request.', 'error');
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          Swal.fire('Error!', 'An unexpected error occurred.', 'error');
+      });
+});
+
+</script>

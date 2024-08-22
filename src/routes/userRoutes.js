@@ -66,6 +66,7 @@ router.put(
 );
 
 //return
+router.get("/returns",returnController.showReturnForm)
 router.post("/returns", returnController.createReturnRequest)
 
 //invoice

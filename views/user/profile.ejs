@@ -367,10 +367,9 @@
                                               <span id="status-<%= item._id %>" class="text-danger">Item
                                                 Cancelled</span>
                                               <% } else if (order.status==='Delivered' ) { %>
-                                                <button type="button" class="btn btn-warning" data-toggle="modal"
-                                                  data-target="#returnModal_<%= order._id %>">
+                                                <a href="/user/returns?orderId=<%= order._id %>" class="btn btn-warning" >
                                                   Return
-                                                </button>
+                                                </a>
                                                 <% } %>
                                         </div>
                                       </div>
@@ -411,8 +410,7 @@
                                         <a href="/user/invoice/genarate/<%= order._id %>"
                                           class="btn btn-primary">Generate Invoice</a>
                                         <% } %>
-                                          <a href="/user/order/return/<%= order._id %>"
-                                            class="btn btn-warning">Return</a>
+                                          
                                           <% } %>
 
                                             <button type="button" class="btn btn-secondary"
@@ -421,61 +419,7 @@
                                 </div>
                               </div>
                             </div>
-                            <!-- Return Modal -->
-                            <div class="modal fade" id="returnModal_<%= order._id %>" tabindex="-1" role="dialog"
-                              aria-labelledby="returnModalLabel_<%= order._id %>" aria-hidden="true">
-                              <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title" id="returnModalLabel_<%= order._id %>">Return Order</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                    <form id="returnForm_<%= order._id %>" method="POST" action="/user/returns">
-                                      <input type="hidden" name="orderId" value="<%= order._id %>">
-                                      <% order.items.forEach((item, index)=> { %>
-                                        <div class="form-group">
-                                          <label>
-                                            <input type="checkbox" name="items[<%= index %>][selected]" value="true">
-                                            <%= item.product_id.product_name %>
-                                          </label>
-                                          <input type="hidden" name="items[<%= index %>][product]"
-                                            value="<%= item.product_id._id %>">
-                                          <input type="hidden" name="items[<%= index %>][size]"
-                                            value="<%= item.size %>">
-                                          <input type="hidden" name="items[<%= index %>][quantity]"
-                                            value="<%= item.quantity %>">
-                                          <input type="hidden" name="items[<%= index %>][price]"
-                                            value="<%= item.price %>">
-                                        </div>
-                                        <% }); %>
-                                          <div class="form-group">
-                                            <label for="reason_<%= order._id %>">Reason for Return:</label>
-                                            <select name="reason" id="reason_<%= order._id %>" class="form-control"
-                                              required>
-                                              <option value="">Select a reason</option>
-                                              <option value="product_damage">Product Damage</option>
-                                              <option value="parcel_damage">Parcel Damage</option>
-                                              <option value="not_fitted">Product Not Fitted</option>
-                                              <option value="wrong_item">Wrong Item Delivered</option>
-                                            </select>
-                                          </div>
-                                          <div class="form-group">
-                                            <label for="note_<%= order._id %>">Additional Note:</label>
-                                            <textarea name="note" id="note_<%= order._id %>" class="form-control"
-                                              placeholder="Elaborate on the issue (optional)"></textarea>
-                                          </div>
-                                          <button type="submit" class="btn btn-main">Submit Return Request</button>
-                                    </form>
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+                          
                             <!-- End of Return Modal -->
                     </div>
 

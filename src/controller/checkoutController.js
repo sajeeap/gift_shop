@@ -289,12 +289,16 @@ module.exports = {
       }
       if (!address) {
         return res.status(400).json({ success: false, message: "Please select an address" });
+
+
       }
-  
-      let shippingAddress = await Address.findById(address);
+
+       let shippingAddress = await Address.findById(address);
       if (!shippingAddress) {
         return res.status(404).json({ success: false, message: "Shipping address not found" });
       }
+  
+   
   
       const userId = req.session.user._id;
       const user = await User.findById(userId);
@@ -389,7 +393,7 @@ module.exports = {
       }
   
       // Set order status and payment status
-      const status = paymentoptions === "COD" || paymentoptions === "Wallet" ? "Placed" : "Pending";
+      const status = paymentoptions === "COD" || paymentoptions === "Wallet" || paymentoptions === "Razor Pay"? "Placed" : "Pending";
       const paymentStatus = paymentoptions === "COD" ? "Pending" : "Paid";
   
       const orderId = generateShortId(); // Generate a unique order ID
@@ -416,11 +420,17 @@ module.exports = {
       const wishlist = await Wishlist.findOne({ user_id: req.session.user }).populate("products");
       let cart = "cart is empty";
   
-      return res.status(201).render("shop/orderConfirm", {
-        user: req.session.user,
-        order,
-        wishlist,
-        cart,
+      // return res.status(201).render("shop/orderConfirm", {
+      //   user: req.session.user,
+      //   order,
+      //   wishlist,
+      //   cart,
+      // });
+      return res.status(200).json({
+        success: true,
+        message: "Order placed successfully",
+        orderId: orderId, // Pass the generated orderId back to the client,
+        user:req.session.user
       });
   
     } catch (error) {
@@ -432,27 +442,20 @@ module.exports = {
       });
     }
   },
-  
-  
-  
-  
-
  
-  
-
   verifyPayment: async (req, res) => {
     try {
-      const payment_id = req.body.paymentId;
-      console.log("paymentId.................................... 1", payment_id);
-      
+      const { paymentId, orderId } = req.body; // Destructure paymentId and orderId from request body
+      console.log("paymentId:", paymentId);
+      console.log("orderId:", orderId);
   
-      if (payment_id) {
-        // Find the order that is being paid for (you might need to pass the order ID in the request as well)
-        const order = await Order.findOne({ customer_id: req.session.user._id, status: "Placed" });
+      if (paymentId && orderId) {
+        // Find the order using the orderId
+        const order = await Order.findOne({ orderId: orderId });
   
         if (order) {
           // Update the order with the payment ID
-          order.paymentId = payment_id;
+          order.paymentId = paymentId;
           order.paymentStatus = "Paid"; // Update the payment status as well
           await order.save();
   
@@ -461,13 +464,44 @@ module.exports = {
           res.status(404).json({ success: false, message: "Order not found" });
         }
       } else {
-        res.status(400).json({ success: false, message: "Payment ID is missing" });
+        res.status(400).json({ success: false, message: "Payment ID or Order ID is missing" });
       }
     } catch (error) {
       console.error("Error verifying payment:", error);
       res.status(500).send("Internal Server Error");
     }
   },
+  
+  
+
+  // verifyPayment: async (req, res) => {
+  //   try {
+  //     const payment_id = req.body.paymentId;
+  //     console.log("paymentId.................................... 1", payment_id);
+      
+  
+  //     if (payment_id) {
+  //       // Find the order that is being paid for (you might need to pass the order ID in the request as well)
+  //       const order = await Order.findOne({ customer_id: req.session.user._id, status: "Placed" });
+  
+  //       if (order) {
+  //         // Update the order with the payment ID
+  //         order.paymentId = payment_id;
+  //         order.paymentStatus = "Paid"; // Update the payment status as well
+  //         await order.save();
+  
+  //         res.json({ success: true });
+  //       } else {
+  //         res.status(404).json({ success: false, message: "Order not found" });
+  //       }
+  //     } else {
+  //       res.status(400).json({ success: false, message: "Payment ID is missing" });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error verifying payment:", error);
+  //     res.status(500).send("Internal Server Error");
+  //   }
+  // },
   
 
   successOrder: async (req, res) => {

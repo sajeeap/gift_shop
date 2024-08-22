@@ -101,7 +101,7 @@ module.exports = {
             const order = await Orders.findOne({ _id: orderId, customer_id: userId }).populate('items.product_id');
 
             if (order && order.orderStatus === 'Delivered') {
-                const deliveryDate = new Date(order.deliveryDate);
+                const deliveryDate = new Date(order.createdAt);
                 const currentDate = new Date();
                 const twoWeeksInMillis = 14 * 24 * 60 * 60 * 1000;
 
