@@ -38,7 +38,7 @@
 
                                 <td>
                                     <span class="badge rounded-pill
-                                        <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Shipped' ? 'alert-warning' : '' %>
+                                        <%= order.status === 'Placed' || order.status === 'Processing' || order.status === 'Shipped' ? 'alert-warning' : '' %>
                                         <%= order.status === 'Cancelled' ? 'alert-danger' : '' %>
                                         <%= order.status === 'Delivered' ? 'alert-success' : '' %>"
                                         data-toggle="modal" data-target="#statusModal-<%= index %>">
@@ -68,7 +68,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="statusModalLabel-<%= index %>">Order Id- <%= order._id %></h5>
+                    <h5 class="modal-title" id="statusModalLabel-<%= index %>">Order Id- <%= order.orderId %></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -78,8 +78,9 @@
                         <div class="form-group">
                             <label for="statusSelect-<%= index %>">Status</label>
                             <select class="form-control" id="statusSelect-<%= index %>" name="status" >
-                                <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                                <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                               
+                                <option value="Placed" <%= order.status === 'Placed' ? 'selected' : '' %>>Placed</option>
+                                 <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
                                 <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
                                 <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
                                 <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>

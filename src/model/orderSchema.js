@@ -3,6 +3,12 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema(
   {
+
+  //   orderId: {
+  //     type: String,
+  //     unique: true,
+  //     required: true
+  // },
     customer_id: {
       type: ObjectId,
       ref: "User",
@@ -92,6 +98,7 @@ const orderSchema = new mongoose.Schema(
     paymentMethod: {
       type: String,
       required: true,
+      enum: [ "COD", "Wallet", "Razor Pay", "Pending" ],
     },
     totalPrice: {
       type: Number,
@@ -113,6 +120,7 @@ const orderSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
+      enum : ["Pending","Placed","Processing","Shipped", "Delivered","Cancelled", "Returned"  ]
     },
     appliedCoupon: { 
       type: String,
@@ -124,9 +132,19 @@ const orderSchema = new mongoose.Schema(
     },
     cancelledBy: { type: String, 
       enum: ['User', 'Admin'],
-       default: null }, 
+       default: null
+       }, 
+
+    razorpayOrderId: {
+        type: String,
+        default: null
+    },
+    razorpayPaymentId: { 
+        type: String,
+        default: null
+    },
        
-    paymentId: {
+      paymentId: {
         type: String,
         required: false,
       },

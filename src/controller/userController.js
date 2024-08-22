@@ -42,80 +42,245 @@ function generateRefferalCode(length) {
 module.exports = {
 
     //profile
-
     getProfile: async (req, res) => {
+    try {
+        const userId = req.session.user._id;
+        const user = await User.findById(userId);
 
-        try {
-            const userId = req.session.user._id;
-            const user = await User.findById(userId);
-
-            
-        if(!user.referralCode){
+        if (!user.referralCode) {
             const refferalCode = generateRefferalCode(8);
-      
             user.referralCode = refferalCode;
             await user.save();
-          }
-      
-          console.log(user);
-      
-          successfullRefferals = user.successfullRefferals.reverse();
-
-            if (!user) {
-                return res.status(404).send('User not found');
-            }
-
-            let cart = await Cart.findOne({ userId: req.session.user }).populate("items");
-            const wishlist = await Wishlist.findOne({ user_id: req.session.user }).populate("products");
-
-            // Get Wallet
-            const wallet = await Wallet.findOne({ userId });
-
-            //Get Addresses
-            const addresses = await Address.find({
-                customer_id: userId,
-                delete: false
-            });
-
-
-
-
-            //Get Orders
-            const orders = await Orders.find({
-                customer_id: userId
-            }).populate('items.product_id')
-                .sort({ createdAt: -1 })
-                .exec();
-
-            // Get Orders using the getUserOrders function
-            // const orders = await getUserOrders(userId);
-
-
-
-            if (!addresses) {
-                throw new Error('No addresses found for the user.');
-            }
-
-            res.render('user/profile', {
-                user,
-                addresses,
-                orders,
-                cart,
-                wishlist,
-                wallet: wallet || { balance: 0, transactions: [] },
-                refferalCode: user.referralCode,
-          successfullRefferals
-
-
-            });
-
-        } catch (error) {
-
-            console.error('Error fetching profile:', error);
-            res.status(500).send('An error occurred while fetching the profile');
         }
 
-    },
+        const successfullRefferals = user.successfullRefferals.reverse();
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        let cart = await Cart.findOne({ userId: req.session.user }).populate("items");
+        const wishlist = await Wishlist.findOne({ user_id: req.session.user }).populate("products");
+
+        // Get Wallet with Pagination
+        const wallet = await Wallet.findOne({ userId });
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 10;
+        const skip = (page - 1) * limit;
+
+        // Ensure transactions are in descending order by date
+        const transactions = wallet 
+            ? wallet.transactions.reverse().slice(skip, skip + limit) 
+            : [];
+
+        const totalTransactions = wallet ? wallet.transactions.length : 0;
+        const totalPages = Math.ceil(totalTransactions / limit);
+
+        // Get Addresses
+        const addresses = await Address.find({
+            customer_id: userId,
+            delete: false
+        });
+
+        // Get Orders
+        const orders = await Orders.find({
+            customer_id: userId
+        }).populate('items.product_id')
+            .sort({ createdAt: -1 })
+            .exec();
+
+        if (!addresses) {
+            throw new Error('No addresses found for the user.');
+        }
+
+        // Check if a specific order is requested for return
+        const orderId = req.query.returnOrderId;  // Assuming the order ID for return is passed via query
+        let returnOrder = null;
+
+        if (orderId) {
+            const order = await Orders.findOne({ _id: orderId, customer_id: userId }).populate('items.product_id');
+
+            if (order && order.orderStatus === 'Delivered') {
+                const deliveryDate = new Date(order.deliveryDate);
+                const currentDate = new Date();
+                const twoWeeksInMillis = 14 * 24 * 60 * 60 * 1000;
+
+                if (currentDate - deliveryDate <= twoWeeksInMillis) {
+                    returnOrder = order;  // Only set if return is allowed
+                } else {
+                    console.warn('Return period has expired');
+                }
+            } else {
+                console.warn('Order not found or not delivered');
+            }
+        }
+
+        res.render('user/profile', {
+            user,
+            addresses,
+            orders,
+            cart,
+            wishlist,
+            wallet: wallet || { balance: 0, transactions: [] },
+            transactions,
+            currentPage: page,
+            totalPages,
+            limit,
+            referralCode: user.referralCode,
+            successfullRefferals,
+            returnOrder  // Include the return order details if applicable
+        });
+
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        res.status(500).send('An error occurred while fetching the profile');
+    }
+},
+
+
+    // getProfile: async (req, res) => {
+    //     try {
+    //         const userId = req.session.user._id;
+    //         const user = await User.findById(userId);
+    
+    //         if (!user.referralCode) {
+    //             const refferalCode = generateRefferalCode(8);
+    //             user.referralCode = refferalCode;
+    //             await user.save();
+    //         }
+    
+    //         const successfullRefferals = user.successfullRefferals.reverse();
+    
+    //         if (!user) {
+    //             return res.status(404).send('User not found');
+    //         }
+    
+    //         let cart = await Cart.findOne({ userId: req.session.user }).populate("items");
+    //         const wishlist = await Wishlist.findOne({ user_id: req.session.user }).populate("products");
+    
+    //         // Get Wallet with Pagination
+    //         const wallet = await Wallet.findOne({ userId });
+    //         const page = parseInt(req.query.page, 10) || 1;
+    //         const limit = parseInt(req.query.limit, 10) || 10;
+    //         const skip = (page - 1) * limit;
+    
+    //         // Ensure transactions are in descending order by date
+    //         const transactions = wallet 
+    //             ? wallet.transactions.reverse().slice(skip, skip + limit) 
+    //             : [];
+    
+    //         const totalTransactions = wallet ? wallet.transactions.length : 0;
+    //         const totalPages = Math.ceil(totalTransactions / limit);
+    
+    //         // Get Addresses
+    //         const addresses = await Address.find({
+    //             customer_id: userId,
+    //             delete: false
+    //         });
+    
+    //         // Get Orders
+    //         const orders = await Orders.find({
+    //             customer_id: userId
+    //         }).populate('items.product_id')
+    //             .sort({ createdAt: -1 })
+    //             .exec();
+    
+    //         if (!addresses) {
+    //             throw new Error('No addresses found for the user.');
+    //         }
+    
+    //         res.render('user/profile', {
+    //             user,
+    //             addresses,
+    //             orders,
+    //             cart,
+    //             wishlist,
+    //             wallet: wallet || { balance: 0, transactions: [] },
+    //             transactions,
+    //             currentPage: page,
+    //             totalPages,
+    //             limit,
+    //             referralCode: user.referralCode,
+    //             successfullRefferals
+    //         });
+    
+    //     } catch (error) {
+    //         console.error('Error fetching profile:', error);
+    //         res.status(500).send('An error occurred while fetching the profile');
+    //     }
+    // },
+    
+
+    // getProfile: async (req, res) => {
+
+    //     try {
+    //         const userId = req.session.user._id;
+    //         const user = await User.findById(userId);
+
+            
+    //     if(!user.referralCode){
+    //         const refferalCode = generateRefferalCode(8);
+      
+    //         user.referralCode = refferalCode;
+    //         await user.save();
+    //       }
+      
+    //       console.log(user);
+      
+    //       successfullRefferals = user.successfullRefferals.reverse();
+
+    //         if (!user) {
+    //             return res.status(404).send('User not found');
+    //         }
+
+    //         let cart = await Cart.findOne({ userId: req.session.user }).populate("items");
+    //         const wishlist = await Wishlist.findOne({ user_id: req.session.user }).populate("products");
+
+    //         // Get Wallet
+    //         const wallet = await Wallet.findOne({ userId });
+
+    //         //Get Addresses
+    //         const addresses = await Address.find({
+    //             customer_id: userId,
+    //             delete: false
+    //         });
+
+    //         //Get Orders
+    //         const orders = await Orders.find({
+    //             customer_id: userId
+    //         }).populate('items.product_id')
+    //             .sort({ createdAt: -1 })
+    //             .exec();
+
+    //         // Get Orders using the getUserOrders function
+    //         // const orders = await getUserOrders(userId);
+
+
+
+    //         if (!addresses) {
+    //             throw new Error('No addresses found for the user.');
+    //         }
+
+    //         res.render('user/profile', {
+    //             user,
+    //             addresses,
+    //             orders,
+    //             cart,
+    //             wishlist,
+    //             wallet: wallet || { balance: 0, transactions: [] },
+    //             refferalCode: user.referralCode,
+    //            successfullRefferals
+
+
+    //         });
+
+    //     } catch (error) {
+
+    //         console.error('Error fetching profile:', error);
+    //         res.status(500).send('An error occurred while fetching the profile');
+    //     }
+
+    // },
 
     editProfile: async (req, res) => {
         try {
@@ -386,6 +551,8 @@ module.exports = {
     verifyPayment: async (req, res) => {
         try {
             const { orderId, paymentId, signature, amount } = req.body;
+            console.log("orderid|||||||||||||||||||||||||||||||||||||||||||",orderId);
+            
     
             const userId = req.session.user._id;
     

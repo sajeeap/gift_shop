@@ -149,25 +149,31 @@ module.exports = {
         discount_amount,
         expiry_date,
       } = req.body;
-
+  
       if (
-        !coupon_code &&
-        !description &&
-        !min_purchase &&
-        !discount_amount &&
+        !coupon_code ||
+        !description ||
+        !min_purchase ||
+        !discount_amount ||
         !expiry_date
       ) {
-        req.flash("error", " You need to fill all the requiring fields");
+        req.flash("error", "You need to fill all the required fields");
         return res.redirect("/admin/add-promocodes");
       }
-
+  
+      if (discount_amount > 70) {
+        req.flash("error", "Discount amount cannot exceed 70%");
+        return res.redirect("/admin/add-promocodes");
+      }
+  
       const coupon = await Coupon.findOne({ coupon_code: coupon_code });
       if (coupon) {
-        req.flash("error", "Coupon already exist");
+        req.flash("error", "Coupon already exists");
         return res.redirect("/admin/add-promocodes");
       }
+  
       const isActive = new Date(expiry_date) > new Date();
-
+  
       const addCoupon = new Coupon({
         coupon_code,
         description,
@@ -176,16 +182,17 @@ module.exports = {
         expiry_date,
         isActive,
       });
-
+  
       await addCoupon.save();
       req.flash("success", "Coupon successfully added");
       return res.redirect("/admin/promocodes");
     } catch (error) {
-      console.error("You got an error from add coupon : ", error);
-      req.flash("error", "Unexpected error when creating  add coupon");
+      console.error("Error in add coupon:", error);
+      req.flash("error", "Unexpected error when creating coupon");
       res.redirect("/admin/add-promocodes");
     }
   },
+  
 
   getEditCoupon: async (req, res) => {
     try {
@@ -221,24 +228,30 @@ module.exports = {
         discount_amount,
         expiry_date,
       } = req.body;
-      console.log("updating coupon", coupon_code, discount_amount, expiry_date);
-
-      const existingCoupon = await Coupon.findOne({ coupon_code: coupon_code });
-      if (existingCoupon && existingCoupon._id.toString() !== req.params.id) {
-        req.flash("error", "Coupon already exist");
+      console.log("Updating coupon", coupon_code, discount_amount, expiry_date);
+  
+      if (discount_amount > 70) {
+        req.flash("error", "Discount amount cannot exceed 70%");
         return res.redirect(`/admin/edit-promocodes/${req.params.id}`);
       }
+  
+      const existingCoupon = await Coupon.findOne({ coupon_code: coupon_code });
+      if (existingCoupon && existingCoupon._id.toString() !== req.params.id) {
+        req.flash("error", "Coupon already exists");
+        return res.redirect(`/admin/edit-promocodes/${req.params.id}`);
+      }
+  
       const isActive = new Date(expiry_date) > new Date();
-
+  
       const updatingCoupon = {
-        coupon_code: coupon_code,
-        description: description,
-        min_purchase: min_purchase,
-        discount_amount: discount_amount,
-        expiry_date: expiry_date,
-        isActive: isActive,
+        coupon_code,
+        description,
+        min_purchase,
+        discount_amount,
+        expiry_date,
+        isActive,
       };
-
+  
       const couponId = req.params.id;
       const updatedCoupon = await Coupon.findByIdAndUpdate(
         couponId,
@@ -246,18 +259,19 @@ module.exports = {
         { new: true }
       );
       if (updatedCoupon) {
-        req.flash("success", " Coupon Successfully Updated");
+        req.flash("success", "Coupon successfully updated");
         return res.redirect("/admin/promocodes");
       } else {
-        req.flash("error", "Error during updaring Coupon");
+        req.flash("error", "Error updating coupon");
         return res.redirect("/admin/promocodes");
       }
     } catch (error) {
-      console.error("You got an error from edit coupon : ", error);
-      req.flash("error", "Unexpected error when creating  edit coupon");
+      console.error("Error in edit coupon:", error);
+      req.flash("error", "Unexpected error when editing coupon");
       res.redirect(`/admin/edit-promocodes/${req.params.id}`);
     }
   },
+  
 
   deleteCoupon: async (req, res) => {
     try {

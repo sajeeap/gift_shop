@@ -2,7 +2,7 @@
     <div class="content-header">
         <div>
             <h2 class="content-title card-title">Order detail</h2>
-            <p>Details for Order ID: <%= order._id %></p>
+            <p>Details for Order ID: <%= order.orderId %></p>
         </div>
     </div>
 
@@ -13,7 +13,7 @@
                     <span>
                         <i class="material-icons md-calendar_today"></i> <b><%= order.createdAt.toLocaleDateString('en-GB') %></b>
                     </span> <br>
-                    <small class="text-muted">Order ID: <%= order._id %></small>
+                    <small class="text-muted">Order ID: <%= order.orderId %></small>
                 </div>
                
             </div>

@@ -1,55 +1,171 @@
+<section class="content-main">
+    <div class="content-header">
+      <div>
+        <h2 class="content-title card-title">Dashboard</h2>
+        <p>Whole data about your business here</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="card card-body mb-4">
+          <article class="icontext">
+            <span class="icon icon-sm rounded-circle bg-primary-light"> 
+              <i class="icon material-icons md-people"></i>
+            </span>
+            <div class="text">
+              <h6 class="mb-1 card-title">Total Users</h6>
+              <span><%= userCount %></span>
+            </div>
+          </article>
+        </div>
+      </div>
+      <div class="col-lg-3">
+        <div class="card card-body mb-4">
+          <article class="icontext">
+            <span class="icon icon-sm rounded-circle bg-primary-light"> 
+              <i class="icon material-icons md-shopping_bag"></i>
+            </span>
+            <div class="text">
+              <h6 class="mb-1 card-title">Total Products</h6>
+              <span><%= productCount %></span>
+            </div>
+          </article>
+        </div>
+      </div>
+      <div class="col-lg-3">
+        <div class="card card-body mb-4">
+          <article class="icontext">
+            <span class="icon icon-sm rounded-circle bg-primary-light"> 
+              <i class="icon material-icons md-shopping_bag"></i>
+            </span>
+            <div class="text">
+              <h6 class="mb-1 card-title">Total Orders</h6>
+              <span><%= orderCount %></span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
 
-    
-    <section class="content-main">
-        <div class="content-header">
-            <div>
-                <h2 class="content-title card-title">Dashboard </h2>
-                <p>Whole data about your business here</p>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title mb-0">Order Analysis</h4>
             </div>
-            
+            <div class="card-body">
+              <div class="row mb-3">
+                <div class="col-lg-4">
+                  <select id="filterType" class="form-control">
+                    <option value="products">Products</option>
+                    <option value="categories">Categories</option>
+                  </select>
+                </div>
+                <div class="col-lg-4">
+                  <select id="dateRange" class="form-control">
+                    <option value="today">Today</option>
+                    <option value="month">This Month</option>
+                    <option value="year">This Year</option>
+                    <option value="custom">Custom Date</option>
+                  </select>
+                  <input type="text" id="filterDate" class="form-control" placeholder="Select Date" style="display:none;">
+                </div>
+                <div class="col-lg-4">
+                  <button id="applyFilter" class="btn btn-primary">Apply Filter</button>
+                </div>
+              </div>
+              <canvas id="orderAnalysisChart"></canvas>
+            </div>
+          </div>
         </div>
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="card card-body mb-4">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-primary-light"> <i class="icon material-icons md-people"></i></span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Total Users</h6>
-                            <span><%- userCount  %></span>
-                            
-                        </div>
-                    </article>
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="card card-body mb-4">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-primary-light"> <i class="icon material-icons md-shopping_bag"></i></span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Total Products</h6>
-                            <span><%- productCount  %></span>
-                            
-                        </div>
-                    </article>
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="card card-body mb-4">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-primary-light"> <i class="icon material-icons md-shopping_bag"></i></span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Total Orders</h6>
-                            <span><%-  orderCount  %></span>
-                            
-                        </div>
-                    </article>
-                </div>
-            </div>
-         
-        </div>
-        
-        
-        
-    </section> <!-- content-main end// -->
-    
+      </div>
+    </div>
+  </section> <!-- content-main end// -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script>
+    document.getElementById('applyFilter').addEventListener('click', function () {
+    const filterType = document.getElementById('filterType').value;
+    const dateRange = document.getElementById('dateRange').value;
+    const filterDate = document.getElementById('filterDate').value;
+
+    fetch(`/admin/order-analysis?filterType=${filterType}&dateRange=${dateRange}&filterDate=${filterDate}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Received data:', data);
+            updateChart(data, filterType);
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+});
+
+document.getElementById('dateRange').addEventListener('change', function () {
+    const dateRange = this.value;
+    const filterDate = document.getElementById('filterDate');
+    if (dateRange === 'custom') {
+        filterDate.style.display = 'block';
+    } else {
+        filterDate.style.display = 'none';
+    }
+});
+
+const ctx = document.getElementById('orderAnalysisChart').getContext('2d');
+let orderAnalysisChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'Orders',
+            data: [],
+            backgroundColor: 'rgba(227, 256, 211, 0.2)',
+            borderColor: 'rgba(65, 61, 180, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+function updateChart(data, filterType) {
+    if (!data || !Array.isArray(data) || data.length === 0) {
+        console.error('Invalid data format:', data);
+        return;
+    }
+
+    console.log('Updating chart with data:', data);
+
+    if (filterType === 'products') {
+        // Handling product data
+        orderAnalysisChart.data.labels = data.map(item => item.productName); 
+        orderAnalysisChart.data.datasets[0].data = data.map(item => item.totalSales); 
+    } else if (filterType === 'categories') {
+        // Handling category data
+        orderAnalysisChart.data.labels = data.map(item => item.category); 
+        orderAnalysisChart.data.datasets[0].data = data.map(item => item.totalSales); 
+    }
+
+    orderAnalysisChart.update();
+}
+
+$(document).ready(function () {
+    $('#filterDate').datepicker({
+        dateFormat: 'yy-mm-dd'
+    });
+});
+
+
+</script>
+
 

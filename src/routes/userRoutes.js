@@ -13,6 +13,7 @@ const walletController = require("../controller/walletController");
 const coupenController = require("../controller/couponController");
 const { route } = require("./authRoutes");
 const couponController = require("../controller/couponController");
+const returnController = require("../controller/returnController")
 
 //user profile
 router
@@ -45,6 +46,7 @@ router.route("/verify-payment").post(userController.verifyPayment);
 router.get("/checkout", checkOutController.getCheckOutPage);
 router.post("/place-order", checkOutController.placeOrder);
 // router.get("/success-order", checkOutController.successOrder);
+// router.route("/create-razororder").post(checkOutController.createRazorOrder)
 router.route("/verify-orderpayment").post(checkOutController.verifyPayment);
 
 //coupon
@@ -62,6 +64,12 @@ router.put(
   "/orders/:orderId/items/:productId/cancel",
   orderController.cancelOrder
 );
+
+//return
+router.post("/returns", returnController.createReturnRequest)
+
+//invoice
+router.get('/invoice/genarate/:id', orderController.downloadInvoice);
 
 
 

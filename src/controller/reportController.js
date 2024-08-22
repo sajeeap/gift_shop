@@ -109,6 +109,8 @@ module.exports = {
         }
       },
       
+      
+
       exportToExcel: async (req, res) => {
         // Date setup
         let startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
@@ -143,9 +145,20 @@ module.exports = {
                     }
                 },
                 {
+                    $addFields: {
+                        customerName: {
+                            $concat: [
+                                { $arrayElemAt: ["$customer.firstName", 0] },
+                                " ",
+                                { $arrayElemAt: ["$customer.lastName", 0] }
+                            ]
+                        }
+                    }
+                },
+                {
                     $group: {
                         _id: "$_id",
-                        customer: { $first: "$customer.firstName" },
+                        customerName: { $first: "$customerName" },
                         shippingAddress: { $first: "$shippingAddress" },
                         paymentMethod: { $first: "$paymentMethod" },
                         status: { $first: "$status" },
@@ -168,17 +181,17 @@ module.exports = {
             const worksheet = workBook.addWorksheet("Sales Report");
     
             worksheet.columns = [
-                { header: "Order ID", key: "_id" },
-                { header: "Customer", key: "customer" },
-                { header: "Product Name", key: "productName" },
-                { header: "Price", key: "price" },
-                { header: "Quantity", key: "quantity" },
-                { header: "Item Total", key: "itemTotal" },
-                { header: "Total Amount", key: "totalAmount" },
-                { header: "Shipping Address", key: "shippingAddress" },
-                { header: "Payment Method", key: "paymentMethod" },
-                { header: "Status", key: "status" },
-                { header: "Date", key: "createdAt" }
+                { header: "Order ID", key: "_id", width: 15 },
+                { header: "Customer", key: "customer", width: 25 },
+                { header: "Product Name", key: "productName", width: 30 },
+                { header: "Price", key: "price", width: 10 },
+                { header: "Quantity", key: "quantity", width: 10 },
+                { header: "Item Total", key: "itemTotal", width: 15 },
+                { header: "Total Amount", key: "totalAmount", width: 15 },
+                { header: "Shipping Address", key: "shippingAddress", width: 30 },
+                { header: "Payment Method", key: "paymentMethod", width: 15 },
+                { header: "Status", key: "status", width: 15 },
+                { header: "Date", key: "createdAt", width: 15 }
             ];
     
             // Adding rows
@@ -186,13 +199,13 @@ module.exports = {
                 order.orderedItems.forEach(item => {
                     worksheet.addRow({
                         _id: order._id.toString().slice(-7).toUpperCase(),
-                        customer: order.customer,
+                        customer: order.customerName,
                         productName: item.product_name,
                         price: item.price,
                         quantity: item.quantity,
                         itemTotal: item.itemTotal,
                         totalAmount: order.totalAmount,
-                        shippingAddress: `${order.shippingAddress.house_name}, ${order.shippingAddress.locality}, ${order.shippingAddress.city}, ${order.shippingAddress.state}, ${order.shippingAddress.zipcode}`,
+                        shippingAddress: `${order.shippingAddress.house_name}, ${order.shippingAddress.locality}, ${order.shippingAddress.state}, ${order.shippingAddress.zipcode}`,
                         paymentMethod: order.paymentMethod,
                         status: order.status,
                         createdAt: order.createdAt.toISOString().split("T")[0]
@@ -200,31 +213,38 @@ module.exports = {
                 });
             });
     
-            // Styling (headers and rows)
+            // Styling headers
             worksheet.getRow(1).eachCell((cell) => {
-                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF3CF696' } };
-                cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFF00' } }; // Yellow background
+                cell.font = { bold: true, color: { argb: '000000' } }; // Black text
+                cell.alignment = { horizontal: 'center' };
             });
     
-            worksheet.eachRow({ includeEmpty: false, skipHeader: true }, (row) => {
-                row.eachCell((cell) => {
-                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE5E6DE' } };
+            // Optional: Styling rows (alternating colors for better readability)
+            worksheet.eachRow({ includeEmpty: false, skipHeader: true }, (row, rowNumber) => {
+                row.eachCell((cell, colNumber) => {
+                    cell.alignment = { vertical: 'middle', horizontal: 'center' };
                 });
+                // Add alternating row color
+                if (rowNumber % 2 === 0) {
+                    row.eachCell({ includeEmpty: true }, (cell) => {
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F2F2F2' } }; // Light grey
+                    });
+                }
             });
     
             // Sending the response
             res.setHeader("content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             res.setHeader("content-Disposition", "attachment; filename=orders.xlsx");
-            return workBook.xlsx.write(res).then(() => {
-                res.status(200);
-            });
+            await workBook.xlsx.write(res);
+            res.status(200);
     
         } catch (err) {
-            console.log(err);
+            console.error("Error generating Excel:", err);
             res.status(500).send("Internal Server Error");
         }
     },
-    
+      
 
     exportToPdf: async (req, res) => {
       // Date setup
@@ -263,7 +283,7 @@ module.exports = {
                   $group: {
                       _id: "$_id",
                       customer: { $first: "$customer" },
-                      shippingAddress: { $first: "$shippingAddress" },
+                      // shippingAddress: { $first: "$shippingAddress" },
                       paymentMethod: { $first: "$paymentMethod" },
                       status: { $first: "$status" },
                       totalAmount: { $first: "$totalPrice" },
@@ -280,28 +300,79 @@ module.exports = {
               }
           ]);
   
-          const doc = new PDFDocument({ margin: 30, size: "A4" });
+          const doc = new PDFDocument({ margin: 20, size: "A4" });
   
           let filename = "sales_report.pdf";
           filename = encodeURIComponent(filename);
           res.setHeader("content-disposition", 'attachment; filename="' + filename + '"');
           res.setHeader("content-type", "application/pdf");
   
-          doc.fontSize(20).text("Sales Report", { align: "center" }).moveDown();
+          doc.fontSize(15).text("Sales Report", { align: "center" }).moveDown();
   
-          // Adding table headers
-          doc.fontSize(12).text("Order ID | Date | Customer | Products | Total Amount | Shipping Address | Payment Method | Status", { underline: true }).moveDown();
+          // Define column widths and starting positions
+          const margins = { left: 20, top: 50 };
+          const columnWidths = {
+              orderId: 80,
+              date: 80,
+              customer: 80,
+              products: 80,
+              totalAmount: 50,
+              // shippingAddress: 80,
+              paymentMethod: 60,
+              status: 80
+          };
+          const rowHeight = 30;
+          const pageWidth = doc.page.width - margins.left - 30; // Adjust based on page width and margins
   
-          // Adding orders
-          orders.forEach(order => {
-              const orderDate = order.createdAt.toISOString().split("T")[0];
-              const productNames = order.orderedItems.map(item => `${item.product_name} (Qty: ${item.quantity})`).join(", ");
-              const customerName = order.customer ? `${order.customer[0].firstName} ${order.customer[0].lastName}` : "";
-              const address = `${order.shippingAddress.house_name}, ${order.shippingAddress.locality}, ${order.shippingAddress.city}, ${order.shippingAddress.state}, ${order.shippingAddress.zipcode}`;
+          // Draw table header
+          doc.fontSize(10).font('Helvetica-Bold');
+          const drawHeader = () => {
+              doc.text('Order ID', margins.left, margins.top, { width: columnWidths.orderId, align: 'left' });
+              doc.text('Date', margins.left + columnWidths.orderId, margins.top, { width: columnWidths.date, align: 'left' });
+              doc.text('Customer', margins.left + columnWidths.orderId + columnWidths.date, margins.top, { width: columnWidths.customer, align: 'left' });
+              doc.text('Products', margins.left + columnWidths.orderId + columnWidths.date + columnWidths.customer, margins.top, { width: columnWidths.products, align: 'left' });
+              doc.text('Total Amount', margins.left + columnWidths.orderId + columnWidths.date + columnWidths.customer + columnWidths.products, margins.top, { width: columnWidths.totalAmount, align: 'left' });
+              // doc.text('Shipping Address', margins.left + columnWidths.orderId + columnWidths.date + columnWidths.customer + columnWidths.products + columnWidths.totalAmount, margins.top, { width: columnWidths.shippingAddress, align: 'left' });
+              doc.text('Payment Method', margins.left + columnWidths.orderId + columnWidths.date + columnWidths.customer + columnWidths.products + columnWidths.totalAmount, margins.top, { width: columnWidths.paymentMethod, align: 'left' });
+              doc.text('Status', margins.left + columnWidths.orderId + columnWidths.date + columnWidths.customer + columnWidths.products + columnWidths.totalAmount + columnWidths.paymentMethod, margins.top, { width: columnWidths.status, align: 'left' });
   
-              doc.fontSize(12).text(`${order._id.toString().slice(-7).toUpperCase()} | ${orderDate} | ${customerName} | ${productNames} | ${order.totalAmount} | ${address} | ${order.paymentMethod} | ${order.status}`).moveDown();
-              doc.text("------------------------------------------------------------------------------------------------------", { align: "center" }).moveDown();
-          });
+              doc.moveDown();
+              doc.moveDown();
+          };
+  
+          // Draw table rows
+          const drawRows = () => {
+              doc.fontSize(10).font('Helvetica');
+              let yPosition = margins.top + rowHeight * 2;
+              orders.forEach(order => {
+                  const orderDate = order.createdAt.toISOString().split("T")[0];
+                  const productNames = order.orderedItems.map(item => `${item.product_name} (Qty: ${item.quantity})`).join(", ");
+                  const customerName = order.customer ? `${order.customer[0].firstName} ${order.customer[0].lastName}` : "";
+                  // const address = `${order.shippingAddress.house_name}, ${order.shippingAddress.locality}, ${order.shippingAddress.city}, ${order.shippingAddress.state}, ${order.shippingAddress.zipcode}`;
+  
+                  doc.text(order._id.toString().slice(-7).toUpperCase(), margins.left, yPosition, { width: columnWidths.orderId, align: 'left' });
+                  doc.text(orderDate, margins.left + columnWidths.orderId, yPosition, { width: columnWidths.date, align: 'left' });
+                  doc.text(customerName, margins.left + columnWidths.orderId + columnWidths.date, yPosition, { width: columnWidths.customer, align: 'left' });
+                  doc.text(productNames, margins.left + columnWidths.orderId + columnWidths.date + columnWidths.customer, yPosition, { width: columnWidths.products, align: 'left' });
+                  doc.text(`₹${order.totalAmount.toFixed(2)}`, margins.left + columnWidths.orderId + columnWidths.date + columnWidths.customer + columnWidths.products, yPosition, { width: columnWidths.totalAmount, align: 'left' });
+                  // doc.text(address, margins.left + columnWidths.orderId + columnWidths.date + columnWidths.customer + columnWidths.products + columnWidths.totalAmount, yPosition, { width: columnWidths.shippingAddress, align: 'left' });
+                  doc.text(order.paymentMethod, margins.left + columnWidths.orderId + columnWidths.date + columnWidths.customer + columnWidths.products + columnWidths.totalAmount, yPosition, { width: columnWidths.paymentMethod, align: 'left' });
+                  doc.text(order.status, margins.left + columnWidths.orderId + columnWidths.date + columnWidths.customer + columnWidths.products + columnWidths.totalAmount + columnWidths.paymentMethod, yPosition, { width: columnWidths.status, align: 'left' });
+  
+                  yPosition += rowHeight;
+  
+                  // Check if the current position is near the bottom of the page, and if so, add a new page
+                  if (yPosition > doc.page.height - margins.top) {
+                      doc.addPage();
+                      drawHeader();
+                      yPosition = margins.top + rowHeight * 2;
+                  }
+              });
+          };
+  
+          // Draw header and rows
+          drawHeader();
+          drawRows();
   
           // Sending the PDF
           doc.pipe(res);
@@ -311,5 +382,6 @@ module.exports = {
           res.status(500).send("Internal Server Error");
       }
   }
+
   
 };

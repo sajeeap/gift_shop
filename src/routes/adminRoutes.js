@@ -18,6 +18,9 @@ const couponController = require('../controller/couponController');
 
 router.get('/', isAdminLoggedIn, adminController.getDashboard)
 
+//chart controller
+router.get('/order-analysis',adminController.ChartCtrl);
+
 
 //category management
 router.get('/category', isAdminLoggedIn, categoryController.getCategory);
