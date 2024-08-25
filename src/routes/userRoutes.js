@@ -42,10 +42,10 @@ router.route("/add-money").post(userController.addMoney);
 
 router.route("/verify-payment").post(userController.verifyPayment);
 
-//checkout
+//checkout 
 router.get("/checkout", checkOutController.getCheckOutPage);
 router.post("/place-order", checkOutController.placeOrder);
-// router.get("/success-order", checkOutController.successOrder);
+router.get("/order-success/:id", checkOutController.successOrder);
 // router.route("/create-razororder").post(checkOutController.createRazorOrder)
 router.route("/verify-orderpayment").post(checkOutController.verifyPayment);
 
