@@ -45,9 +45,10 @@ router.route("/verify-payment").post(userController.verifyPayment);
 //checkout 
 router.get("/checkout", checkOutController.getCheckOutPage);
 router.post("/place-order", checkOutController.placeOrder);
-router.get("/order-success/:id", checkOutController.successOrder);
+// router.get("/order-success/:id", checkOutController.successOrder);
 // router.route("/create-razororder").post(checkOutController.createRazorOrder)
 router.route("/verify-orderpayment").post(checkOutController.verifyPayment);
+
 
 //coupon
 router.route("/apply-coupon").post(couponController.applyCoupon);
