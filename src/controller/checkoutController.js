@@ -100,13 +100,11 @@ module.exports = {
     }
   },
 
-
-
  
 
   placeOrder :async (req, res) => {
     try {
-      const { paymentoptions, address,  } = req.body;
+      const { paymentoptions, address } = req.body;
   
       if (!paymentoptions) {
         return res.status(400).json({ success: false, message: "Please select a payment method" });
@@ -213,11 +211,14 @@ module.exports = {
       }
   
       // Set order status and payment status
+      // const status = paymentoptions === "COD" || paymentoptions === "Wallet" || paymentoptions === "Razor Pay"?  "Placed" : "Pending";
+      // const paymentStatus = paymentoptions === "COD" ? "Pending" : "Paid";
+
       const status = paymentoptions === "COD" || paymentoptions === "Wallet" ? "Placed" : "Pending";
-      const paymentStatus = paymentoptions === "COD" ? "Pending" : "Paid";
+      const paymentStatus = paymentoptions === "COD" || paymentoptions === "Wallet" ? "Pending" : "Pending"; // Set to Pending for Razorpay
   
       const orderId = generateShortId(); // Generate a unique order ID
-  
+
       const order = new Order({
         orderId: orderId,
         customer_id: userId,
@@ -225,27 +226,51 @@ module.exports = {
         totalPrice: totalPrice,
         discountedTotalPrice: discountedTotalPrice,
         paymentMethod: paymentoptions,
-        paymentStatus: paymentStatus,
+        paymentStatus: paymentStatus, // Initially set to Pending
         status: status,
         shippingAddress: shippingAddress,
         appliedCoupon: appliedCouponCode,
         couponDiscount: couponDiscount,
         couponDiscountPercentage: couponDiscountPercentage,
         paymentId: null // Initialize paymentId as null
-      });
+    });
+    
+  
+      // const order = new Order({
+      //   orderId: orderId,
+      //   customer_id: userId,
+      //   items: items,
+      //   totalPrice: totalPrice,
+      //   discountedTotalPrice: discountedTotalPrice,
+      //   paymentMethod: paymentoptions,
+      //   paymentStatus: paymentStatus,
+      //   status: status,
+      //   shippingAddress: shippingAddress,
+      //   appliedCoupon: appliedCouponCode,
+      //   couponDiscount: couponDiscount,
+      //   couponDiscountPercentage: couponDiscountPercentage,
+      //   paymentId: null // Initialize paymentId as null
+      // });
   
       await order.save();
       await Cart.findOneAndDelete({ userId });
   
       const wishlist = await Wishlist.findOne({ user_id: req.session.user }).populate("products");
       let cart = "cart is empty";
-  
-      return res.status(201).render("shop/orderConfirm", {
-        user: req.session.user,
-        order,
-        wishlist,
-        cart,
+      
+      return res.status(201).json({
+        success: true,
+        orderId,
+        message: "Order placed successfully",
+        paymentRequired: amountToBePaid > 0,
       });
+  
+      // return res.status(201).render("shop/orderConfirm", {
+      //   user: req.session.user,
+      //   order,
+      //   wishlist,
+      //   cart,
+      // });
   
     } catch (error) {
       console.error("Error placing order:", error);
@@ -256,38 +281,6 @@ module.exports = {
       });
     }
   },
-
-
-  
-  
-  
-  
-
- 
-  
-
-  verifyPayment: async (req, res) => {
-    try {
-      const payment_id = req.body.paymentId;
-  
-      if (payment_id) {
-        // Find the order that is being paid for (you might need to pass the order ID in the request as well)
-        
-        res.json({ success: true });
-        
-      } else {
-        res.status(400).json({ success: false, message: "Payment ID is missing" });
-      }
-    } catch (error) {
-      console.error("Error verifying payment:", error);
-      res.status(500).send("Internal Server Error");
-    }
-  },
-  
-
- 
-
-
  
   changeAddress: async(req,res)=>{
 
@@ -295,7 +288,85 @@ module.exports = {
 
   },
 
+  successOrder: async(req,res)=>{
+    const order = await Order.findOne({ orderId: req.params.id }); 
+    const wishlist = await Wishlist.findOne({ user_id:req.session.user }).populate("products");
+    let cart = await Cart.findOne({userId:req.session.user}).populate("items");
+    
 
+    try {
+      res.render('shop/orderConfirm', {
+        user: req.session.user,
+        order,
+        wishlist,
+        cart,
+      })
+
+    } catch (error) {
+      console.log(error);
+    }
+  },
+ 
+
+
+  verifyPayment: async (req, res) => {
+    try {
+        const { paymentId, orderId } = req.body;  // Include orderId in the request
+  
+        if (!paymentId || !orderId) {
+            return res.status(400).json({ success: false, message: "Missing required payment details" });
+        }
+  
+        // Find the order using the provided orderId
+        const order = await Order.findOne({ orderId, customer_id: req.session.user._id });
+  
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Invalid Order ID" });
+        }
+  
+        // Update the order with the payment ID and mark it as paid
+        order.paymentId = paymentId;
+        order.paymentStatus = "Paid";  // Update the payment status to "Paid"
+        order.status = "Placed";  // Update the order status to "Placed"
+        await order.save();
+  
+        return res.status(200).json({ success: true, message: "Payment verified successfully" });
+    } catch (error) {
+        console.error("Error verifying payment:", error);
+        return res.status(500).json({ success: false, message: "Failed to verify payment", error: error.message });
+    }
+  },
+
+
+  
+  
+ 
+  // verifyPayment: async (req, res) => {
+  // try {
+  //     const { paymentId, orderId } = req.body;  // Include orderId in the request
+
+  //     if (!paymentId || !orderId) {
+  //         return res.status(400).json({ success: false, message: "Missing required payment details" });
+  //     }
+
+  //     // Find the order using the provided orderId
+  //     const order = await Order.findOne({ orderId, customer_id: req.session.user._id });
+
+  //     if (!order) {
+  //         return res.status(404).json({ success: false, message: "Invalid Order ID" });
+  //     }
+
+  //     // Update the order with the payment ID and mark it as paid
+  //     order.paymentId = paymentId;
+  //     order.paymentStatus = "Paid";
+  //     await order.save();
+
+  //     return res.status(200).json({ success: true, message: "Payment verified successfully" });
+  // } catch (error) {
+  //     console.error("Error verifying payment:", error);
+  //     return res.status(500).json({ success: false, message: "Failed to verify payment", error: error.message });
+  // }
+  // },
  
   
 

@@ -1,10 +1,10 @@
-<form class="bg0 p-t-75 p-b-85" action="/user/place-order" method="POST" id="placeorderForm">
+<form class="bg0 p-t-75 p-b-85" id="placeorderForm">
   <div class="container">
     <div class="row">
       <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
         <div class="row">
-           <!-- Delivery Address Section -->
-           <div class="col-12">
+          <!-- Delivery Address Section -->
+          <div class="col-12">
             <div class="card">
               <div class="card-body">
                 <h4 class="mtext-109 cl2 p-b-30">Delivery Address</h4>
@@ -13,24 +13,43 @@
                   <div class="default-address">
                     <address id="selectedAddress">
                       <!-- This will be updated with the selected address -->
-                      <span class="address_name"><%= address.name %></span><br />
-                      <span class="address_type"><%= address.address_type %></span><br />
-                      <span class="zip_code"><%= address.zip_code %></span><br />
-                      <span class="locality"><%= address.locality %></span><br />
-                      <span class="house_name"><%= address.house_name %></span><br />
-                      <span class="area_street"><%= address.area_street %></span><br />
-                      <span class="town"><%= address.town %></span><br />
-                      <span class="state"><%= address.state %></span><br />
-                      <span class="landmark"><%= address.landmark %></span>
+                      <span class="address_name">
+                        <%= address.name %>
+                      </span><br />
+                      <span class="address_type">
+                        <%= address.address_type %>
+                      </span><br />
+                      <span class="zip_code">
+                        <%= address.zip_code %>
+                      </span><br />
+                      <span class="locality">
+                        <%= address.locality %>
+                      </span><br />
+                      <span class="house_name">
+                        <%= address.house_name %>
+                      </span><br />
+                      <span class="area_street">
+                        <%= address.area_street %>
+                      </span><br />
+                      <span class="town">
+                        <%= address.town %>
+                      </span><br />
+                      <span class="state">
+                        <%= address.state %>
+                      </span><br />
+                      <span class="landmark">
+                        <%= address.landmark %>
+                      </span>
                     </address>
                   </div>
                   <input type="hidden" id="selectedAddressId" name="address" value="<%= address._id %>" />
                   <a href="#" class="btn btn-primary" onclick="openEditModal('<%= address._id %>')">Edit</a>
-                  <a href="#" class="btn btn-primary" id="changeAddressButton" data-toggle="modal" data-target="#changeAddressModal">Change</a>
-                <% } else { %>
-                  <p>No default address found. Please set a default address.</p>
-                  <a href="/user/profile" class="btn btn-primary mt-3">Add New Address +</a>
-                <% } %>
+                  <a href="#" class="btn btn-primary" id="changeAddressButton" data-toggle="modal"
+                    data-target="#changeAddressModal">Change</a>
+                  <% } else { %>
+                    <p>No default address found. Please set a default address.</p>
+                    <a href="/user/profile" class="btn btn-primary mt-3">Add New Address +</a>
+                    <% } %>
               </div>
             </div>
           </div>
@@ -170,27 +189,26 @@
             </div>
             <% } %>
 
-              
 
-                  <div class="flex-w flex-t p-t-27 p-b-33">
-                    <div class="size-208">
-                      <span class="mtext-101 cl2">Total:</span>
-                    </div>
-                    <div class="size-209 p-t-1">
-                      <% const discountedTotal=totalPrice - (couponDiscount || 0); %>
-                        <span class="mtext-110 cl2">$<%= discountedTotal.toFixed(2) %></span>
-                    </div>
-                  </div>
 
-                  
+              <div class="flex-w flex-t p-t-27 p-b-33">
+                <div class="size-208">
+                  <span class="mtext-101 cl2">Total:</span>
+                </div>
+                <div class="size-209 p-t-1">
+                  <% const discountedTotal=totalPrice - (couponDiscount || 0); %>
+                    <span class="mtext-110 cl2">$<%= discountedTotal.toFixed(2) %></span>
+                </div>
+              </div>
 
-                    
-                    
 
-                        <button type="submit"
-                          class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
-                          Pay Now
-                        </button>
+
+
+
+
+              <button type="submit" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+                Pay Now
+              </button>
         </div>
       </div>
 
@@ -240,47 +258,68 @@
 </div>
 
 <!-- change address modal -->
-<div class="modal fade" id="changeAddressModal" tabindex="-1" role="dialog" aria-labelledby="changeAddressModalLabel" aria-hidden="true">
+<div class="modal fade" id="changeAddressModal" tabindex="-1" role="dialog" aria-labelledby="changeAddressModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="changeAddressModalLabel">Change Address</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       <div class="modal-body">
         <!-- Display Address if Available -->
         <div class="row">
-          <% if (addresses && addresses.length > 0) { %> 
+          <% if (addresses && addresses.length> 0) { %>
             <% addresses.forEach(function(address) { %>
-            <div class="col-lg-12 mb-3" id="address-<%= address._id %>">
-              <div class="card mb-3 mb-lg-0">
-                <div class="card-body">
-                  <address>
-                    <span class="name"><%= address.name %></span><br />
-                    <span class="address_type"><%= address.address_type %></span><br />
-                    <span class="zip_code"><%= address.zip_code %></span><br />
-                    <span class="locality"><%= address.locality %></span><br />
-                    <span class="house_name"><%= address.house_name %></span><br />
-                    <span class="area_street"><%= address.area_street %></span><br />
-                    <span class="town"><%= address.town %></span><br />
-                    <span class="state"><%= address.state %></span><br />
-                    <span class="landmark"><%= address.landmark %></span>
-                  </address>
-                  <div class="mt-2">
-                    <button class="btn btn-primary" onclick="selectAddress('<%= address._id %>')">Select</button>
+              <div class="col-lg-6 mb-3" id="address-<%= address._id %>">
+                <div class="card mb-3 mb-lg-0">
+                  <div class="card-body">
+                    <address>
+                      <span class="name">
+                        <%= address.name %>
+                      </span><br />
+                      <span class="address_type">
+                        <%= address.address_type %>
+                      </span><br />
+                      <span class="zip_code">
+                        <%= address.zip_code %>
+                      </span><br />
+                      <span class="locality">
+                        <%= address.locality %>
+                      </span><br />
+                      <span class="house_name">
+                        <%= address.house_name %>
+                      </span><br />
+                      <span class="area_street">
+                        <%= address.area_street %>
+                      </span><br />
+                      <span class="town">
+                        <%= address.town %>
+                      </span><br />
+                      <span class="state">
+                        <%= address.state %>
+                      </span><br />
+                      <span class="landmark">
+                        <%= address.landmark %>
+                      </span>
+                    </address>
+                    <div class="mt-2">
+                      <button class="btn btn-primary" onclick="selectAddress('<%= address._id %>')">Select</button>
+
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <% }); %>
-          <% } else { %>
-            <p>No addresses found.</p>
-          <% } %>
+              <% }); %>
+                <% } else { %>
+                  <p>No addresses found.</p>
+                  <% } %>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -317,6 +356,7 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <!-- address form  -->
+
 <script>
   function openEditModal(addressId) {
     const address = document.getElementById("address-" + addressId);
@@ -429,15 +469,9 @@
     document.getElementById('selectedAddress').innerHTML = selectedAddress;
     document.getElementById('selectedAddressId').value = addressId;
 
-    // Manually initialize the modal and close it
-    const modalElement = document.getElementById('changeAddressModal');
-    const modalInstance = new bootstrap.Modal(modalElement);
-    
-    // Hide the modal
-    modalInstance.hide();
-}
-
-
+    // Close the modal
+    $('#changeAddressModal').modal('hide');
+  }
 
 
 
@@ -524,15 +558,527 @@
 <!-- payme -->
 
 <script>
-  document.querySelector("form").addEventListener("submit", function (e) {
-    e.preventDefault(); // Prevent the form from submitting immediately
+  document.querySelector("#placeorderForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
 
     const selectedPaymentMethod = document.querySelector('input[name="paymentoptions"]:checked').value;
+    const selectedAddress = document.querySelector('input[name="address"]').value;
     const totalPrice = parseFloat("<%= discountedTotalPrice.toFixed(2) %>");
     const walletBalance = parseFloat("<%= walletBalance.toFixed(2) %>");
 
-    if (selectedPaymentMethod === "Wallet") {
-      if (walletBalance < totalPrice) {
+    const confirmPayment = await Swal.fire({
+      title: 'Confirm Payment',
+      text: `You have selected ${selectedPaymentMethod}. Do you want to proceed with the payment?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Proceed',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (confirmPayment.isConfirmed) {
+      const response = await fetch('/user/place-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentoptions: selectedPaymentMethod,
+          totalPrice: totalPrice,
+          walletBalance: walletBalance,
+          address: selectedAddress,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        if (selectedPaymentMethod === "Razor Pay") {
+          var options = {
+            key: "<%= process.env.RAZOR_PAY_KEY_ID %>",
+            amount: totalPrice * 100,
+            currency: "INR",
+            name: "Order Payment",
+            description: "Payment for order",
+            handler: function (response) {
+              fetch("/user/verify-orderpayment", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  paymentId: response.razorpay_payment_id,
+                  orderId: data.orderId,
+                }),
+              })
+                .then((response) => response.json())
+                .then((verifyData) => {
+                  if (verifyData.success) {
+                    window.location.href = `/user/order-success/${data.orderId}`;
+                  } else {
+                    Swal.fire({
+                      icon: "error",
+                      title: "Payment Verification Failed",
+                      text: "Please try again.",
+                    });
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error verifying payment:", error);
+                  Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Failed to verify payment.",
+                  });
+                });
+            },
+            
+
+            theme: {
+              color: "#3399cc",
+            },
+            modal: {
+              ondismiss: function () {
+                window.location.href = `/user/order-success/${data.orderId}`;
+              },
+            },
+          };
+
+          var rzp1 = new Razorpay(options);
+          rzp1.open();
+        } else if (selectedPaymentMethod === "COD") {
+          window.location.href = `/user/order-success/${data.orderId}`;
+        } else if (selectedPaymentMethod === "Wallet") {
+          if (walletBalance >= totalPrice) {
+            Swal.fire({
+              icon: "success",
+              title: "Payment Successful",
+              text: "Your order has been placed successfully.",
+              showConfirmButton: false,
+              timer: 1500,
+            }).then(() => {
+              window.location.href = `/user/order-success/${data.orderId}`;
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Insufficient Wallet Balance",
+              text: "You have two options:",
+              showCancelButton: true,
+              confirmButtonText: "Add Money",
+              cancelButtonText: "Use Wallet & Pay Rest",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                $("#addMoneyModal").modal("show");
+              } else {
+                const remainingAmount = totalPrice - walletBalance;
+
+                Swal.fire({
+                  title: "Select Additional Payment Method",
+                  input: 'select',
+                  inputOptions: {
+                    'Razor Pay': 'Razor Pay',
+                    'COD': 'Cash on Delivery',
+                  },
+                  inputPlaceholder: 'Select payment method',
+                  showCancelButton: true,
+                  confirmButtonText: "Proceed",
+                  cancelButtonText: "Cancel",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    const additionalPaymentMethod = result.value;
+                    if (additionalPaymentMethod) {
+                      if (additionalPaymentMethod === "Razor Pay") {
+                        var options = {
+                          key: "<%= process.env.RAZOR_PAY_KEY_ID %>",
+                          amount: remainingAmount * 100,
+                          currency: "INR",
+                          name: "Order Payment",
+                          description: "Payment for order",
+                          handler: function (response) {
+                            fetch("/user/verify-orderpayment", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify({
+                                paymentId: response.razorpay_payment_id,
+                                orderId: data.orderId,
+                              }),
+                            })
+                              .then((response) => response.json())
+                              .then((verifyData) => {
+                                if (verifyData.success) {
+                                  Swal.fire({
+                                    icon: "success",
+                                    title: "Payment Verified",
+                                    text: "Proceeding with order submission.",
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                  }).then(() => {
+                                    window.location.href = `/user/order-success/${data.orderId}`;
+                                  });
+                                } else {
+                                  Swal.fire({
+                                    icon: "error",
+                                    title: "Payment Verification Failed",
+                                    text: "Please try again.",
+                                  });
+                                }
+                              })
+                              .catch((error) => {
+                                console.error("Error verifying payment:", error);
+                                Swal.fire({
+                                  icon: "error",
+                                  title: "Error",
+                                  text: "Failed to verify payment.",
+                                });
+                              });
+                          },
+                          theme: {
+                            color: "#3399cc",
+                          },
+                        };
+
+                        var rzp1 = new Razorpay(options);
+                        rzp1.open();
+                      } else if (additionalPaymentMethod === "COD") {
+                        if (remainingAmount > 1000) {
+                          Swal.fire({
+                            icon: "error",
+                            title: "COD Not Available",
+                            text: "Cash on Delivery is not available for orders above ₹1000. Please choose another payment method.",
+                          });
+                        } else {
+                          Swal.fire({
+                            icon: "info",
+                            title: "Cash on Delivery",
+                            text: "Proceeding with COD payment.",
+                            showConfirmButton: false,
+                            timer: 1500,
+                          }).then(() => {
+                            window.location.href = `/user/order-success/${data.orderId}`;
+                          });
+                        }
+                      }
+                    }
+                  }
+                });
+              }
+            });
+          }
+        }
+      } else {
+        Swal.fire({
+          title: "Purchase Failed",
+          text: data.message || "There was an issue with your order. Please try again.",
+          icon: "error",
+        });
+      }
+    }
+  });
+
+</script>
+
+<!-- <script>
+  document.querySelector("#placeorderForm").addEventListener("submit", async function (e) {
+  e.preventDefault(); // Prevent the form from submitting immediately
+
+  const selectedPaymentMethod = document.querySelector('input[name="paymentoptions"]:checked').value;
+  const selectedAddress = document.querySelector('input[name="address"]').value;
+  const totalPrice = parseFloat("<%= discountedTotalPrice.toFixed(2) %>");
+  const walletBalance = parseFloat("<%= walletBalance.toFixed(2) %>");
+
+  const response = await fetch('/user/place-order', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      paymentoptions: selectedPaymentMethod,
+      totalPrice: totalPrice,
+      walletBalance: walletBalance,
+      address: selectedAddress,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (data.success) {
+    if (selectedPaymentMethod === "Razor Pay") {
+      // Handle Razorpay logic
+      var options = {
+        key: "<%= process.env.RAZOR_PAY_KEY_ID %>", 
+        amount: totalPrice * 100, 
+        currency: "INR",
+        name: "Order Payment",
+        description: "Payment for order",
+        handler: function (response) {
+          fetch("/user/verify-orderpayment", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              paymentId: response.razorpay_payment_id,
+              orderId: data.orderId,
+            }),
+          })
+            .then((response) => response.json())
+            .then((verifyData) => {
+              if (verifyData.success) {
+                window.location.href = `/user/order-success/${data.orderId}`;
+              } else {
+                Swal.fire({
+                  icon: "error",
+                  title: "Payment Verification Failed",
+                  text: "Please try again.",
+                });
+              }
+            })
+            .catch((error) => {
+              console.error("Error verifying payment:", error);
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Failed to verify payment.",
+              });
+            });
+        },
+        theme: {
+          color: "#3399cc",
+        },
+        modal: {
+          ondismiss: function () {
+            window.location.href = `/user/order-success/${data.orderId}`;
+          },
+        },
+      };
+
+      var rzp1 = new Razorpay(options);
+      rzp1.open();
+    } else if (selectedPaymentMethod === "COD") {
+      window.location.href = `/user/order-success/${data.orderId}`;
+    } else if (selectedPaymentMethod === "Wallet") {
+      if (walletBalance >= totalPrice) {
+        // Wallet balance is sufficient
+        Swal.fire({
+          icon: "success",
+          title: "Payment Successful",
+          text: "Your order has been placed successfully.",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          window.location.href = `/user/order-success/${data.orderId}`;
+        });
+      } else {
+        // Wallet balance is insufficient, ask for alternative payment method
+        Swal.fire({
+          icon: "error",
+          title: "Insufficient Wallet Balance",
+          text: "You have two options:",
+          showCancelButton: true,
+          confirmButtonText: "Add Money",
+          cancelButtonText: "Use Wallet & Pay Rest",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Open the Add Money modal
+            $("#addMoneyModal").modal("show");
+          } else {
+            // Calculate remaining amount after using wallet balance
+            const remainingAmount = totalPrice - walletBalance;
+
+            Swal.fire({
+              title: "Select Additional Payment Method",
+              input: 'select',
+              inputOptions: {
+                'Razor Pay': 'Razor Pay',
+                'COD': 'Cash on Delivery',
+              },
+              inputPlaceholder: 'Select payment method',
+              showCancelButton: true,
+              confirmButtonText: "Proceed",
+              cancelButtonText: "Cancel",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                const additionalPaymentMethod = result.value;
+                if (additionalPaymentMethod) {
+                  // Handle the partial wallet payment and other method logic here
+                  if (additionalPaymentMethod === "Razor Pay") {
+                    var options = {
+                      key: "<%= process.env.RAZOR_PAY_KEY_ID %>",
+                      amount: remainingAmount * 100, 
+                      currency: "INR",
+                      name: "Order Payment",
+                      description: "Payment for order",
+                      handler: function (response) {
+                        fetch("/user/verify-orderpayment", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            paymentId: response.razorpay_payment_id,
+                          }),
+                        })
+                          .then((response) => response.json())
+                          .then((verifyData) => {
+                            if (verifyData.success) {
+                              Swal.fire({
+                                icon: "success",
+                                title: "Payment Verified",
+                                text: "Proceeding with order submission.",
+                                showConfirmButton: false,
+                                timer: 1500,
+                              }).then(() => {
+                                window.location.href = `/user/order-success/${data.orderId}`;
+                              });
+                            } else {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Payment Verification Failed",
+                                text: "Please try again.",
+                              });
+                            }
+                          })
+                          .catch((error) => {
+                            console.error("Error verifying payment:", error);
+                            Swal.fire({
+                              icon: "error",
+                              title: "Error",
+                              text: "Failed to verify payment.",
+                            });
+                          });
+                      },
+                      theme: {
+                        color: "#3399cc",
+                      },
+                    };
+
+                    var rzp1 = new Razorpay(options);
+                    rzp1.open();
+                  } else if (additionalPaymentMethod === "COD") {
+                    if (remainingAmount > 1000) {
+                      Swal.fire({
+                        icon: "error",
+                        title: "COD Not Available",
+                        text: "Cash on Delivery is not available for orders above ₹1000. Please choose another payment method.",
+                      });
+                    } else {
+                      Swal.fire({
+                        icon: "info",
+                        title: "Cash on Delivery",
+                        text: "Proceeding with COD payment.",
+                        showConfirmButton: false,
+                        timer: 1500,
+                      }).then(() => {
+                        window.location.href = `/user/order-success/${data.orderId}`;
+                      });
+                    }
+                  }
+                }
+              }
+            });
+          }
+        });
+      }
+    }
+  } else {
+    Swal.fire({
+      title: "Purchase Failed",
+      text: data.message || "There was an issue with your order. Please try again.",
+      icon: "error",
+    });
+  }
+});
+
+</script> -->
+
+<!-- <script>
+  document.querySelector("#placeorderForm").addEventListener("submit", async  function (e) {
+    
+    e.preventDefault(); // Prevent the form from submitting immediately
+
+    const selectedPaymentMethod = document.querySelector('input[name="paymentoptions"]:checked').value;
+    const selectedAddress = document.querySelector('input[name="address"]').value;
+    const totalPrice = parseFloat("<%= discountedTotalPrice.toFixed(2) %>");
+    const walletBalance = parseFloat("<%= walletBalance.toFixed(2) %>");
+
+    
+    const response = await fetch('/user/place-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          paymentoptions: selectedPaymentMethod,
+          totalPrice: totalPrice,
+          walletBalance: walletBalance,
+          address: selectedAddress
+        })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+          if (selectedPaymentMethod === "Razor Pay") {
+            var options = {
+              key: "<%= process.env.RAZOR_PAY_KEY_ID %>", // Your Razorpay Key ID
+              amount: totalPrice * 100, // Amount in cents
+              currency: "INR",
+              name: "Order Payment",
+              description: "Payment for order",
+              
+              handler: function (response) {
+
+                fetch("/user/verify-orderpayment", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    paymentId: response.razorpay_payment_id,
+                    orderId: data.orderId
+                  }),
+                })
+                  .then((response) => response.json())
+                  .then((verifyData) => {
+                    if (verifyData.success) {
+                      window.location.href = `/user/order-success/${data.orderId}`;
+                    } else {
+                      Swal.fire({
+                        icon: "error",
+                        title: "Payment Verification Failed",
+                        text: "Please try again.",
+                      });
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Error verifying payment:", error);
+                    Swal.fire({
+                      icon: "error",
+                      title: "Error",
+                      text: "Failed to verify payment.",
+                    });
+                  });
+              },
+              theme: {
+                color: "#3399cc",
+              },
+              "modal": {
+                "ondismiss": function(){
+                  window.location.href = `/user/order-success/${data.orderId}`;
+                }
+              }
+            };
+
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+          } else if (selectedPaymentMethod === "COD") {
+            // Handle COD success
+            window.location.href = `/user/order-success/${data.orderId}`;
+          } else if (selectedPaymentMethod === "Wallet"){
+
+            if (walletBalance < totalPrice) {
         Swal.fire({
           icon: "error",
           title: "Insufficient Wallet Balance",
@@ -664,98 +1210,25 @@
           }
         });
       }
-    } else if (selectedPaymentMethod === "Razor Pay") {
-      // Trigger Razorpay UI
-      var options = {
-        key: "<%= process.env.RAZOR_PAY_KEY_ID %>", // Your Razorpay Key ID
-        amount: totalPrice * 100, // Amount in cents
-        currency: "INR",
-        name: "Order Payment",
-        description: "Payment for order",
-        handler: function (response) {
-          fetch("/user/verify-orderpayment", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              paymentId: response.razorpay_payment_id,
-            }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.success) {
-                Swal.fire({
-                  icon: "success",
-                  title: "Payment Verified",
-                  text: "Proceeding with order submission.",
-                  showConfirmButton: false,
-                  timer: 1500,
-                }).then(() => {
-                  document.querySelector("form").submit(); // Submit the form after Razorpay payment is verified
-                });
-              } else {
-                Swal.fire({
-                  icon: "error",
-                  title: "Payment Verification Failed",
-                  text: "Please try again.",
-                });
-              }
-            })
-            .catch((error) => {
-              console.error("Error verifying payment:", error);
-              Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "Failed to verify payment.",
-              });
-            });
-        },
-        theme: {
-          color: "#3399cc",
-        },
-      };
 
-      var rzp1 = new Razorpay(options);
-      rzp1.open();
-    } else if (selectedPaymentMethod === "COD") {
-      Swal.fire({
-        title: "Confirm Payment",
-        text: "Are you sure you want to proceed with Cash on Delivery?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Yes, Proceed",
-        cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          if (totalPrice > 1000) {
-            Swal.fire({
-              icon: "error",
-              title: "COD Not Available",
-              text: "Cash on Delivery is not available for orders above $1000. Please choose another payment method.",
-            });
-          } else {
-            Swal.fire({
-              icon: "info",
-              title: "Cash on Delivery",
-              text: "Proceeding with COD payment.",
-              showConfirmButton: false,
-              timer: 1500,
-            }).then(() => {
-              document.querySelector("form").submit(); // Submit the form for COD
-            });
+
+
+            
           }
-        }
-      });
     } else {
+      // Show a purchase failed message
       Swal.fire({
-        icon: "warning",
-        title: "No Payment Method Selected",
-        text: "Please select a payment method.",
+        title: 'Purchase Failed',
+        text: data.message || 'There was an issue with your order. Please try again.',
+        icon: 'error'
       });
     }
-  });
-</script>
+
+
+    });
+
+    
+</script> -->
 
 
 

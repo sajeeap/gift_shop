@@ -13,7 +13,21 @@
             <p class="mt-4">Total Price: $<%= order.totalPrice.toFixed(2) %></p>
             <p> Discounted Price: $<%= order.discountedTotalPrice.toFixed(2) %></p>
             <p>Payment Method: <%= order.paymentMethod %></p>
-            <p>Payment Status: <%= order.paymentStatus %></p>
+           
+            <p>Payment Status:
+              <% if (order.paymentStatus === "Pending" ) { %>
+                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#retryPaymentModal">Retry Payment</a>
+                <div class="alert alert-danger">
+                  Payment verification failed, but your order has been placed successfully.
+                </div>
+                <% } else { %>
+                  <%= order.paymentStatus %>
+                  <div class="alert alert-success">
+                    Payment successful! Your order has been placed successfully.
+                  </div>
+                <% } %>
+              
+            </p>
             <p>Applied Coupon: <%= order.appliedCoupon ? order.appliedCoupon : 'None' %></p>
       
             <a class="btn btn-primary mt-5" href="/">Continue Shopping</a>
@@ -23,4 +37,151 @@
     
     
   </div>
+
+  <!-- Retry Payment Modal -->
+<div class="modal fade" id="retryPaymentModal" tabindex="-1" role="dialog" aria-labelledby="retryPaymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="retryPaymentModalLabel">Retry Payment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Your previous payment attempt was unsuccessful. Please select a payment method to retry the payment for your order.</p>
+
+        <!-- Display the current payment method -->
+        <div class="form-group">
+          <label for="retryPaymentMethod">Payment Method</label>
+          <select class="form-control" id="retryPaymentMethod">
+            <option value="Razor Pay" selected>Razor Pay</option>
+            <option value="COD">Cash on Delivery (COD)</option>
+            <option value="Wallet">Wallet</option>
+          </select>
+        </div>
+
+       
+
+        <!-- Additional Instructions -->
+        <p id="additionalInstructions" style="display: none;">
+          Please add funds to your wallet or select an alternative payment method.
+        </p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="retryPaymentConfirmButton">Retry Payment</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+  document.querySelector("#retryPaymentConfirmButton").addEventListener("click", function () {
+    const selectedPaymentMethod = document.querySelector("#retryPaymentMethod").value;
+    const totalPrice = parseFloat("<%= order.totalPrice.toFixed(2) %>");
+    const orderId = "<%= order.orderId %>"; // Current order ID
+
+    if (selectedPaymentMethod === "Razor Pay") {
+      // Trigger Razorpay payment
+      var options = {
+        key: "<%= process.env.RAZOR_PAY_KEY_ID %>",
+        amount: totalPrice * 100, // Convert to paise
+        currency: "INR",
+        name: "Order Payment",
+        description: "Retry payment for order",
+        handler: function (response) {
+          // Verify payment
+          fetch("/user/verify-orderpayment", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              paymentId: response.razorpay_payment_id,
+              orderId: orderId,
+            }),
+          })
+            .then((response) => response.json())
+            .then((verifyData) => {
+              if (verifyData.success) {
+                Swal.fire({
+                  icon: "success",
+                  title: "Payment Successful",
+                  text: "Your order has been placed successfully.",
+                  showConfirmButton: false,
+                  timer: 1500,
+                }).then(() => {
+                  location.reload(); // Or navigate to another page
+                });
+              } else {
+                Swal.fire({
+                  icon: "error",
+                  title: "Payment Verification Failed",
+                  text: "Please try again.",
+                });
+              }
+            })
+            .catch((error) => {
+              console.error("Error verifying payment:", error);
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Failed to verify payment.",
+              });
+            });
+        },
+        theme: {
+          color: "#3399cc",
+        },
+        modal: {
+          ondismiss: function () {
+            Swal.fire({
+              icon: "info",
+              title: "Payment Cancelled",
+              text: "You cancelled the payment.",
+            });
+          },
+        },
+      };
+      var rzp1 = new Razorpay(options);
+      rzp1.open();
+    } else if (selectedPaymentMethod === "COD") {
+      // Handle COD
+      Swal.fire({
+        icon: "info",
+        title: "Cash on Delivery",
+        text: "Proceeding with COD payment.",
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(() => {
+        location.reload(); // Or navigate to another page
+      });
+    } else if (selectedPaymentMethod === "Wallet") {
+      // Handle Wallet
+      if (walletBalance >= totalPrice) {
+        Swal.fire({
+          icon: "success",
+          title: "Payment Successful",
+          text: "Your order has been placed successfully.",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          location.reload(); // Or navigate to another page
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Insufficient Wallet Balance",
+          text: "Please add funds to your wallet and retry.",
+        });
+      }
+    }
+  });
+</script>
+
 

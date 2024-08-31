@@ -370,7 +370,10 @@
                                                 <a href="/user/returns?orderId=<%= order._id %>" class="btn btn-warning" >
                                                   Return
                                                 </a>
-                                                <% } %>
+                                                <% } else if (order.paymentStatus === "Pending") { %>
+                                                  <a href="#" class="btn btn-warning"  >Retry Payment</a>
+                                                  <% } %>
+
                                         </div>
                                       </div>
                                       <hr />
