@@ -8,7 +8,7 @@ const orderSchema = new mongoose.Schema(
       type: String,
       unique: true,
       required: true
-  },
+    },
     customer_id: {
       type: ObjectId,
       ref: "User",
@@ -25,7 +25,7 @@ const orderSchema = new mongoose.Schema(
         required: true,
         min: [1, `Quantity Can't be less than 1`],
       },
-      
+
       price: {
         type: Number,
         required: true,
@@ -44,9 +44,7 @@ const orderSchema = new mongoose.Schema(
       payment_status: {
         type: String,
       },
-      returnReason: {
-        type: String,
-      },
+      
       shipped_on: {
         type: Date,
       },
@@ -59,8 +57,34 @@ const orderSchema = new mongoose.Schema(
       cancelled_on: {
         type: Date,
       },
+      return_requested_on: {
+        type: Date,
+      },
+      returnRequested: { type: Boolean, default: false },
+      
+      
+      
+      returnNote: {
+        type: String,
+        default: '' // Optional field for additional notes
+      },
+      reason: {
+        type: String,
+  
+        enum: ['product_damage', 'parcel_damage', 'not_fitted', 'wrong_item'] // Add other reasons as necessary
+      },
+      ProductReturned: {
+        type: Boolean,
+        default: false
+      },
       returned_on: {
         type: Date,
+      },
+
+      productStatus: {
+        type: String,
+        
+        enum: ["Pending", "Placed", "Processing", "Shipped", "Delivered", "Cancelled", "Return requested", 'Return Approved', 'Return Rejected', 'Return Item Recieved',  "Recieved and Refunded"]
       },
     }],
     shippingAddress: {
@@ -98,7 +122,7 @@ const orderSchema = new mongoose.Schema(
     paymentMethod: {
       type: String,
       required: true,
-      enum: [ "COD", "Wallet", "Razor Pay", "Pending" ],
+      enum: ["COD", "Wallet", "Razor Pay", "Pending"],
     },
     totalPrice: {
       type: Number,
@@ -109,20 +133,37 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-  
+
     paymentStatus: {
       type: String,
       enum: ["Paid", "Pending", "COD", "Failed", "Refunded", "Cancelled"],
       required: true,
     },
-   
-   
+
+
     status: {
       type: String,
       required: true,
-      enum : ["Pending","Placed","Processing","Shipped", "Delivered","Cancelled", "Returned", 'Pending', 'Approved', 'Rejected'  ]
+      enum: ["Pending", "Placed", "Processing", "Shipped", "Delivered", "Cancelled", "Return requested", 'Approved', 'Rejected']
     },
-    appliedCoupon: { 
+    note: {
+      type: String,
+      default: '' // Optional field for additional notes
+    },
+    reason: {
+      type: String,
+
+      enum: ['product_damage', 'parcel_damage', 'not_fitted', 'wrong_item'] // Add other reasons as necessary
+    },
+    returned: {
+      type: Boolean,
+      default: false
+    },
+    returned_on: {
+      type: Date,
+    },
+    returnRequested: { type: Boolean, default: false },
+    appliedCoupon: {
       type: String,
       default: null
     },
@@ -130,26 +171,27 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    cancelledBy: { type: String, 
+    cancelledBy: {
+      type: String,
       enum: ['User', 'Admin'],
-       default: null
-       }, 
+      default: null
+    },
 
     razorpayOrderId: {
-        type: String,
-        default: null
+      type: String,
+      default: null
     },
-    razorpayPaymentId: { 
-        type: String,
-        default: null
+    razorpayPaymentId: {
+      type: String,
+      default: null
     },
-       
-      paymentId: {
-        type: String,
-        required: false,
-      },
+
+    paymentId: {
+      type: String,
+      required: false,
+    },
   },
-  
+
   {
     timestamps: true
   }

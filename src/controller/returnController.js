@@ -13,6 +13,7 @@ module.exports = {
     
         try {
             const orderId = req.query.orderId;
+            const itemId = req.query.itemId;
             const userId = req.session.user._id;
     
             if (!orderId) {
@@ -24,6 +25,13 @@ module.exports = {
     
             if (!order || order.status !== 'Delivered') {
                 return res.status(404).json({ success: false, message: 'Order not found or not delivered' });
+            }
+
+            // Extract the specific item from the order's items array
+            const item = order.items.find(item => item._id.toString() === itemId);
+
+            if (!item) {
+                return res.status(404).json({ success: false, message: 'Item not found in order' });
             }
     
             const deliveryDate = new Date(order.createdAt);
@@ -40,6 +48,7 @@ module.exports = {
             res.render('user/returnForm', {
                 title: "Return Order",
                 order,
+                item,
                 user: req.session.user,
                 cart,
                 wishlist
@@ -49,6 +58,89 @@ module.exports = {
             res.status(500).json({ success: false, message: 'Server error' });
         }
     },
+    // createReturnRequest: async (req, res) => {
+    //     if (!req.session.user) {
+    //         return res.redirect('/login');
+    //     }
+    
+    //     try {
+    //         const userId = req.session.user._id;
+    //         const { orderId, items, reason, note } = req.body;
+    
+    //         console.log('Request Body:', JSON.stringify(req.body));
+    //         console.log('Order ID:', orderId);
+    //         console.log('Items:', items);
+    //         console.log('Reason:', reason);
+    //         console.log('Note:', note);
+    
+    //         // Validate required fields
+    //         if (!orderId || !reason) {
+    //             return res.status(400).json({ success: false, message: 'Missing required fields' });
+    //         }
+    
+    //         // Find the order
+    //         const order = await Order.findOne({ _id: orderId, customer_id: userId }).populate('items.product_id');
+    //         if (!order) {
+    //             return res.status(404).json({ success: false, message: 'Order not found' });
+    //         }
+    
+    //         // Check if the order status allows returns
+    //         if (order.status !== 'Delivered') {
+    //             return res.status(400).json({ success: false, message: 'Return request can only be made for delivered orders' });
+    //         }
+    
+    //         // Check if the return period has expired
+    //         const deliveryDate = new Date(order.delivered_on);
+    //         const currentDate = new Date();
+    //         const oneWeek = 7 * 24 * 60 * 60 * 1000;
+    
+    //         if (currentDate - deliveryDate > oneWeek) {
+    //             return res.status(400).json({ success: false, message: 'Return period has expired' });
+    //         }
+    
+    //         let updated = false;
+    
+    //         if (items && items.length > 0) {
+    //             // Handle return for specific items
+    //             items.forEach(itemRequest => {
+    //                 if (itemRequest.selected) {
+    //                     const item = order.items.find(orderItem => 
+    //                         orderItem.product_id._id.toString() === itemRequest.product &&
+    //                         orderItem.quantity >= parseInt(itemRequest.quantity) // Ensure quantity check
+    //                     );
+    
+    //                     if (item) {
+    //                         item.returnRequested = true;
+    //                         item.returnReason = reason;
+    //                         item.returnNote = note;
+    //                         item.returnQuantity = parseInt(itemRequest.quantity); // Store the quantity being returned
+    //                         updated = true;
+    //                     }
+    //                 }
+    //             });
+    
+    //             if (!updated) {
+    //                 return res.status(400).json({ success: false, message: 'No valid items for return' });
+    //             }
+    //         } else {
+    //             // Handle return for the entire order
+    //             order.returned = true;
+    //             order.reason = reason;
+    //             order.note = note;
+    //             order.status = "Return requested";
+    //         }
+    
+    //         // Save the updated order
+    //         await order.save();
+    
+    //         res.status(201).json({ success: true, message: 'Return request created successfully' });
+    //     } catch (error) {
+    //         console.error('Error creating return request:', error);
+    //         res.status(500).json({ success: false, message: 'Server error' });
+    //     }
+    // },
+    
+    
     
     createReturnRequest: async (req, res) => {
         if (!req.session.user) {
@@ -57,14 +149,14 @@ module.exports = {
 
         try {
             const userId = req.session.user._id;
-            const { orderId, items, reason, note } = req.body
+            const { orderId, itemId, reason, note } = req.body
 
-            console.log(JSON.stringify(req.body));
             
-            console.log(" orderId, items, reason, note",orderId, items, reason, note);
+            
+            console.log(" orderId, item, reason, note",orderId, itemId, reason, note);
             
     
-            if (!orderId || !items || !reason) {
+            if (!orderId || !itemId || !reason) {
                 return res.status(400).json({ success: false, message: 'Missing required fields' });
             }
     
@@ -76,6 +168,13 @@ module.exports = {
             if (order.status !== 'Delivered') {
                 return res.status(400).json({ success: false, message: 'Return request can only be made for delivered orders' });
             }
+            
+             // Extract the specific item from the order's items array
+             const item = order.items.find(item => item._id.toString() === itemId);
+
+             if (!item) {
+                 return res.status(404).json({ success: false, message: 'Item not found in order' });
+             }
     
             const deliveryDate = new Date(order.createdAt);
             const currentDate = new Date();
@@ -85,15 +184,15 @@ module.exports = {
                 return res.status(400).json({ success: false, message: 'Return period has expired' });
             }
     
-            const returnRequest = new Return({
-                user: userId,
-                order: orderId,
-                items,
-                reason,
-                note
-            });
+          // Update the item-specific fields
+            order.returnRequested = true;
+            item.returnRequested = true;
+            item.reason = reason;
+            item.returnNote = note;
+            item.productStatus = 'Return requested';
+            item.return_requested_on = new Date();
     
-            await returnRequest.save();
+            await order.save();
     
             res.status(201).json({ success: true, message: 'Return request created successfully' });
         } catch (error) {

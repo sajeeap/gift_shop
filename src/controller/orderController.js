@@ -435,7 +435,7 @@ module.exports = {
             let perPage = 12;
             let page = req.query.page || 1;
 
-            const orders = await Order.find()
+            const orders = await Order.find({ returned : false})
                 .populate('items.product_id')
                 .populate('customer_id')
                 .sort({ createdAt: -1 })
@@ -469,7 +469,7 @@ module.exports = {
         const orderId = req.params.id;
         const { status } = req.body;
 
-        const statusOrder = ['Placed', 'Processing', 'Shipped', 'Delivered', 'Cancelled', "Returned"];
+        const statusOrder = ['Placed', 'Processing', 'Shipped', 'Delivered', 'Cancelled', "Returned", "Return requested"];
 
         if (!statusOrder.includes(status)) {
             req.flash('error', 'Invalid status');
@@ -517,11 +517,11 @@ module.exports = {
             let perPage = 12;
             let page = req.query.page || 1;
 
-            const orders = await Return.find()
-                
-                .sort({ createdAt: -1 })
+            const returnOrders = await Order.find( {returnRequested : true}).populate('items.product_id').populate('customer_id').sort({ createdAt: -1 })
                 .skip((perPage * page) - perPage)
                 .limit(perPage);
+
+            
 
             const count = await Order.find().countDocuments({});
             const nextPage = parseInt(page) + 1;
@@ -529,9 +529,9 @@ module.exports = {
 
 
 
-            res.render("admin/orders/order", {
+            res.render("admin/return/return", {
                 locals,
-                orders,
+                returnOrders,
                 current: page,
                 perPage,
                 pages: Math.ceil(count / perPage),
@@ -542,6 +542,92 @@ module.exports = {
         } catch (error) {
             console.error('Error fetching orders:', error);
             res.status(500).send('Internal Server Error');
+        }
+    },
+
+  manageReturnStatus : async (req, res) => {
+        
+        const orderId = req.body.order;
+        const itemOrderId = req.body.itemOrderId;
+        const status  = req.body.returnStatus;
+
+    
+        // Define valid return statuses
+        const validReturnStatuses = ["Requested", "Approved", "Rejected", "Recieved and Refunded"];
+    
+        if (!validReturnStatuses.includes(status)) {
+            req.flash('error', 'Invalid return status');
+            return res.redirect('/admin/return'); // Redirect to the correct return management page
+        }
+
+        
+    
+        try {
+            const orderItem = await Order.findOne({ _id: orderId });
+            const returnItem = orderItem.items.find(item => item.order_id.toString() === itemOrderId);
+            
+           
+
+            if (returnItem) {
+                if (status === 'Requested') {
+                    returnItem.productStatus = 'Return requested';
+                    returnItem.ProductReturned = false;
+                } else if (status === 'Approved') {
+                    returnItem.productStatus = 'Return Approved';
+                    returnItem.ProductReturned = false;
+                } else if (status === 'Rejected') {
+                    returnItem.productStatus = 'Return Rejected';
+                    returnItem.ProductReturned = false;
+                } else if (status === 'Recieved and Refunded') {
+                    returnItem.productStatus = 'Recieved and Refunded';
+                    returnItem.ProductReturned = true;
+
+                    if (orderItem.paymentMethod === 'COD') {
+                        // No refund necessary for COD orders, simply save the order
+                    }else if (orderItem.paymentMethod === 'Razor Pay' || orderItem.paymentMethod === 'Wallet') {
+                        // Refund directly to the wallet
+                        let wallet = await Wallet.findOne({ userId: orderItem.customer_id });
+                        
+                        if (!wallet) {
+                            
+                            wallet = new Wallet({ userId: orderItem.customer_id, balance: 0 });
+                        }
+                    
+                        const discpercent = orderItem.couponDiscount / orderItem.totalPrice;
+                        const refundAmount = returnItem.itemTotal * (1 - discpercent);
+                    
+                        // Convert refundAmount to a float before adding it to the balance
+                        wallet.balance += parseFloat(refundAmount.toFixed(2));
+                        wallet.transactions.push({
+                            amount: refundAmount.toFixed(2),
+                            message: 'Refunded to Wallet from return product',
+                            type: 'Credit'
+                        });
+                    
+                        await wallet.save();
+                    }  else {
+                        return res.status(400).json({ error: 'Invalid payment method' });
+                    }
+
+
+                } else if (status === 'Returned') {
+                    returnItem.returned_on = new Date(); // Set the returned_on date
+                } 
+
+              
+    
+                await orderItem.save();
+                console.log('Return Item::::::::::::::::::::::::::::::', orderItem);
+                req.flash('success', 'Return status updated successfully');
+
+            } else {
+                req.flash('error', 'Product not found');
+            }
+            res.redirect('/admin/return'); // Redirect to the return management page
+        } catch (error) {
+            console.error('Error updating return status:', error);
+            req.flash('error', 'Internal Server Error');
+            res.redirect('/admin/return'); // Redirect to the return management page
         }
     },
 

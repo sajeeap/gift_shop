@@ -142,6 +142,7 @@ router.patch('/toggle-active-product/:id', offerController.toggleActiveProdOffer
 
 
 router.get("/return",orderController.getReturn)
+router.post("/manage-return-status", orderController.manageReturnStatus)
 
 module.exports = router;
   

@@ -7,7 +7,7 @@ const Wishlist = require("../model/whishlistSchema")
 const Orders = require("../model/orderSchema")
 const Wallet = require("../model/walletSchema");
 const Cart = require("../model/cartSchema");
-const { getUserOrders } = require('./orderController');
+const { getUserOrders } = require('../controller/orderController');
 const crypto = require('crypto');
 const razorpayInstance = require("../config/razorPay");
 
@@ -84,44 +84,41 @@ module.exports = {
 
         // Get Orders
         const orders = await Orders.find({
-            customer_id: userId
+            customer_id: userId,
+            returned: false
         }).populate('items.product_id')
             .sort({ createdAt: -1 })
             .exec();
+
+        // Get Returns
+        const returns = await Orders.find({customer_id: userId, returnRequested : true }).populate('items.product_id').sort({ createdAt: -1 })
+        .exec();
+
+        console.log("Returns in profile page................................................", returns);
+
+        // Extract the specific items from the order that have returnRequested = true
+        // const returnedItems = allOrders.items.filter(item => item.returnRequested === true);
+
+        // if (!returnedItems) {
+        //     return res.status(404).json({ success: false, message: 'No items find.' });
+        // }
+
+
 
         if (!addresses) {
             throw new Error('No addresses found for the user.');
         }
 
-        // Check if a specific order is requested for return
-        const orderId = req.query.returnOrderId;  // Assuming the order ID for return is passed via query
-        let returnOrder = null;
+     
 
-        if (orderId) {
-            const order = await Orders.findOne({ _id: orderId, customer_id: userId }).populate('items.product_id');
-
-            if (order && order.orderStatus === 'Delivered') {
-                const deliveryDate = new Date(order.createdAt);
-                const currentDate = new Date();
-                const twoWeeksInMillis = 14 * 24 * 60 * 60 * 1000;
-
-                if (currentDate - deliveryDate <= twoWeeksInMillis) {
-                    returnOrder = order;  // Only set if return is allowed
-                } else {
-                    console.warn('Return period has expired');
-                }
-            } else {
-                console.warn('Order not found or not delivered');
-            }
-        }
-
-        console.log("ordeer in profile page................................................",orders);
+        
         
 
         res.render('user/profile', {
             user,
             addresses,
             orders,
+            returns,
             cart,
             wishlist,
             wallet: wallet || { balance: 0, transactions: [] },
@@ -131,7 +128,7 @@ module.exports = {
             limit,
             referralCode: user.referralCode,
             successfullRefferals,
-            returnOrder  // Include the return order details if applicable
+            // returnOrder  // Include the return order details if applicable
         });
 
     } catch (error) {
@@ -582,6 +579,7 @@ module.exports = {
                     date: new Date(),
                     type: 'Credit',
                     orderId: orderId,
+                    message: "Add Money To Wallet",
                     paymentId: paymentId
                 });
                 await wallet.save();

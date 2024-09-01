@@ -136,8 +136,6 @@ module.exports = {
     }
   },
 
-
-
   getEditProducts: async (req, res) => {
     const locals = {
       title: 'Products'

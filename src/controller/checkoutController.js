@@ -197,7 +197,7 @@ module.exports = {
       // Save wallet transaction
       if (wallet) {
         wallet.transactions.push({
-          amount: discountedTotalPrice - amountToBePaid,
+          amount: discountedTotalPrice,
           type: "Debit",
           date: new Date(),
           message: "Order payment"
@@ -215,8 +215,7 @@ module.exports = {
       // const paymentStatus = paymentoptions === "COD" ? "Pending" : "Paid";
 
       const status = paymentoptions === "COD" || paymentoptions === "Wallet" ? "Placed" : "Pending";
-      const paymentStatus = paymentoptions === "COD" || paymentoptions === "Wallet" ? "Pending" : "Pending"; // Set to Pending for Razorpay
-  
+      const paymentStatus = paymentoptions === "COD" ? "Pending" : "Paid"; 
       const orderId = generateShortId(); // Generate a unique order ID
 
       const order = new Order({

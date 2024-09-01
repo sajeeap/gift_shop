@@ -31,6 +31,9 @@ const WalletSchema = new Schema({
                 required: true,
                 enum: ["Credit", "Debit"]
             },
+            message: {
+                type: String,
+            },
             orderId: {
                 type: String,
             }
