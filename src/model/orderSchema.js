@@ -120,7 +120,7 @@ const orderSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum : ["Pending","Placed","Processing","Shipped", "Delivered","Cancelled", "Returned"  ]
+      enum : ["Pending","Placed","Processing","Shipped", "Delivered","Cancelled", "Returned", 'Pending', 'Approved', 'Rejected'  ]
     },
     appliedCoupon: { 
       type: String,

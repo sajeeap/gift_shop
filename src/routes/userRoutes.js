@@ -65,6 +65,9 @@ router.put(
   orderController.cancelOrder
 );
 
+router.post(
+  '/orders/cancel/:orderId',orderController.cancelWholeOrder)
+
 //return
 router.get("/returns",returnController.showReturnForm)
 router.post("/returns", returnController.createReturnRequest)

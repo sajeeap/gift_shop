@@ -1,0 +1,50 @@
+<div class="tab-pane fade show active" id="v-pills-account" role="tabpanel"
+                aria-labelledby="v-pills-home-tab" tabindex="0">
+                <form id="update_profile" action="/user/profile" method="post">
+                  <div class="row">
+                    <div class="col-md-12 mb-4">
+                      <div class="form-outline">
+                        <h3 class="text-capitalize" id="username">
+                          <%= user.firstName %>
+                            <%= user.lastName %>
+                        </h3>
+                        <p>Update Profile</p>
+
+                      </div>
+                      <hr />
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-4">
+                      <div class="form-outline">
+                        <label for="firstName" class="form-label text-left">First Name</label>
+                        <input name="firstName" type="text" class="form-control" id="firstName" placeholder="First Name"
+                          value="<%= user.firstName %>" />
+                        <small class="text-danger"></small>
+                      </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                      <div class="form-outline">
+                        <label for="lastName" class="form-label text-left">Last Name</label>
+                        <input name="lastName" type="text" class="form-control" id="lastName" placeholder="Last Name"
+                          value="<%= user.lastName %>" />
+                        <small class="text-danger"></small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-outline mb-4">
+                    <label for="email" class="form-label text-left">Email</label>
+                    <input name="email" type="email" class="form-control" id="email" value="<%= user.email %>"
+                      placeholder="example@gmail.com" disabled />
+                    <small class="text-danger"></small>
+                  </div>
+
+                  <div class="flex-c-m">
+                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                      Update
+                    </button>
+                  </div>
+                </form>
+              </div>

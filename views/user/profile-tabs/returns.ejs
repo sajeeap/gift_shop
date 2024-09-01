@@ -1,0 +1,148 @@
+<div class="tab-pane fade" id="v-pills-returns" role="tabpanel" aria-labelledby="v-pills-returns-tab" tabindex="0">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+            <h3 class="text-capitalize">My Returns</h3>
+            </div>
+            <hr />
+        </div>
+    </div>
+    
+
+    <div class="row">
+        <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
+            <div class="wrap-table-shopping-cart">
+                <table class="table-shopping-cart">
+                    <thead>
+                        <tr class="table_head">
+                            <th class="column-1"></th>
+                            <th class="column-2 text-center">Product</th>
+                            <th class="column-2">Return Requested On</th>
+                            <th class="column-3">Status</th>
+                            <th class="column-3 text-center" >Qty</th>
+                            <th class="column-4">Total</th>
+                            <th class="column-5">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% returns.forEach(order=> { %>
+                            
+                                <% order.items.forEach(item=> {%>
+                                    <% if(item.returnRequested) { %>
+                                        <tr class="table_row">
+                                            <td class="column-1">
+                                                <% const hasImages=item.product_id && item.product_id.primaryImages &&
+                                                item.product_id.primaryImages.length> 0; %>
+                                                <% if (hasImages) { %>
+                                                    <img
+                                                    src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
+                                                    class="card-img-top" alt="<%= item.product_id.product_name %>"
+                                                    style="width: 120px; height: auto" />
+                                                    <% } else { %>
+                                                    <img src="/path/to/default-image.jpg" class="card-img-top" alt="Default Image"
+                                                        style="width: 120px; height: auto" />
+                                                    <% } %>
+                                            </td>
+                                            <td class="column-2 text-center">
+                                                <%= item.product_id.product_name %>
+                                            </td>
+                                            <td class="column-2">
+                                                <%= new Date(item.return_requested_on).toDateString() %>
+                                            </td>
+                                            <td class="column-3">
+                                                <span class="badge rounded-pill 
+                                                    <%= item.productStatus === 'Return requested' ? 'badge-info' : '' %>
+                                                    <%= item.productStatus === 'Return Approved' ? 'badge-success' : '' %>
+                                                    <%= item.productStatus === 'Return Rejected' ? 'badge-danger' : '' %>
+                                                    <%= item.productStatus === 'Return Item Recieved' ? 'badge-info' : '' %>
+                                                    <%= item.productStatus === 'Recieved and Refunded' ? 'badge-secondary' : '' %>">
+                                                    <%= item.productStatus %>
+                                                </span>
+                                            </td>
+                                            
+                                            <td class="column-3 text-center">
+                                                <%= item.quantity %>
+                                            </td>
+                                            <td class="column-4">
+                                                <%= item.itemTotal %>
+                                            </td>
+                                            <td class="column-5">
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#returnModal_<%= item._id %>">
+                                                    View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="returnModal_<%= item._id %>" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h3 class="text-capitalize">Return Details</h3>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <% if (hasImages) { %>
+                                                                <img
+                                                                src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
+                                                                class="card-img-top" alt="<%= item.product_id.product_name %>"
+                                                                style="width: 120px; height: auto" />
+                                                                <% } else { %>
+                                                                <img src="/path/to/default-image.jpg" class="card-img-top" alt="Default Image"
+                                                                    style="width: 120px; height: auto" />
+                                                            <% } %>
+                                                            <div class="mt-2">
+                                                                Name: <%= item.product_id.product_name %>
+                                                            </div>
+                                                            <div class="mt-2">
+                                                                Qty: <%= item.quantity %>
+                                                            </div>
+                                                            <div class="mt-2">
+                                                                Total Price: <%= item.itemTotal %>
+                                                            </div>
+                                                            <div class="mt-2">
+                                                                Return Reason: <%= item.reason %>
+                                                            </div>
+                                                            <div class="mt-2">
+                                                                Note: <%= item.returnNote %>
+                                                            </div>
+                                                            <div class="mt-2">
+                                                                <span class="badge rounded-pill 
+                                                                <%= item.productStatus === 'Return requested' ? 'badge-warning' : '' %>
+                                                                <%= item.productStatus === 'Return Approved' ? 'badge-success' : '' %>
+                                                                <%= item.productStatus === 'Return Rejected' ? 'badge-danger' : '' %>
+                                                                <%= item.productStatus === 'Return Item Recieved' ? 'badge-info' : '' %>
+                                                                <%= item.productStatus === 'Recieved and Refunded' ? 'badge-secondary' : '' %>">
+                                                                <%= item.productStatus %>
+                                                            </span>
+                                                            </div>
+                                                            <div class="mt-2">
+                                                                Return Requested On: <%= new Date(item.return_requested_on).toDateString() %>
+                                                            </div>
+                                                                
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        
+                                    <% } %>
+                                <% }) %> 
+                                                   
+                        <% })%> 
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    
+    
+</div>

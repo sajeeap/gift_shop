@@ -29,7 +29,7 @@
                             <tr>
                                 
                                <td> <%= (current - 1) * perPage + index + 1 %></td>
-                                <td><%= order._id %></td>
+                                <td><%= order.orderId %></td>
                                 <td><%= order.createdAt.toLocaleDateString('en-GB') %></td>
                                 <td><%= order.customer_id ? `${order.customer_id.firstName} ${order.customer_id.lastName}` : 'Unknown User' %></td>
                                 <td><%= order.paymentMethod %></td>
@@ -40,8 +40,10 @@
                                     <span class="badge rounded-pill
                                         <%= order.status === 'Placed' || order.status === 'Processing' || order.status === 'Shipped' ? 'alert-warning' : '' %>
                                         <%= order.status === 'Cancelled' ? 'alert-danger' : '' %>
+                                        <%= order.status === 'Returned' ? 'alert-danger' : '' %>
                                         <%= order.status === 'Delivered' ? 'alert-success' : '' %>"
                                         data-toggle="modal" data-target="#statusModal-<%= index %>">
+                                       
                                         <%= order.status %>
                                     </span>
                                 </td>
@@ -84,6 +86,7 @@
                                 <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
                                 <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
                                 <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                
                             </select>
                         </div>
                     </form>
@@ -96,6 +99,8 @@
         </div>
     </div>
 <% }) %>
+
+
 
 <% if (orders.length >0 && nextPage || current == pages) { %>
     <nav aria-label="Dashboard pagination">

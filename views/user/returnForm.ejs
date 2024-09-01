@@ -1,33 +1,47 @@
 <section class="return-form page-wrapper">
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 mt-5 mb-5">
                 <div class="form-wrapper">
                     <h3>Return Order</h3>
-                    <form id="returnForm" method="POST" action="/user/returns">
+                    <form id="returnForm" class="mt-5" method="POST" action="/user/returns">
                         <input type="hidden" name="orderId" value="<%= order._id %>">
-                        <% order.items.forEach((item, index) => { %>
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" name="items[<%= index %>][selected]" value="true">
-                                 <% const itemHasImages=item.product_id && item.product_id.primaryImages &&
-                                item.product_id.primaryImages.length> 0; %>
-                                <% if (itemHasImages) { %>
-                                  <img
-                                    src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
-                                    class="card-img-top" alt="<%= item.product_id.product_name %>"
-                                    style="width: 20%; height: auto" />
-                                  <% } else { %>
-                                    <img src="/path/to/default-image.jpg" class="card-img-top"
-                                      alt="Default Image" style="width: 100%; height: auto" />
-                                    <% } %>
-                                <%= item.product_id.product_name %> 
-                            </label>
-                            <input type="hidden" name="items[<%= index %>][product]" value="<%= item.product_id._id %>">
-                            <input type="hidden" name="items[<%= index %>][quantity]" value="<%= item.quantity %>">
-                            <input type="hidden" name="items[<%= index %>][price]" value="<%= item.price %>">
+                        <input type="hidden" name="itemId" value="<%= item._id %>">
+                        <div class="row mb-5">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        
+                                         <% const itemHasImages=item.product_id && item.product_id.primaryImages &&
+                                        item.product_id.primaryImages.length> 0; %>
+                                        <% if (itemHasImages) { %>
+                                          <img
+                                            src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
+                                            class="card-img-top" alt="<%= item.product_id.product_name %>"
+                                            style="width: 20%; height: auto" />
+                                          <% } else { %>
+                                            <img src="/path/to/default-image.jpg" class="card-img-top"
+                                              alt="Default Image" style="width: 100%; height: auto" />
+                                            <% } %>
+                                        
+                                    </label>
+                                    
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>
+                                    <%= item.product_id.product_name %> 
+                                </h4>
+                                <label>
+                                    Qty: <%= item.quantity %> 
+                                </label>
+                                <label>
+                                    Price: <%= item.price %> 
+                                </label>
+                            </div>
                         </div>
-                        <% }); %>
+                        
+                        
                         <div class="form-group">
                             <label for="reason">Reason for Return:</label>
                             <select name="reason" id="reason" class="form-control" required>
@@ -42,7 +56,7 @@
                             <label for="note">Additional Note:</label>
                             <textarea name="note" id="note" class="form-control" placeholder="Elaborate on the issue (optional)"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-main">Submit Return Request</button>
+                        <button type="submit" class="btn btn-main btn-primary">Submit Return Request</button>
                     </form>
                 </div>
             </div>

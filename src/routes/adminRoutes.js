@@ -140,6 +140,9 @@ router.get('/product-details/:id', productController.getProdDetails)
 router.patch('/product-offer/:id', offerController.addProdOffer)
 router.patch('/toggle-active-product/:id', offerController.toggleActiveProdOffer)
 
+
+router.get("/return",orderController.getReturn)
+
 module.exports = router;
   
 

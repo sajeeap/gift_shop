@@ -7,7 +7,7 @@ const Wishlist = require("../model/whishlistSchema")
 const Orders = require("../model/orderSchema")
 const Wallet = require("../model/walletSchema");
 const Cart = require("../model/cartSchema");
-const { getUserOrders } = require('../controller/orderController');
+const { getUserOrders } = require('./orderController');
 const crypto = require('crypto');
 const razorpayInstance = require("../config/razorPay");
 
@@ -114,6 +114,9 @@ module.exports = {
                 console.warn('Order not found or not delivered');
             }
         }
+
+        console.log("ordeer in profile page................................................",orders);
+        
 
         res.render('user/profile', {
             user,

@@ -1,0 +1,221 @@
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">
+                <%= locals.title ? locals.title : 'Dashboard' %>
+            </h2>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Order Id</th>
+                            <th>Reequested On</th>
+                            <th>User</th>
+                            <th>Payment</th>
+                            <th>Qty</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <% returnOrders.forEach((order, index) => { %>
+                            <% order.items.forEach((item)=> {%>
+                                
+                                <% if(item.returnRequested) { %>
+                                    <tr>
+                                        
+                                        <td>
+                                            <% const hasImages=item.product_id && item.product_id.primaryImages &&
+                                                item.product_id.primaryImages.length> 0; %>
+                                                <% if (hasImages) { %>
+                                                    <img
+                                                    src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
+                                                    class="card-img-top" alt="<%= item.product_id.product_name %>"
+                                                    style="width: 120px; height: auto" />
+                                                    <% } else { %>
+                                                    <img src="/path/to/default-image.jpg" class="card-img-top" alt="Default Image"
+                                                        style="width: 120px; height: auto" />
+                                                    <% } %>
+                                            
+                                        </td>
+                                        <th><%= order.orderId %></th>
+                                            
+                                        <td><%= item.return_requested_on.toLocaleDateString('en-GB') %></td>
+                                        <td><%= order.customer_id ? `${order.customer_id.firstName} ${order.customer_id.lastName}` : 'Unknown User' %></td>
+                                        <td><%= order.paymentMethod %></td>
+                                        <td><%= item.quantity %></td>
+                                        <td><%= item.itemTotal %></td>
+                                        <td><%= item.productStatus %></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm font-sm rounded btn-brand" data-bs-toggle="modal" data-bs-target="#returnModal_<%= item._id %>">
+                                                View
+                                            </button>
+                                            <button type="button" class="btn btn-sm font-sm rounded btn-brand" data-toggle="modal" data-target="#changeStatus_<%= item._id %>">Change Status</button>                                  
+                                        </td>
+                                    </tr>
+
+                                    
+                                <%}%>
+                                
+                            <% }) %>
+                            
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Return Details Modals -->
+
+<% returnOrders.forEach((order, index) => { %>
+    <% order.items.forEach((item)=> {%>
+        
+        <% if(item.returnRequested) { %>
+
+            <div class="modal fade" id="returnModal_<%= item._id %>" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="text-capitalize">Return Details</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <% const hasImages=item.product_id && item.product_id.primaryImages &&
+                                                item.product_id.primaryImages.length> 0; %>
+                                <% if (hasImages) { %>
+                                    <img
+                                    src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
+                                    class="card-img-top" alt="<%= item.product_id.product_name %>"
+                                    style="width: 120px; height: auto" />
+                                    <% } else { %>
+                                    <img src="/path/to/default-image.jpg" class="card-img-top" alt="Default Image"
+                                        style="width: 120px; height: auto" />
+                                <% } %>
+                                <div class="mt-2">
+                                    Name: <%= item.product_id.product_name %>
+                                </div>
+                                <div class="mt-2">
+                                    Qty: <%= item.quantity %>
+                                </div>
+                                <div class="mt-2">
+                                    Total Price: <%= item.itemTotal %>
+                                </div>
+                                <div class="mt-2">
+                                    Return Reason: <%= item.reason %>
+                                </div>
+                                <div class="mt-2">
+                                    Note: <%= item.returnNote %>
+                                </div>
+                                <div class="mt-2">
+                                    Status: <%= item.productStatus %>
+                                </div>
+                                <div class="mt-2">
+                                    Return Requested On: <%= new Date(item.return_requested_on).toDateString() %>
+                                </div>
+                                    
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="changeStatus_<%= item._id %>" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="text-capitalize">Change Status</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="statusForm_<%= item._id %>" action="/admin/manage-return-status/" method="post">
+                            <div class="form-group">
+                                <label for="statusSelect-0">Status</label>
+                                <input type="text" name="order" value="<%= order._id %>" hidden />
+                                <input type="text" name="customer" value="<%= order.customer_id %>" hidden/>
+                                <input type="text" name="itemOrderId" value="<%= item.order_id %>" hidden/>
+                                <select class="form-control" id="returnStatus" name="returnStatus">
+                                   
+                                    <option value="Requested">Return Requested</option>
+                                    <option value="Approved">Return Approved</option>
+                                    <option value="Rejected">Return Rejected</option>
+                                    <option value="Recieved and Refunded">Recieved and Refunded</option>
+                                    
+                                    
+                                </select>
+                            </div>
+                        </form>            
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" form="statusForm_<%= item._id %>" class="btn btn-primary">Save changes</button>
+                    
+                    </div>
+                </div>
+                </div>
+            </div>
+            
+        <%}%>
+        
+    <% }) %>
+    
+<% }) %>    
+
+<!-- Change Status Modal -->
+
+
+<% if (returnOrders.length > 0) { %>
+    <nav aria-label="Dashboard pagination">
+        <ul class="pagination justify-content-center mt-5">
+            <% if (current === 1) { %>
+                <li class="page-item disabled"><a href="#" class="page-link">First</a></li>
+            <% } else { %>
+                <li class="page-item"><a href="/admin/orders?page=1" class="page-link">First</a></li>
+            <% } %>
+
+            <% var i = (Number(current) > 5 ? Number(current) - 4 : 1); %>
+            <% if (i !== 1) { %>
+                <li class="page-item disabled"><a href="#" class="page-link">...</a></li>
+            <% } %>
+
+            <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+                <% if (i === Number(current)) { %>
+                    <li class="page-item disabled"><a href="#" class="page-link"><%= i %></a></li>
+                <% } else { %>
+                    <li class="page-item"><a href="/admin/orders?page=<%= i %>" class="page-link"><%= i %></a></li>
+                <% } %>
+
+                <% if (i === Number(current) + 4 && i < pages) { %>
+                    <li class="page-item disabled"><a href="#" class="page-link">...</a></li>
+                <% } %>
+            <% } %>
+
+            <% if (current === pages) { %>
+                <li class="page-item disabled"><a href="#" class="page-link">Last</a></li>
+            <% } else { %>
+                <li class="page-item"><a href="/admin/orders?page=<%= pages %>" class="page-link">Last</a></li>
+            <% } %>
+        </ul>
+    </nav>
+<% } %>
+
+<!-- jQuery and Bootstrap JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

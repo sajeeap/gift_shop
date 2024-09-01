@@ -85,26 +85,6 @@ module.exports = {
                 return res.status(400).json({ success: false, message: 'Return period has expired' });
             }
     
-            // // Ensure items are valid and match order items
-            // const returnItems = items.map(item => {
-            //     try {
-            //         // Parse the product JSON string if necessary
-            //         const parsedProduct = typeof item.product === 'string' ? JSON.parse(item.product) : item.product;
-            //         return {
-            //             product: parsedProduct._id, // Use product ID
-            //             quantity: parseInt(item.quantity, 10),
-            //             price: parseFloat(item.price)
-            //         };
-            //     } catch (e) {
-            //         console.error('Error parsing item product data:', e);
-            //         return null; // Invalidate item if parsing fails
-            //     }
-            // }).filter(item => item && item.product && item.quantity && item.price); // Filter out invalid items
-    
-            // if (returnItems.length === 0) {
-            //     return res.status(400).json({ success: false, message: 'No items selected for return' });
-            // }
-    
             const returnRequest = new Return({
                 user: userId,
                 order: orderId,

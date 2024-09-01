@@ -1,0 +1,68 @@
+<div class="tab-pane fade" id="v-pills-address" role="tabpanel" aria-labelledby="v-pills-profile-tab"
+              tabindex="0">
+              <div class="row">
+                <div class="col-md-12 mb-4">
+                  <div class="address-title">
+                    <h3 class="text-capitalize">Address</h3>
+                    <button class="btn bg1 cl0 bor1" data-toggle="modal" data-target="#exampleModal">
+                      + New Address
+                    </button>
+                  </div>
+                  <hr />
+                </div>
+              </div>
+
+              <div class="row">
+                <% if (addresses && addresses.length> 0) { %> <% addresses.forEach(function(address) { %>
+                    <div class="col-lg-6 mb-3" id="address-<%= address._id %>">
+                      <div class="card mb-3 mb-lg-0 mb-3">
+                        <div class="card-body">
+                          <address>
+                            <span class="name">
+                              <%= address.name %>
+                            </span><br />
+                            <span class="address_type">
+                              <%= address.address_type %>
+                            </span><br />
+                            <span class="zip_code">
+                              <%= address.zip_code %>
+                            </span><br />
+                            <span class="locality">
+                              <%= address.locality %>
+                            </span><br />
+                            <span class="house_name">
+                              <%= address.house_name %>
+                            </span><br />
+                            <span class="area_street">
+                              <%= address.area_street %>
+                            </span><br />
+                            <span class="town">
+                              <%= address.town %>
+                            </span><br />
+                            <span class="state">
+                              <%= address.state %>
+                            </span><br />
+                            <span class="landmark">
+                              <%= address.landmark %>
+                            </span>
+                          </address>
+                          <div class="mt-2">
+                            <button class="btn btn-primary" onclick="openEditModal('<%= address._id %>')">
+                              Edit
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteAddress('<%= address._id %>')">
+                              Delete
+                            </button>
+                            <button class="btn btn-success" onclick="setDefaultAddress('<%= address._id %>')">
+                              <% if (address.default) { %> Default Address <% } else { %> Set as Default <% } %>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <% }); %>
+                      <% } else { %>
+                        <p>No addresses found.</p>
+                        <% } %>
+              </div>
+            </div>

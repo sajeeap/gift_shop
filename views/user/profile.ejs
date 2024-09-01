@@ -26,6 +26,11 @@
                   aria-selected="false">Orders
                 </a>
 
+                <a href="#" class="nav-link" id="v-pills-returns-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-returns" type="button" role="tab" aria-controls="v-pills-returns"
+                  aria-selected="false">Returns</a>
+
+
                 <a href="#" class="nav-link" id="v-pills-address-tab" data-bs-toggle="pill"
                   data-bs-target="#v-pills-address" type="button" role="tab" aria-controls="v-pills-address"
                   aria-selected="false">Address
@@ -44,515 +49,38 @@
           <div class="card-body py-5 px-md-5">
             <div class="tab-content" id="v-pills-tabContent">
               <!-- Account -->
-              <div class="tab-pane fade show active" id="v-pills-account" role="tabpanel"
-                aria-labelledby="v-pills-home-tab" tabindex="0">
-                <form id="update_profile" action="/user/profile" method="post">
-                  <div class="row">
-                    <div class="col-md-12 mb-4">
-                      <div class="form-outline">
-                        <h3 class="text-capitalize" id="username">
-                          <%= user.firstName %>
-                            <%= user.lastName %>
-                        </h3>
-                        <p>Update Profile</p>
-
-                      </div>
-                      <hr />
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-6 mb-4">
-                      <div class="form-outline">
-                        <label for="firstName" class="form-label text-left">First Name</label>
-                        <input name="firstName" type="text" class="form-control" id="firstName" placeholder="First Name"
-                          value="<%= user.firstName %>" />
-                        <small class="text-danger"></small>
-                      </div>
-                    </div>
-                    <div class="col-md-6 mb-4">
-                      <div class="form-outline">
-                        <label for="lastName" class="form-label text-left">Last Name</label>
-                        <input name="lastName" type="text" class="form-control" id="lastName" placeholder="Last Name"
-                          value="<%= user.lastName %>" />
-                        <small class="text-danger"></small>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="form-outline mb-4">
-                    <label for="email" class="form-label text-left">Email</label>
-                    <input name="email" type="email" class="form-control" id="email" value="<%= user.email %>"
-                      placeholder="example@gmail.com" disabled />
-                    <small class="text-danger"></small>
-                  </div>
-
-                  <div class="flex-c-m">
-                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                      Update
-                    </button>
-                  </div>
-                </form>
-              </div>
+              <%- include('profile-tabs/account.ejs') %>
               <!-- change password -->
-              <div class="tab-pane fade" id="v-pills-password" role="tabpanel" aria-labelledby="v-pills-profile-tab"
-                tabindex="0">
-                <div class="row">
-                  <div class="col-md-12 mb-4">
-                    <div class="form-outline">
-                      <h3 class="text-capitalize">Change Password</h3>
-                    </div>
-                    <hr />
-                  </div>
-                </div>
-                <!-- change password -->
-                <form id="changePasswordForm" action="/user/change-password" method="POST">
-                  <div class="form-outline mb-4">
-                    <label for="currentPassword" class="form-label text-left">Current Password</label>
-                    <input name="currentPassword" type="password" class="form-control" id="currentPassword" required />
-                  </div>
-                  <div class="form-outline mb-4">
-                    <label for="newPassword" class="form-label text-left">New Password</label>
-                    <input name="newPassword" type="password" class="form-control" id="newPassword" required />
-                  </div>
-                  <div class="form-outline mb-4">
-                    <label for="confirmPassword" class="form-label text-left">Confirm Password</label>
-                    <input name="confirmPassword" type="password" class="form-control" id="confirmPassword" required />
-                  </div>
-                  <div class="flex-c-m">
-                    <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                      Confirm
-                    </button>
-                  </div>
-                </form>
-              </div>
+              <%- include('profile-tabs/change-password.ejs') %>
 
               <!-- Wallet -->
-              <div class="tab-pane fade" id="v-pills-wallet" role="tabpanel" aria-labelledby="v-pills-wallet-tab"
-                tabindex="0">
-                <div class="row">
-                  <div class="col-md-12 mb-4">
-                    <div class="wallet-title">
-                      <h3 class="text-capitalize">Wallet</h3>
-                    </div>
-                    <hr />
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-lg-6 mb-3">
-                    <div class="card mb-3">
-                      <div class="card-body">
-                        <h4>Balance: $ <%= wallet.balance %>
-                        </h4>
-                        <button class="btn bg1 cl0 bor1 mt-3" data-bs-toggle="modal" data-bs-target="#addMoneyModal">
-                          + Add Money
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-                <!-- Wallet Transactions with Pagination -->
-                <div class="row">
-                  <div class="col-lg-12 mb-3">
-                    <h4 class="mb-4">Transactions</h4>
-                    <hr />
-                    <% if (transactions.length> 0) { %>
-                      <% transactions.forEach(function(transaction) { %>
-                        <div class="card mb-3" id="transaction-<%= transaction._id %>">
-                          <div class="card-body">
-                            <div class="transaction-date">
-                              <strong>Date:</strong>
-                              <%= new Date(transaction.date).toLocaleString() %>
-                            </div>
-                            <div class="transaction-amount">
-                              <strong>Amount:</strong> $<%= transaction.amount %>
-                            </div>
-                            <div class="transaction-type">
-                              <strong>Type:</strong>
-                              <%= transaction.type %>
-                            </div>
-                            <% if (transaction.message) { %>
-                              <div class="transaction-message">
-                                <strong>Message:</strong>
-                                <%= transaction.message %>
-                              </div>
-                              <% } %>
-                          </div>
-                        </div>
-                        <% }); %>
-                          <% } else { %>
-                            <p>No transactions found.</p>
-                            <% } %>
-
-                              <!-- Pagination Controls -->
-                              <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-center">
-                                  <% if (currentPage> 1) { %>
-                                    <li class="page-item">
-                                      <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= limit %>"
-                                        aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                      </a>
-                                    </li>
-                                    <% } else { %>
-                                      <li class="page-item disabled">
-                                        <span class="page-link">&laquo;</span>
-                                      </li>
-                                      <% } %>
-
-                                        <% for (let i=1; i <=totalPages; i++) { %>
-                                          <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                            <a class="page-link" href="?page=<%= i %>&limit=<%= limit %>">
-                                              <%= i %>
-                                            </a>
-                                          </li>
-                                          <% } %>
-
-                                            <% if (currentPage < totalPages) { %>
-                                              <li class="page-item">
-                                                <a class="page-link"
-                                                  href="?page=<%= currentPage + 1 %>&limit=<%= limit %>"
-                                                  aria-label="Next">
-                                                  <span aria-hidden="true">&raquo;</span>
-                                                </a>
-                                              </li>
-                                              <% } else { %>
-                                                <li class="page-item disabled">
-                                                  <span class="page-link">&raquo;</span>
-                                                </li>
-                                                <% } %>
-                                </ul>
-                              </nav>
-                  </div>
-                </div>
-
-
-              </div>
+              <%- include('profile-tabs/wallet.ejs') %>
 
               <!-- Orders -->
-              <div class="tab-pane fade" id="v-pills-orders" role="tabpanel" aria-labelledby="v-pills-profile-tab"
-                tabindex="0">
-                <div class="row">
-                  <div class="col-md-12 mb-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <h3 class="text-capitalize">My Orders</h3>
+              <%- include('profile-tabs/orders.ejs') %>
+            
+              <!-- returns -->
+              <%- include('profile-tabs/returns.ejs') %>
 
-                    </div>
-                    <hr />
-                  </div>
-                </div>
+              <!-- Address -->
+              <%- include('profile-tabs/address.ejs') %>
 
-                <div class="row">
-                  <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
-                    <div class="wrap-table-shopping-cart">
-                      <table class="table-shopping-cart">
-                        <thead>
-                          <tr class="table_head">
-                            <th class="column-1"></th>
-                            <th class="column-2 text-center">Items</th>
-                            <th class="column-2">Date</th>
-                            <th class="column-3">Status</th>
-                            <th class="column-3">Payment</th>
-                            <th class="column-4">Total</th>
-                            <th class="column-5">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <% orders.forEach(order=> { %>
-                            <tr class="table_row">
-                              <td class="column-1">
-                                <% const hasImages=order.items[0].product_id && order.items[0].product_id.primaryImages
-                                  && order.items[0].product_id.primaryImages.length> 0; %>
-                                  <% if (hasImages) { %>
-                                    <img
-                                      src="/uploads/products-images/crp/<%= order.items[0].product_id.primaryImages[0].name %>"
-                                      class="card-img-top" alt="<%= order.items[0].product_id.product_name %>"
-                                      style="width: 120px; height: auto" />
-                                    <% } else { %>
-                                      <img src="/path/to/default-image.jpg" class="card-img-top" alt="Default Image"
-                                        style="width: 120px; height: auto" />
-                                      <% } %>
-                              </td>
-                              <td class="column-2 text-center">
-                                <%= order.items.length %>
-                              </td>
-                              <td class="column-2">
-                                <%= new Date(order.createdAt).toDateString() %>
-                              </td>
-                              <td class="column-3">
-                                <span class="badge rounded-pill
-                      <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Placed' || order.status === 'Shipped' ? 'badge-warning' : '' %>
-                      <%= order.status === 'Cancelled' ? 'badge-danger' : '' %>
-                      <%= order.status === 'Delivered' ? 'badge-success' : '' %>">
-                                  <%= order.status %>
-                                </span>
-                              </td>
-                              <td class="column-3">
-                                <%= order.paymentMethod %>
-                              </td>
-                              <td class="column-4">
-                                $<%= (order.items.reduce((total, item)=> total + item.itemTotal, 0) -
-                                  order.couponDiscount).toFixed(2) %>
-                              </td>
-                              <td class="column-5">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                  data-target="#orderModal_<%= order._id %>">View</button>
-                              </td>
-                            </tr>
-
-                            <!-- Order Modal -->
-                            <div class="modal fade" id="orderModal_<%= order._id %>" tabindex="-1" role="dialog"
-                              aria-labelledby="orderModalLabel_<%= order._id %>" aria-hidden="true">
-                              <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title" id="orderModalLabel_<%= order._id %>">Order Details</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                    <p class="mt-2"><strong>Order ID:</strong>
-                                      <%= order._id %>
-                                    </p>
-                                    <p><strong>Date:</strong>
-                                      <%= new Date(order.createdAt).toDateString() %>
-                                    </p>
-                                    <p><strong>Status:</strong>
-                                      <span class="badge rounded-pill
-                              <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Placed' || order.status === 'Shipped' ? 'badge-warning' : '' %>
-                              <%= order.status === 'Cancelled' ? 'badge-danger' : '' %>
-                              <%= order.status === 'Delivered' ? 'badge-success' : '' %>">
-                                        <%= order.status %>
-                                      </span>
-                                    </p>
-
-                                    <h5 class="mt-5 mb-2">Ordered Items:</h5>
-                                    <hr />
-                                    <% order.items.forEach(item=> { %>
-                                      <div class="row">
-                                        <div class="col">
-                                          <% const itemHasImages=item.product_id && item.product_id.primaryImages &&
-                                            item.product_id.primaryImages.length> 0; %>
-                                            <% if (itemHasImages) { %>
-                                              <img
-                                                src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
-                                                class="card-img-top" alt="<%= item.product_id.product_name %>"
-                                                style="width: 100%; height: auto" />
-                                              <% } else { %>
-                                                <img src="/path/to/default-image.jpg" class="card-img-top"
-                                                  alt="Default Image" style="width: 100%; height: auto" />
-                                                <% } %>
-                                        </div>
-                                        <div class="col">
-                                          <%= item.product_id.product_name %>
-                                        </div>
-                                        <div class="col">
-                                          <%= item.quantity %>
-                                        </div>
-                                        <div class="col">$<%= item.price %>
-                                        </div>
-                                        <div class="col">
-                                          <% if (item.status !=='Cancelled' && (order.status==='Processing' ||
-                                            order.status==='Placed' )) { %>
-                                            <button id="cancel-btn-<%= item._id %>" class="btn btn-danger cancel-order"
-                                              data-order-id="<%= order._id %>"
-                                              data-product-id="<%= item.product_id._id %>">
-                                              Cancel
-                                            </button>
-                                            <% } else if (item.status==='Cancelled' || order.status==='Cancelled' ) { %>
-                                              <span id="status-<%= item._id %>" class="text-danger">Item
-                                                Cancelled</span>
-                                              <% } else if (order.status==='Delivered' ) { %>
-                                                <a href="/user/returns?orderId=<%= order._id %>" class="btn btn-warning" >
-                                                  Return
-                                                </a>
-                                                <% } else if (order.paymentStatus === "Pending") { %>
-                                                  <a href="#" class="btn btn-warning"  >Retry Payment</a>
-                                                  <% } %>
-
-                                        </div>
-                                      </div>
-                                      <hr />
-                                      <% }); %>
-                                        <div class="row">
-                                          <div class="col"></div>
-                                          <div class="col"></div>
-                                          <div class="col"><strong>Subtotal</strong></div>
-                                          <div class="col">
-                                            <strong>$<%= order.items.reduce((total, item)=> total + item.itemTotal,
-                                                0).toFixed(2) %></strong>
-                                          </div>
-                                        </div>
-                                        <div class="row">
-                                          <div class="col"></div>
-                                          <div class="col"></div>
-                                          <div class="col"><strong>Coupon Discount</strong></div>
-                                          <div class="col">
-                                            <strong>-$<%= order.couponDiscount.toFixed(2) %></strong>
-                                          </div>
-                                        </div>
-                                        <div class="row">
-                                          <div class="col"></div>
-                                          <div class="col"></div>
-                                          <div class="col"><strong>Total</strong></div>
-                                          <div class="col">
-                                            <strong>$<%= (order.items.reduce((total, item)=> total + item.itemTotal, 0)
-                                                - order.couponDiscount).toFixed(2) %></strong>
-                                          </div>
-                                        </div>
-                                  </div>
-                                  <div class="modal-footer">
-
-
-                                    <% if (order.status==='Delivered' ) { %>
-                                      <% if (order.paymentMethod==='Razor Pay' || order.paymentMethod==="Wallet" ) { %>
-                                        <a href="/user/invoice/genarate/<%= order._id %>"
-                                          class="btn btn-primary">Generate Invoice</a>
-                                        <% } %>
-                                          
-                                          <% } %>
-
-                                            <button type="button" class="btn btn-secondary"
-                                              data-dismiss="modal">Close</button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          
-                            <!-- End of Return Modal -->
-                    </div>
-
-                    <% }); %>
-                      </tbody>
-                      </table>
-                  </div>
-                </div>
-              </div>
+              <!-- Address -->
+              <%- include('profile-tabs/refferel.ejs') %>
             </div>
 
+            
 
-            <!-- Address -->
-
-            <div class="tab-pane fade" id="v-pills-address" role="tabpanel" aria-labelledby="v-pills-profile-tab"
-              tabindex="0">
-              <div class="row">
-                <div class="col-md-12 mb-4">
-                  <div class="address-title">
-                    <h3 class="text-capitalize">Address</h3>
-                    <button class="btn bg1 cl0 bor1" data-toggle="modal" data-target="#exampleModal">
-                      + New Address
-                    </button>
-                  </div>
-                  <hr />
-                </div>
-              </div>
-
-              <div class="row">
-                <% if (addresses && addresses.length> 0) { %> <% addresses.forEach(function(address) { %>
-                    <div class="col-lg-6 mb-3" id="address-<%= address._id %>">
-                      <div class="card mb-3 mb-lg-0 mb-3">
-                        <div class="card-body">
-                          <address>
-                            <span class="name">
-                              <%= address.name %>
-                            </span><br />
-                            <span class="address_type">
-                              <%= address.address_type %>
-                            </span><br />
-                            <span class="zip_code">
-                              <%= address.zip_code %>
-                            </span><br />
-                            <span class="locality">
-                              <%= address.locality %>
-                            </span><br />
-                            <span class="house_name">
-                              <%= address.house_name %>
-                            </span><br />
-                            <span class="area_street">
-                              <%= address.area_street %>
-                            </span><br />
-                            <span class="town">
-                              <%= address.town %>
-                            </span><br />
-                            <span class="state">
-                              <%= address.state %>
-                            </span><br />
-                            <span class="landmark">
-                              <%= address.landmark %>
-                            </span>
-                          </address>
-                          <div class="mt-2">
-                            <button class="btn btn-primary" onclick="openEditModal('<%= address._id %>')">
-                              Edit
-                            </button>
-                            <button class="btn btn-danger" onclick="deleteAddress('<%= address._id %>')">
-                              Delete
-                            </button>
-                            <button class="btn btn-success" onclick="setDefaultAddress('<%= address._id %>')">
-                              <% if (address.default) { %> Default Address <% } else { %> Set as Default <% } %>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <% }); %>
-                      <% } else { %>
-                        <p>No addresses found.</p>
-                        <% } %>
-              </div>
-            </div>
-
-
-            <div class="tab-pane fade" id="v-pills-referral-tab" role="tabpanel" aria-labelledby="#v-pills-referral"
-              tabindex="0">
-              <div class="row">
-                <div class="col-md-12 mb-4">
-                  <div class="form-outline">
-                    <h3 class="text-capitalize">My Orders</h3>
-                  </div>
-                  <hr />
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
-                  <div class="wrap-table-shopping-cart">
-                    <table class="table-shopping-cart">
-                      <tr class="table_head">
-                        <th class="column-1">Name</th>
-                        <th class="column-2">Email</th>
-                        <th class="column-3">Joined Date</th>
-
-                      </tr>
-                      <% if (successfullRefferals && successfullRefferals.length !==0 ) { %>
-                        <% successfullRefferals.forEach(element=> { %>
-                          <tr class="table_row">
-                            <td class="column-1">
-                              <%= element.date.toDateString() %>
-                            </td>
-                            <td class="column-2"></td>
-                            <td class="column-1"><%- element.status %></td>
+            
 
 
 
-                          </tr>
+            
+
+            
 
 
-
-                          <% }); %>
-                            <% } else { %>
-                              <tr>
-                                <td colspan="4" class="text-center">No refferals yet</td>
-                              </tr>
-                              <% } %>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
+            
 
 
           </div>
@@ -561,6 +89,9 @@
     </div>
   </div>
   </div>
+
+
+
 </section>
 
 <!-- add/edit address Modal -->
@@ -637,7 +168,59 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-//address
+
+
+<!-- //cancell if pending
+// -->
+<!-- <script>
+  //   document.addEventListener('DOMContentLoaded', () => {
+  //     const updateCountdown = (orderId, createdAt) => {
+  //       const countdownElement = document.getElementById(`countdown_${orderId}`);
+  //       const createdDate = new Date(createdAt);
+  //       const now = new Date();
+  //       const twoHours = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+  //       const timeLeft = twoHours - (now - createdDate);
+
+  //       if (timeLeft > 0) {
+  //         const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+  //         const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+  //         const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+  //         countdownElement.textContent = `${hours} hours ${minutes} minutes ${seconds} seconds`;
+  //       } else {
+  //         countdownElement.textContent = 'Time expired. Your order has been cancelled.';
+
+  //         // Optionally, disable or hide elements related to the order
+  //         document.querySelector(`#orderModal_${orderId} .modal-footer`).innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>';
+
+  //         // Optionally, inform the server about the cancellation
+  //         fetch(`/user/orders/cancel/${orderId}`, { method: 'POST' })
+  //           .then(response => response.json())
+  //           .then(data => {
+  //             if (data.success) {
+  //               console.log(`Order ${orderId} cancelled.`);
+  //             } else {
+  //               console.error(`Failed to cancel order ${orderId}.`);
+  //             }
+  //           });
+  //       }
+  //     };
+
+  //     // Loop through each order with a pending payment status
+  //     document.querySelectorAll('[id^="countdown_"]').forEach(element => {
+  //       const orderId = element.id.split('_')[1];
+  //       const createdAt = element.dataset.createdAt;
+  //       updateCountdown(orderId, createdAt);
+
+  //       // Update the countdown every second
+  //       setInterval(() => {
+  //         updateCountdown(orderId, createdAt);
+  //       }, 1000);
+  //     });
+  //   });
+  // </script> -->
+
+<!-- //address -->
 <script>
   function openAddModal() {
     document.getElementById("address-form").reset();
@@ -788,7 +371,7 @@
   }
 </script>
 
-//change passwrd
+<!-- //change passwrd -->
 <script>
   document
     .getElementById("changePasswordForm")
@@ -860,7 +443,7 @@
     });
 </script>
 
-//update profile
+<!-- //update profile -->
 <script>
   document
     .getElementById("update_profile")
@@ -956,7 +539,7 @@
     });
 </script>
 
-//default address
+<!-- //default address -->
 <script>
   function setDefaultAddress(addressId) {
     fetch("/user/set-default-address", {
@@ -998,7 +581,7 @@
   }
 </script>
 
-//cancel order
+<!-- //cancel order -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".cancel-order").forEach((button) => {
@@ -1070,10 +653,7 @@
 
 </script>
 
-
-
-
-// add money to waallet
+<!-- // add money to waallet -->
 <script>
   document.getElementById("payButton").addEventListener("click", function (e) {
     e.preventDefault();
@@ -1091,7 +671,7 @@
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ amount: amountUSD, currency: "USD" }),
+      body: JSON.stringify({ amount: amountUSD, currency: "INR" }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -1146,4 +726,134 @@
         alert("Failed to process payment.");
       });
   });
+</script>
+
+<!-- // retry payment -->
+<script>
+  document.querySelectorAll(".retryPaymentButton").forEach(button => {
+    button.addEventListener("click", function () {
+      const orderId = this.getAttribute("data-order-id");
+      const totalPrice = parseFloat(this.getAttribute("data-total-price"));
+
+      Swal.fire({
+        title: 'Retry Payment',
+        input: 'select',
+        inputOptions: {
+          'Razor Pay': 'Razor Pay',
+          'COD': 'Cash on Delivery',
+          'Wallet': 'Wallet'
+        },
+        inputPlaceholder: 'Select a payment method',
+        showCancelButton: true,
+        inputValidator: (value) => {
+          if (!value) {
+            return 'You need to choose a payment method!';
+          }
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const selectedPaymentMethod = result.value;
+
+          console.log("order::::::::::::::::::::::::::::", totalPrice, orderId);
+
+          if (selectedPaymentMethod === "Razor Pay") {
+            // Trigger Razorpay payment
+            var options = {
+              key: "<%= process.env.RAZOR_PAY_KEY_ID %>",
+              amount: totalPrice * 100, // Convert to paise
+              currency: "INR",
+              name: "Order Payment",
+              description: "Retry payment for order",
+              handler: function (response) {
+                // Verify payment
+                fetch("/user/verify-orderpayment", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    paymentId: response.razorpay_payment_id,
+                    orderId: orderId,
+                  }),
+                })
+                  .then((response) => response.json())
+                  .then((verifyData) => {
+                    if (verifyData.success) {
+                      Swal.fire({
+                        icon: "success",
+                        title: "Payment Successful",
+                        text: "Your order has been placed successfully.",
+                        showConfirmButton: false,
+                        timer: 1500,
+                      }).then(() => {
+                        location.reload(); // Or navigate to another page
+                      });
+                    } else {
+                      Swal.fire({
+                        icon: "error",
+                        title: "Payment Verification Failed",
+                        text: "Please try again.",
+                      });
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Error verifying payment:", error);
+                    Swal.fire({
+                      icon: "error",
+                      title: "Error",
+                      text: "Failed to verify payment.",
+                    });
+                  });
+              },
+              theme: {
+                color: "#3399cc",
+              },
+              modal: {
+                ondismiss: function () {
+                  Swal.fire({
+                    icon: "info",
+                    title: "Payment Cancelled",
+                    text: "You cancelled the payment.",
+                  });
+                },
+              },
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+          } else if (selectedPaymentMethod === "COD") {
+            // Handle COD
+            Swal.fire({
+              icon: "info",
+              title: "Cash on Delivery",
+              text: "Proceeding with COD payment.",
+              showConfirmButton: false,
+              timer: 1500,
+            }).then(() => {
+              location.reload(); // Or navigate to another page
+            });
+          } else if (selectedPaymentMethod === "Wallet") {
+            // Handle Wallet
+            if (walletBalance >= totalPrice) {
+              Swal.fire({
+                icon: "success",
+                title: "Payment Successful",
+                text: "Your order has been placed successfully.",
+                showConfirmButton: false,
+                timer: 1500,
+              }).then(() => {
+                location.reload(); // Or navigate to another page
+              });
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Insufficient Wallet Balance",
+                text: "Please add funds to your wallet and retry.",
+              });
+            }
+          }
+        }
+      });
+    });
+  });
+
 </script>
