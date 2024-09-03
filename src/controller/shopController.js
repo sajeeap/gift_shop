@@ -18,6 +18,8 @@ module.exports = {
 
         
         const products = await Product.find().populate('category').sort({ createdAt: -1 })
+        console.log("prrrrrrrrrrrrrrrrrr", products);
+        
         const wishlist = await Wishlist.findOne({ user_id:req.session.user }).populate("products");
         
         
@@ -44,6 +46,7 @@ module.exports = {
         const locals = {
             title: "All Products",
         }
+        const {search} = req.query
     
         const userId = req.session.user;
         const user = await User.findById(userId);
@@ -51,9 +54,10 @@ module.exports = {
         let perPage = 6;
         let page = parseInt(req.query.page) || 1;
     
-        let sortOption = req.query.sort || 'createdAt';
+        let sortOption = req.query.sort ;
         let sortOrder = parseInt(req.query.order) || -1;
         let categoryFilter = req.query.category || '';
+
     
         // Construct sorting object
         let sort = {};
@@ -63,7 +67,24 @@ module.exports = {
         let filter = {};
         if (categoryFilter) {
             filter['category.name'] = categoryFilter;
+
         }
+      
+
+
+        if (search) {
+            
+    
+            const categoryNames = await Category.find({ name: new RegExp(search, 'i'), isActive: true }).select('_id');
+            const categoryIds = categoryNames.map(cat => cat._id);
+    
+            // Combine search filters
+            filter.$or = [
+              
+              { category: { $in: categoryIds } },
+              { product_name: new RegExp(search, 'i') }
+            ];
+          }
     
         let count = await Product.countDocuments(filter);
         let pages = Math.ceil(count / perPage);
@@ -94,7 +115,8 @@ module.exports = {
                 cart,
                 wishlist,
                 current: page,
-                pages: pages
+                pages: pages,
+                search
             });
         } catch (error) {
             console.log(error);
@@ -221,7 +243,7 @@ module.exports = {
         try {
           let productSuggestions = [];
           let categorySuggestions = [];
-          let brandSuggestions = [];
+          
     
           // If a category filter is applied, filter product suggestions by that category
           if (categoryFilter) {
@@ -241,9 +263,7 @@ module.exports = {
               isActive: true // Assuming you want only active categories
             }).limit(4).select('name');
     
-            brandSuggestions = await Brand.find({
-              name: new RegExp(query, "i"),
-            }).limit(4).select('name');
+           
           }
     
     
@@ -252,7 +272,7 @@ module.exports = {
           const suggestions = [
             ...productSuggestions.map(p => p.product_name),
             ...categorySuggestions.map(c => c.name),
-            ...brandSuggestions.map(b => b.name)
+           
           ];
     
           res.json(suggestions);

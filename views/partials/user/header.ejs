@@ -212,11 +212,6 @@
 				<a href="/user/whishlist" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"  data-notify="<%= wishlist && wishlist.products && wishlist.products.length ? wishlist.products.length : '0' %>">
 					<i class="zmdi zmdi-favorite-outline"></i>
 				</a>
-
-				
-				 
-				
-
 				
 				<a href="/user/profile" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11">
 					<i class="zmdi zmdi-account-o"></i>
@@ -277,7 +272,7 @@
 		
 			const showSuggestions = async (query) => {
 				try {
-					const response = await fetch(`/allProducts/search?query=${encodeURIComponent(query)}`);
+					const response = await fetch(`/product-list/search?query=${encodeURIComponent(query)}`);
 					const suggestions = await response.json();
 		
 					if (suggestions.length > 0) {
@@ -309,7 +304,7 @@
 			searchIcon.addEventListener('click', () => {
 				const query = searchInput.value.trim();
 				if (query.length > 0) {
-					window.location.href = `/allProducts?search=${encodeURIComponent(query)}`;
+					window.location.href = `/product-list?search=${encodeURIComponent(query)}`;
 				} else {
 					errorMessage.style.display = 'block'; // Show error message if no query is entered
 					suggestionsList.style.display = 'none';
@@ -319,7 +314,7 @@
 			suggestionsList.addEventListener('click', (e) => {
 				if (e.target.tagName === 'LI') {
 					const selectedSuggestion = e.target.textContent;
-					window.location.href = `/allProducts?search=${encodeURIComponent(selectedSuggestion)}`;
+					window.location.href = `/product-list?search=${encodeURIComponent(selectedSuggestion)}`;
 				}
 			});
 		});

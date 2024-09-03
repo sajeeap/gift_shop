@@ -14,7 +14,8 @@ const reviewController = require("../controller/reviewController")
 router.get('/', shopController.userHome);
 
 //productlist
-router.get("/product-list",shopController.getProductList )
+router.get("/product-list",shopController.getProductList );
+router.get('/product-list/search',shopController.getSearchSuggestions)
 
 //prduct details
 router.get("/product-details/:id", shopController.getProductDetails)

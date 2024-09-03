@@ -17,7 +17,11 @@ const couponController = require('../controller/couponController');
 
 
 router.get('/', isAdminLoggedIn, adminController.getDashboard)
-router.get('/dashboard/chart-data',isAdminLoggedIn, adminController.getChartData);
+router.get('/dashboard/chart-data', isAdminLoggedIn, adminController.getChartData)
+
+
+
+
 
 //chart controller
 // router.get('/order-analysis',adminController.ChartCtrl);
