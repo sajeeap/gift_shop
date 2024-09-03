@@ -213,7 +213,7 @@
 
                                           <% } %>
 
-                                            <% if (order.paymentStatus==="Pending" ) { %>
+                                            <% if (order.paymentStatus==="Pending" && order.paymentMethod==='Razor Pay') { %>
                                               <a href="#" class="btn btn-primary retryPaymentButton"
                                                 data-order-id="<%= order.orderId %>"
                                                 data-total-price="<%= (order.items.reduce((total, item) => total + item.itemTotal, 0) - order.couponDiscount).toFixed(2) %>">Retry
