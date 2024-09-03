@@ -125,7 +125,7 @@ module.exports={
         if (!req.session.verifyToken) {
           return res.redirect("/");
         }
-        res.render("auth/user/VerifyOtp");
+        res.render("auth/user/verifyOtp");
       },
       // 
       verifyOtp: async (req, res) => {
