@@ -21,6 +21,8 @@ router
   .get(userController.getProfile)
   .post(userController.editProfile);
 
+
+
 //change password
 router.route("/change-password").post(userController.changePassword);
 

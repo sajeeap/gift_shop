@@ -54,85 +54,101 @@ module.exports = {
 
 
   addProducts: async (req, res) => {
-    console.log(req.body);
     try {
-      const existProduct = await Product.findOne({
-        name: req.body.productName.toLowerCase(),
-      });
-      if (existProduct) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Product already exist" });
+      const { productName, categoryName, productDespt, productStock, price } = req.body;
+  
+      // Validate required fields
+      const errors = {};
+      if (!productName) errors.productName = "Product title is required.";
+      if (!categoryName) errors.categoryName = "Category is required.";
+      if (!productDespt) errors.productDespt = "Product description is required.";
+      if (!productStock || isNaN(productStock) || parseInt(productStock, 10) < 0) errors.productStock = "Valid stock quantity is required.";
+      if (!price || isNaN(price) || parseFloat(price) < 0) errors.price = "Valid price is required.";
+  
+      if (Object.keys(errors).length > 0) {
+        req.flash("errors", errors);
+        return res.redirect("/admin/add-product");
       }
-
+  
+      // Check if product already exists
+      const existingProduct = await Product.findOne({
+        product_name: productName.toLowerCase(),
+      });
+      if (existingProduct) {
+        req.flash("error", "Product already exists");
+        return res.redirect("/admin/add-product");
+      }
+  
       // Ensure req.files is defined and contains the expected fields
       if (!req.files || !req.files.images || !req.files.primaryImage) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Images are required" });
+        req.flash("error", "Images are required");
+        return res.redirect("/admin/add-product");
       }
-
-      let secondaryImages = [];
-      req.files.images.forEach((e) => {
-        secondaryImages.push({
-          name: e.filename,
-          path: e.path,
-        });
-      });
-
-
-
-      secondaryImages.forEach(async (e) => {
-        await sharp(
-          path.join(__dirname, "../../public/uploads/products-images/") + e.name
-        )
+  
+      // Process secondary images
+      const secondaryImages = [];
+      for (const file of req.files.images) {
+        const outputPath = path.join(__dirname, "../../public/uploads/products-images/crp/", file.filename);
+        
+        // Resize and save secondary images
+        await sharp(path.join(__dirname, "../../public/uploads/products-images/", file.filename))
           .resize(500, 500)
-          .toFile(
-            path.join(__dirname, "../../public/uploads/products-images/crp/") +
-            e.name
-          );
-      });
-
-
-      let primaryImage = [];
-      req.files.primaryImage.forEach((e) => {
-        primaryImage = {
-          name: e.filename,
-          path: e.path,
-        };
-      });
-
-      await sharp(
-        path.join(__dirname, "../../public/uploads/products-images/") +
-        primaryImage.name
-      )
+          .toFile(outputPath);
+        
+        secondaryImages.push({
+          name: file.filename,
+          path: outputPath,
+        });
+      }
+  
+      // Process primary image
+      const primaryImageFile = req.files.primaryImage[0];
+      const primaryImagePath = path.join(__dirname, "../../public/uploads/products-images/crp/", primaryImageFile.filename);
+  
+      await sharp(path.join(__dirname, "../../public/uploads/products-images/", primaryImageFile.filename))
         .resize(500, 500)
-        .toFile(
-          path.join(__dirname, "../../public/uploads/products-images/crp/") +
-          primaryImage.name
-        );
-
+        .toFile(primaryImagePath);
+  
+      const primaryImage = {
+        name: primaryImageFile.filename,
+        path: primaryImagePath,
+      };
+  
+      // Create new product
       const product = new Product({
-        product_name: req.body.productName.toLowerCase(),
-        category: req.body.categoryName,
-        description: req.body.productDespt,
-        stock: req.body.productStock,
-        price: req.body.price,
-        primaryImages: primaryImage,
+        product_name: productName.toLowerCase(),
+        category: categoryName,
+        description: productDespt,
+        stock: parseInt(productStock, 10),
+        price: parseFloat(price),
+        primaryImage: primaryImage,
         secondaryImages: secondaryImages,
       });
-
-
-
+  
+      // Save product to database
       await product.save();
       req.flash("success", "Product added successfully");
       res.redirect("/admin/products");
+  
     } catch (error) {
-
-      console.log(error);
-      //   res.status(500).json({ message: 'Server error' });
-      req.flash("error", error.message);
-      return res.redirect("/admin/add-product");
+      console.error(error);
+  
+      // Handle different types of errors
+      if (error instanceof multer.MulterError) {
+        req.flash("error", "File upload error: " + error.message);
+      } else {
+        req.flash("error", "Server error: " + error.message);
+      }
+  
+      // Remove uploaded files if error occurs
+      if (req.files) {
+        req.files.images.forEach(file => fs.unlinkSync(path.join(__dirname, "../../public/uploads/products-images/", file.filename)));
+        if (req.files.primaryImage) {
+          fs.unlinkSync(path.join(__dirname, "../../public/uploads/products-images/", req.files.primaryImage[0].filename));
+        }
+      }
+  
+      res.redirect("/admin/add-product");
     }
   },
 

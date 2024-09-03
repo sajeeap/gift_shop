@@ -207,7 +207,60 @@ module.exports = {
             console.error('Error fetching product stock:', error);
             res.status(500).json({ error: 'Failed to fetch product stock' });
         }
-    }
+    },
+
+    getSearchSuggestions: async (req, res) => {
+        const query = req.query.query;
+        const categoryFilter = req.session.category;
+    
+    
+        if (!query) {
+          return res.json([]);
+        }
+    
+        try {
+          let productSuggestions = [];
+          let categorySuggestions = [];
+          let brandSuggestions = [];
+    
+          // If a category filter is applied, filter product suggestions by that category
+          if (categoryFilter) {
+            productSuggestions = await Product.find({
+                product_name: new RegExp(query, 'i'),
+              category: categoryFilter // Only include products in the selected category
+            }).limit(4).select('product_name');
+          } else {
+            // If no category filter is applied, get suggestions from all products
+            productSuggestions = await Product.find({
+                product_name: new RegExp(query, 'i')
+            }).limit(4).select('product_name');
+    
+            // Get category suggestions based on the query
+            categorySuggestions = await Category.find({
+              name: new RegExp(query, 'i'),
+              isActive: true // Assuming you want only active categories
+            }).limit(4).select('name');
+    
+            brandSuggestions = await Brand.find({
+              name: new RegExp(query, "i"),
+            }).limit(4).select('name');
+          }
+    
+    
+    
+          // Combine and return suggestions
+          const suggestions = [
+            ...productSuggestions.map(p => p.product_name),
+            ...categorySuggestions.map(c => c.name),
+            ...brandSuggestions.map(b => b.name)
+          ];
+    
+          res.json(suggestions);
+        } catch (err) {
+          console.error(err);
+          res.status(500).json({ error: 'Server error' });
+        }
+      }
 
 
 

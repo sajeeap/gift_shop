@@ -1,46 +1,90 @@
-<div class="tab-pane fade" id="v-pills-referral-tab" role="tabpanel" aria-labelledby="#v-pills-referral"
-              tabindex="0">
-              <div class="row">
-                <div class="col-md-12 mb-4">
-                  <div class="form-outline">
-                    <h3 class="text-capitalize">My Orders</h3>
-                  </div>
-                  <hr />
-                </div>
+<div class="tab-pane fade" id="v-pills-referral" role="tabpanel" aria-labelledby="v-pills-referrals-tab" tabindex="0">
+  <div class="row">
+      <div class="col-md-12 mb-4">
+          <div class="d-flex justify-content-between align-items-center">
+              <h3 class="text-capitalize">My Referrals</h3>
+          </div>
+          <hr />
+      </div>
+  </div>
+
+  <div class="row">
+      <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
+          <div class="wrap-table-shopping-cart">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                  <p class="lead bg-success-light fw-semibold text-muted p-2">Your Referral Code: 
+                      <span class="text-dark fw-bold" id="referralCode"><%- referralCode %></span>
+                  </p>
+                  <button type="button" data-clipboard-text="<%- referralCode %>" id="copyCode" class="btn btn-outline-dark">Copy Code</button>
+                  <button type="button" data-clipboard-link="<%- referralCode %>" data-bs-toggle="tooltip" data-bs-placement="top"
+                      data-bs-title="Copy to clipboard." id="copyLink" class="btn btn-outline-primary">Copy Referral Link</button>
               </div>
-              <div class="row">
-                <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
-                  <div class="wrap-table-shopping-cart">
-                    <table class="table-shopping-cart">
+              <p class="lead bg-success-light fw-semibold text-muted text-uppercase p-2">Referral Rewards: <%- user.referralRewards ? user.referralRewards : 0 %></p>
+              <p class="lead bg-success-light fw-semibold text-muted text-uppercase p-2">Successful Referrals: <%- successfulReferrals ? successfulReferrals.length : 0 %></p>
+
+              <table class="table-shopping-cart">
+                  <thead>
                       <tr class="table_head">
-                        <th class="column-1">Name</th>
-                        <th class="column-2">Email</th>
-                        <th class="column-3">Joined Date</th>
-
+                          <th class="column-2">Date</th>
+                          <th class="column-2 text-center">Username</th>
+                          <th class="column-3">Status</th>
                       </tr>
-                      <% if (successfullRefferals && successfullRefferals.length !==0 ) { %>
-                        <% successfullRefferals.forEach(element=> { %>
-                          <tr class="table_row">
-                            <td class="column-1">
-                              <%= element.date.toDateString() %>
-                            </td>
-                            <td class="column-2"></td>
-                            <td class="column-1"><%- element.status %></td>
-
-
-
-                          </tr>
-
-
-
-                          <% }); %>
-                            <% } else { %>
-                              <tr>
-                                <td colspan="4" class="text-center">No refferals yet</td>
+                  </thead>
+                  <tbody>
+                      <% if (successfulReferrals && successfulReferrals.length !== 0 ) { %>
+                          <% successfulReferrals.forEach((element) => { %>
+                              <tr class="table_row">
+                                  <td class="column-2"><%= element.date.toDateString() %></td>
+                                  <td class="column-2 text-center"><%- element.username %></td>
+                                  <td class="column-3">
+                                      <span class="badge rounded-pill 
+                                          <%= element.status === 'Active' ? 'badge-success' : 'badge-secondary' %>">
+                                          <%= element.status %>
+                                      </span>
+                                  </td>
                               </tr>
-                              <% } %>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
+                          <% }) %>
+                      <% } else { %>
+                          <tr>
+                              <td colspan="3" class="text-center">No referrals yet</td>
+                          </tr>
+                      <% } %>
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script defer>
+  const copyCode = document.getElementById("copyCode");
+  const copyLink = document.getElementById("copyLink");
+
+  copyCode.addEventListener("click", () => {
+      const copyCodeText = document.getElementById("referralCode").innerText;
+      navigator.clipboard.writeText(copyCodeText);
+
+      Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Code Copied",
+          showConfirmButton: false,
+          timer: 1000,
+      })
+  });
+
+  copyLink.addEventListener("click", () => {
+      const copyCodeText = document.getElementById("referralCode").innerText;
+      const link = `${window.location.origin}/register/?ref=${copyCodeText}`;
+
+      navigator.clipboard.writeText(link);
+
+      Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Link Copied",
+          showConfirmButton: false,
+          timer: 1000,
+      })
+  });
+</script>

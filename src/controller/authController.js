@@ -1,16 +1,27 @@
 const bcrypt = require('bcrypt');
 const adminLayout = './layouts/authLayout'
 const jwt = require('jsonwebtoken');
+const Wallet = require("../model/walletSchema")
+const User = require("../model/userSchema");
+const OTP = require("../model/otpSchema");
 
 const jwtSecret = process.env.JWT_SECRET;
 
+function generateRefferalCode(length) {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let referralCode = "";
+  for (let i = 0; i < length; i++) {
+    referralCode += characters.charAt(
+      Math.floor(Math.random() * characters.length)
+    );
+  }
+  return referralCode;
+}
 
 
-/**
- * Models
- */
-const User = require("../model/userSchema");
-const OTP = require("../model/otpSchema");
+
+
 
 const { sendOtpEmail } = require("../helper/userVerificationHelper");
 
@@ -36,7 +47,7 @@ module.exports={
 
   userRegister: async (req, res) => {
 
-    const {firstName,lastName,email,password,confirmPassword} = req.body;
+    const {firstName,lastName,email,password,confirmPassword, referral} = req.body;
    
     console.log(req.body);
 
@@ -47,15 +58,40 @@ module.exports={
     }
 
     
-    const hashpwd=await bcrypt.hash(password,12);
+    
+
+    try {
+
+      if (password !== confirmPassword) {
+        req.flash("error", "Passwords do not match");
+        return res.redirect("/register");
+      }
+
+      const hashpwd=await bcrypt.hash(password,12);
+
+    let referralCode = generateRefferalCode(8);
+      console.log("referralCode: " + referralCode);
+
     const user=await User.create({
               firstName,
               lastName,
               email,
               password:hashpwd,
+              referralCode
             });
 
-    try {
+  
+      if (referral) {
+        console.log("Stuck Here");
+        const refferer = await User.findOne({ referralCode: referral });
+  
+        if(refferer){
+          console.log({ refferal: refferer, referralCode: referral });
+    
+          user.referralToken = refferer._id;
+        }
+      }
+
       const savedUser = await user.save();
       if (!savedUser) {
         req.flash("error", "user registered unsuccessfully");
@@ -125,7 +161,7 @@ module.exports={
         if (!req.session.verifyToken) {
           return res.redirect("/");
         }
-        res.render("auth/user/VerifyOtp");
+        res.render("auth/user/verifyOtp");
       },
       // 
       verifyOtp: async (req, res) => {
@@ -147,18 +183,110 @@ module.exports={
             }
     
             // Compare OTP
-            const validOtp = await bcrypt.compare(req.body.otp, otpData.otp);
+           
     
             // Check if OTP is valid
-            if (!validOtp) {
-                req.flash("error", "Invalid OTP");
+            
+
+            if(otpData){
+              if(await bcrypt.compare(req.body.otp, otpData.otp)){
+                let updateUser = await User.findOne({ _id: otpData.userId });
+                   updateUser.isVerified = true;
+
+                   if (updateUser) {
+                    const user = await User.findOne({ _id: req.session.verifyToken });
+        
+                    console.log(`user ${user.referralToken}`);
+        
+                    if (user.referralToken) {
+                      const referrer = await User.findOne({ _id: user.referralToken });
+        
+                      if (referrer) {
+                        referrer.refferalRewards += 100;
+                        user.refferalRewards += 100;
+        
+                        const referrerWallet = await Wallet.findOne({
+                          userId: referrer._id,
+                        });
+                        const userWallet = await Wallet.findOne({ userId: user._id });
+        
+                        if (!referrerWallet) {
+                          const referrerWallet = new Wallet({
+                            userId: referrer._id,
+                            balance: 100,
+                            transactions: [
+                              {
+                                date: Date.now(),
+                                amount: 100,
+                                message: "Refferal Reward",
+                                type: "Credit",
+                              },
+                            ],
+                          });
+                          await referrerWallet.save();
+                        } else {
+                          referrerWallet.balance += 100;
+                          referrerWallet.transactions.push({
+                            date: Date.now(),
+                            amount: 100,
+                            message: "Refferal Reward",
+                            type: "Credit",
+                          });
+                          await referrerWallet.save();
+                        }
+        
+                        if (!userWallet) {
+                          const userWallet = new Wallet({
+                            userId: user._id,
+                            balance: 100,
+                            transactions: [
+                              {
+                                date: Date.now(),
+                                amount: 100,
+                                message: "Refferal Reward",
+                                type: "Credit",
+                              },
+                            ],
+                          });
+                          await userWallet.save();
+                        }
+        
+                        referrer.successfullRefferals.push({
+                          date: Date.now(),
+                          username: user.username,
+                          status: "Successful Refferal",
+                        });
+        
+                        await referrer.save();
+                        await user.save();
+                      }
+                    }
+        
+                    req.flash("success", "User verificaion successfull, Please Login");
+                    console.log("success");
+                    delete req.session.verifyToken;
+                    return res.redirect("/login");
+                  }
+
+              } else {
+                req.flash("error", "Please enter a valid OTP!!!!!!");
+                console.log("errorr, otp not valid");
                 return res.redirect("/verifyOtp");
+              }
+
+            }else {
+              req.flash("error", "OTP expired, Try again by logging in!!!!!!");
+              console.log("errorr, otp expired");
+              return res.redirect("/login");
             }
+
+            
     
             // Update user verification status
-            let user = await User.findOne({ _id: otpData.userId });
-            user.isVerified = true;
-            await user.save();
+            
+            await updateUser.save();
+
+
     
             // Success response
             req.flash("success", "User verification successful");

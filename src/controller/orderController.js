@@ -545,84 +545,84 @@ module.exports = {
         }
     },
 
-  manageReturnStatus : async (req, res) => {
-        
+    manageReturnStatus: async (req, res) => {
         const orderId = req.body.order;
         const itemOrderId = req.body.itemOrderId;
-        const status  = req.body.returnStatus;
-
+        const newStatus = req.body.returnStatus;
     
-        // Define valid return statuses
+        // Define valid return statuses in the correct order
         const validReturnStatuses = ["Requested", "Approved", "Rejected", "Recieved and Refunded"];
     
-        if (!validReturnStatuses.includes(status)) {
+        if (!validReturnStatuses.includes(newStatus)) {
             req.flash('error', 'Invalid return status');
             return res.redirect('/admin/return'); // Redirect to the correct return management page
         }
-
-        
     
         try {
             const orderItem = await Order.findOne({ _id: orderId });
             const returnItem = orderItem.items.find(item => item.order_id.toString() === itemOrderId);
-            
-           
-
+    
             if (returnItem) {
-                if (status === 'Requested') {
+                const currentStatus = returnItem.productStatus;
+    
+                // Check if trying to revert back to "Requested" after moving forward
+                if (newStatus === 'Requested' && currentStatus !== 'Return requested') {
+                    req.flash('error', 'Cannot change status back to Requested once it has been approved, rejected, or refunded');
+                    return res.redirect('/admin/return'); // Redirect to the return management page
+                }
+    
+                // Prevent going back from "Approved", "Rejected", or "Recieved and Refunded"
+                if (["Approved", "Rejected", "Recieved and Refunded"].includes(currentStatus) && validReturnStatuses.indexOf(newStatus) < validReturnStatuses.indexOf(currentStatus)) {
+                    req.flash('error', `Cannot move return status back from ${currentStatus} to ${newStatus}`);
+                    return res.redirect('/admin/return'); // Redirect to the return management page
+                }
+    
+                // Update status based on newStatus
+                if (newStatus === 'Requested') {
                     returnItem.productStatus = 'Return requested';
                     returnItem.ProductReturned = false;
-                } else if (status === 'Approved') {
+                } else if (newStatus === 'Approved') {
                     returnItem.productStatus = 'Return Approved';
                     returnItem.ProductReturned = false;
-                } else if (status === 'Rejected') {
+                } else if (newStatus === 'Rejected') {
                     returnItem.productStatus = 'Return Rejected';
                     returnItem.ProductReturned = false;
-                } else if (status === 'Recieved and Refunded') {
+                } else if (newStatus === 'Recieved and Refunded') {
                     returnItem.productStatus = 'Recieved and Refunded';
                     returnItem.ProductReturned = true;
-
+    
                     if (orderItem.paymentMethod === 'COD') {
                         // No refund necessary for COD orders, simply save the order
-                    }else if (orderItem.paymentMethod === 'Razor Pay' || orderItem.paymentMethod === 'Wallet') {
+                    } else if (orderItem.paymentMethod === 'Razor Pay' || orderItem.paymentMethod === 'Wallet') {
                         // Refund directly to the wallet
                         let wallet = await Wallet.findOne({ userId: orderItem.customer_id });
-                        
+    
                         if (!wallet) {
-                            
                             wallet = new Wallet({ userId: orderItem.customer_id, balance: 0 });
                         }
-                    
+    
                         const discpercent = orderItem.couponDiscount / orderItem.totalPrice;
                         const refundAmount = returnItem.itemTotal * (1 - discpercent);
-                    
-                        // Convert refundAmount to a float before adding it to the balance
+    
                         wallet.balance += parseFloat(refundAmount.toFixed(2));
                         wallet.transactions.push({
                             amount: refundAmount.toFixed(2),
                             message: 'Refunded to Wallet from return product',
                             type: 'Credit'
                         });
-                    
+    
                         await wallet.save();
-                    }  else {
+                    } else {
                         return res.status(400).json({ error: 'Invalid payment method' });
                     }
-
-
-                } else if (status === 'Returned') {
-                    returnItem.returned_on = new Date(); // Set the returned_on date
-                } 
-
-              
+                }
     
                 await orderItem.save();
-                console.log('Return Item::::::::::::::::::::::::::::::', orderItem);
                 req.flash('success', 'Return status updated successfully');
-
             } else {
                 req.flash('error', 'Product not found');
             }
+    
             res.redirect('/admin/return'); // Redirect to the return management page
         } catch (error) {
             console.error('Error updating return status:', error);
@@ -630,7 +630,8 @@ module.exports = {
             res.redirect('/admin/return'); // Redirect to the return management page
         }
     },
-
+    
+    
 
 
 

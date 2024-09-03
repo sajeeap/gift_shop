@@ -1,3 +1,111 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+	/* Hide the dropdown by default */
+	.dropdown-menu {
+	  display: none;
+	  position: absolute;
+	  background-color: white;
+	  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+	  z-index: 1;
+	}
+  
+	/* Show the dropdown when 'show' class is added */
+	.dropdown-menu.show {
+	  display: block;
+	}
+	.cl2 {
+    color: black !important;
+}
+
+	.dropdown-item {
+	  padding: 8px 16px;
+	  display: block;
+	  text-decoration: none;
+	  color: black;
+	}
+  
+	.dropdown-item:hover {
+	  background-color: #f1f1f1;
+	}
+	/* Container for search input and icon */
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+	width: 90%;
+}
+
+/* Style for search input */
+.input-search {
+    padding: 8px 40px 8px 12px; /* Add padding on the right for the icon */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex: 1;
+}
+
+/* Style for search icon */
+#search-icon {
+    position: absolute;
+    right: 12px; /* Position inside the input field */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    padding: 8px;
+    pointer-events: all; /* Ensure the icon can be clicked */
+}
+
+/* Style for suggestions dropdown */
+.suggestions {
+    display: none; /* Initially hidden */
+    position: absolute;
+    top: 100%; /* Position below the search container */
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 200px; /* Optional: limit the height */
+    overflow-y: auto; /* Optional: add scroll if content is too long */
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+/* Style for each suggestion item */
+.suggestions ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.suggestions li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.suggestions li:hover {
+    background-color: #f0f0f0;
+}
+
+/* Style for error message */
+.error-message {
+    position: absolute;
+    top: 100%; /* Position below the search container */
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    color: red;
+    font-size: 14px;
+    display: none; /* Initially hidden */
+    text-align: center;
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+
+  </style>
+	
+	
 	<!-- Header -->
 	<header class="header-v2">
 		<!-- Header desktop -->
@@ -33,11 +141,21 @@
 
 					<!-- Icon header -->
 					<div class="wrap-icon-header flex-w flex-r-m">
+						
+						<div class="wrap-icon-header flex-w flex-r-m">
+							<div class="search-container">
+								<input id="search-input" type="text" placeholder="Search..." class="input-search">
+								<div id="search-icon" class="icon-header-item cl2 hov-cl1 trans-04">
+									<i class="zmdi zmdi-search"></i>
+								</div>
+								<div id="suggestions" class="suggestions"></div>
+								<div id="error-message" class="error-message" style="display: none;">No products found.</div>
+							</div>
+						</div>
+
 						<% if (typeof user !=='undefined') { %>
 							<% if (user) { %>
-						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
-							<i class="zmdi zmdi-search"></i>
-						</div>
+						
 
 						<a  href="/cart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="<%= cart && cart.items && cart.items.length ? cart.items.length : '0' %>">
 							<i class="zmdi zmdi-shopping-cart"></i>
@@ -71,10 +189,140 @@
 			</div>	
 		</div>
 
+		<!-- Header Mobile -->
+		<div class="wrap-header-mobile">
+			<!-- Logo moblie -->		
+			<div class="logo-mobile">
+				<a href="/"><img src="/images/icons/gift-shop-logo.png" alt="IMG-LOGO"></a>
+			</div>
+
+			<!-- Icon header -->
+			<div class="wrap-icon-header flex-w flex-r-m m-r-15">
+				
+
+				<% if (typeof user !=='undefined') { %>
+					<% if (user) { %>
+				
+
+				<a  href="/cart" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="<%= cart && cart.items && cart.items.length ? cart.items.length : '0' %>">
+					<i class="zmdi zmdi-shopping-cart"></i>
+				</a>
+				
+
+				<a href="/user/whishlist" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"  data-notify="<%= wishlist && wishlist.products && wishlist.products.length ? wishlist.products.length : '0' %>">
+					<i class="zmdi zmdi-favorite-outline"></i>
+				</a>
+
+				
+				 
+				
+
+				
+				<a href="/user/profile" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11">
+					<i class="zmdi zmdi-account-o"></i>
+				</a>
+				<a href="/logout"  class="flex-c-m stext-100 cl0 mobile-login-button bg1 bor1 hov-btn1 p-lr-2 trans-04">
+					Logout
+				</a>
+				<% } %>
+				  <% } else { %>
+				<a href="/login"  class="flex-c-m stext-100 cl0 mobile-login-button bg1 bor1 hov-btn1 p-lr-2 trans-04">
+					Login
+				</a>
+				<% } %>
+			</div>
+
+			<!-- Button show menu -->
+			<div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+				<span class="hamburger-box">
+					<span class="hamburger-inner"></span>
+				</span>
+			</div>
+		</div>
+
+
+		<!-- Menu Mobile -->
+		<div class="menu-mobile">
+			
+
+			<ul class="main-menu-m">
+				<li class="active-menu">
+					<a href="/">Home</a>								
+				</li>
+				<li>
+					<a href="/product-list">All Products</a>
+				</li>	
+				<li>
+					<a href="/">About</a>
+				</li>
+
+				<li>
+					<a href="/">Contact</a>
+				</li>
+			</ul>
+		</div>
 		
 
 
 
 	</header>
+
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const searchInput = document.getElementById('search-input');
+			const searchIcon = document.getElementById('search-icon');
+			const suggestionsList = document.getElementById('suggestions');
+			const errorMessage = document.getElementById('error-message');
+		
+			const showSuggestions = async (query) => {
+				try {
+					const response = await fetch(`/allProducts/search?query=${encodeURIComponent(query)}`);
+					const suggestions = await response.json();
+		
+					if (suggestions.length > 0) {
+						const limitedSuggestions = suggestions.slice(0, 4); // Limit to 4 suggestions
+						suggestionsList.innerHTML = '<ul>' + limitedSuggestions.map(item => `<li>${item}</li>`).join('') + '</ul>';
+						suggestionsList.style.display = 'block';
+						errorMessage.style.display = 'none'; // Hide error message
+					} else {
+						suggestionsList.style.display = 'none';
+						errorMessage.style.display = 'block'; // Show error message
+					}
+				} catch (error) {
+					console.error('Error fetching suggestions:', error);
+					suggestionsList.style.display = 'none';
+					errorMessage.style.display = 'block'; // Show error message
+				}
+			};
+		
+			searchInput.addEventListener('input', () => {
+				const query = searchInput.value.trim();
+				if (query.length > 0) {
+					showSuggestions(query);
+				} else {
+					suggestionsList.style.display = 'none';
+					errorMessage.style.display = 'none';
+				}
+			});
+		
+			searchIcon.addEventListener('click', () => {
+				const query = searchInput.value.trim();
+				if (query.length > 0) {
+					window.location.href = `/allProducts?search=${encodeURIComponent(query)}`;
+				} else {
+					errorMessage.style.display = 'block'; // Show error message if no query is entered
+					suggestionsList.style.display = 'none';
+				}
+			});
+		
+			suggestionsList.addEventListener('click', (e) => {
+				if (e.target.tagName === 'LI') {
+					const selectedSuggestion = e.target.textContent;
+					window.location.href = `/allProducts?search=${encodeURIComponent(selectedSuggestion)}`;
+				}
+			});
+		});
+		</script>
 
 		

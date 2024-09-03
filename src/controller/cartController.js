@@ -8,12 +8,16 @@ const Category = require("../model/categorySchema")
 module.exports = {
 
     getCart: async (req, res) => {
-        if (!req.session.user) {
-            return res.status(401).json({ error: "Please log in to view your cart." });
-        }
-    
+
+       
+        
         try {
-            const userId = req.session.user._id;
+           
+            const user = req.session.user
+            if (!user) {
+                return res.status(401).json({ error: "Please log in to view your cart." });
+            }
+            const userId =user._id;
             let cart = await Cart.findOne({ userId }).populate("items.product_id");
             const wishlist = await Wishlist.findOne({ user_id: req.session.user }).populate("products");
     

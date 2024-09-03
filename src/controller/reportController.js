@@ -29,7 +29,7 @@ module.exports = {
             {
               $match: {
                 createdAt: { $gte: startDate, $lte: endDate },
-                status: { $ne: "cancelled" },
+                status: "Delivered",
               },
             },
             {
@@ -124,7 +124,7 @@ module.exports = {
                 {
                     $match: {
                         createdAt: { $gte: startDate, $lte: endDate },
-                        status: { $ne: "cancelled" }
+                        status: "Delivered", 
                     }
                 },
                 {
@@ -135,7 +135,6 @@ module.exports = {
                         as: "customer"
                     }
                 },
-                { $unwind: "$items" },
                 {
                     $lookup: {
                         from: "products",
@@ -143,6 +142,9 @@ module.exports = {
                         foreignField: "_id",
                         as: "productDetails"
                     }
+                },
+                {
+                    $unwind: "$items"
                 },
                 {
                     $addFields: {
@@ -173,6 +175,9 @@ module.exports = {
                             }
                         }
                     }
+                },
+                {
+                    $sort: { createdAt: -1 }  // Sort by creation date
                 }
             ]);
     
@@ -259,7 +264,7 @@ module.exports = {
               {
                   $match: {
                       createdAt: { $gte: startDate, $lte: endDate },
-                      status: { $ne: "cancelled" }
+                      status: "Delivered",
                   }
               },
               {
