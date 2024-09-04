@@ -95,7 +95,7 @@ module.exports = {
                 .sort({ createdAt: -1 })
                 .exec();
 
-                console.log("orders",or);
+              
                 
 
             // Get Returns
