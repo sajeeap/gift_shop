@@ -118,6 +118,7 @@ const cancelPendingOrders = async () => {
     await Order.updateMany(
       {
         paymentStatus: 'Pending',
+        paymentMethod: "Razor Pay",
         createdAt: { $lt: twoHoursAgo }
       },
       { $set: { status: 'Cancelled', paymentStatus: 'Cancelled' } }
