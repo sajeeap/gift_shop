@@ -95,6 +95,9 @@ module.exports = {
                 .sort({ createdAt: -1 })
                 .exec();
 
+                console.log("orders",orders);
+                
+
             // Get Returns
             const returns = await Orders.find({ customer_id: userId, returnRequested: true }).populate('items.product_id').sort({ createdAt: -1 })
                 .exec();

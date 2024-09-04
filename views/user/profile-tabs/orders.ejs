@@ -1,247 +1,246 @@
-<div class="tab-pane fade" id="v-pills-orders" role="tabpanel" aria-labelledby="v-pills-profile-tab"
-                tabindex="0">
-                <div class="row">
-                  <div class="col-md-12 mb-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <h3 class="text-capitalize">My Orders</h3>
+<div class="tab-pane fade" id="v-pills-orders" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0">
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <h3 class="text-capitalize">My Orders</h3>
 
-                    </div>
-                    <hr />
-                  </div>
-                </div>
+      </div>
+      <hr />
+    </div>
+  </div>
 
-                <div class="row">
-                  <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
-                    <div class="wrap-table-shopping-cart">
-                      <table class="table-shopping-cart">
-                        <thead>
-                          <tr class="table_head">
-                            <th class="column-1"></th>
-                            <th class="column-2 text-center">Items</th>
-                            <th class="column-2">Date</th>
-                            <th class="column-3">Status</th>
-                            <th class="column-3">Payment</th>
-                            <th class="column-4">Total</th>
-                            <th class="column-5">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <% orders.forEach(order=> { %>
-                            <tr class="table_row">
-                              <td class="column-1">
-                                <% const hasImages=order.items[0].product_id && order.items[0].product_id.primaryImages
-                                  && order.items[0].product_id.primaryImages.length> 0; %>
-                                  <% if (hasImages) { %>
-                                    <img
-                                      src="/uploads/products-images/crp/<%= order.items[0].product_id.primaryImages[0].name %>"
-                                      class="card-img-top" alt="<%= order.items[0].product_id.product_name %>"
-                                      style="width: 120px; height: auto" />
-                                    <% } else { %>
-                                      <img src="/path/to/default-image.jpg" class="card-img-top" alt="Default Image"
-                                        style="width: 120px; height: auto" />
-                                      <% } %>
-                              </td>
-                              <td class="column-2 text-center">
-                                <%= order.items.length %>
-                              </td>
-                              <td class="column-2">
-                                <%= new Date(order.createdAt).toDateString() %>
-                              </td>
-                              <td class="column-3">
-                                <span class="badge rounded-pill
+  <div class="row">
+    <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
+      <div class="wrap-table-shopping-cart">
+        <table class="table-shopping-cart">
+          <thead>
+            <tr class="table_head">
+              <th class="column-1"></th>
+              <th class="column-2 text-center">Items</th>
+              <th class="column-2">Date</th>
+              <th class="column-3">Status</th>
+              <th class="column-3">Payment</th>
+              <th class="column-4">Total</th>
+              <th class="column-5">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% orders.forEach(order=> { %>
+              <tr class="table_row">
+                <td class="column-1">
+                  <% const hasImages=order.items[0].product_id && order.items[0].product_id.primaryImages &&
+                    order.items[0].product_id.primaryImages.length> 0; %>
+                    <% if (hasImages) { %>
+                      <img src="/uploads/products-images/crp/<%= order.items[0].product_id.primaryImages[0].name %>"
+                        class="card-img-top" alt="<%= order.items[0].product_id.product_name %>"
+                        style="width: 120px; height: auto" />
+                      <% } else { %>
+                        <img src="/path/to/default-image.jpg" class="card-img-top" alt="Default Image"
+                          style="width: 120px; height: auto" />
+                        <% } %>
+                </td>
+                <td class="column-2 text-center">
+                  <%= order.items.length %>
+                </td>
+                <td class="column-2">
+                  <%= new Date(order.createdAt).toDateString() %>
+                </td>
+                <td class="column-3">
+                  <span class="badge rounded-pill
                                   <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Placed' || order.status === 'Shipped' ? 'badge-warning' : '' %>
                                   <%= order.status === 'Cancelled' ? 'badge-danger' : '' %>
                                   <%= order.status === 'Delivered' ? 'badge-success' : '' %>">
-                                  <%= order.status %>
-                                </span>
-                              </td>
+                    <%= order.status %>
+                  </span>
+                </td>
 
-                              <td class="column-3">
-                                <%= order.paymentMethod %>
-                              </td>
-                              <td class="column-4">
-                                $<%= (order.items.reduce((total, item)=> total + item.itemTotal, 0) -
-                                  order.couponDiscount).toFixed(2) %>
-                              </td>
-                              <td class="column-5">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                  data-target="#orderModal_<%= order._id %>">View</button>
-                              </td>
-                            </tr>
+                <td class="column-3">
+                  <%= order.paymentMethod %>
+                </td>
+                <td class="column-4">
+                  $<%= (order.items.reduce((total, item)=> total + item.itemTotal, 0) -
+                    order.couponDiscount).toFixed(2) %>
+                </td>
+                <td class="column-5">
+                  <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                    data-target="#orderModal_<%= order._id %>">View</button>
+                </td>
+              </tr>
 
-                            <!-- Order Modal -->
-                            <div class="modal fade" id="orderModal_<%= order._id %>" tabindex="-1" role="dialog"
-                              aria-labelledby="orderModalLabel_<%= order._id %>" aria-hidden="true">
-                              <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title" id="orderModalLabel_<%= order._id %>">Order Details</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                    <p class="mt-2"><strong>Order ID:</strong>
-                                      <%= order.orderId %>
-                                    </p>
-                                    <p><strong>Date:</strong>
-                                      <%= new Date(order.createdAt).toDateString() %>
-                                    </p>
-                                    <p><strong>Status:</strong>
-                                      <span class="badge rounded-pill
+              <!-- Order Modal -->
+              <div class="modal fade" id="orderModal_<%= order._id %>" tabindex="-1" role="dialog"
+                aria-labelledby="orderModalLabel_<%= order._id %>" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="orderModalLabel_<%= order._id %>">Order Details</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p class="mt-2"><strong>Order ID:</strong>
+                        <%= order.orderId %>
+                      </p>
+                      <p><strong>Date:</strong>
+                        <%= new Date(order.createdAt).toDateString() %>
+                      </p>
+                      <p><strong>Status:</strong>
+                        <span class="badge rounded-pill
                                         <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Placed' || order.status === 'Shipped' ? 'badge-warning' : '' %>
                                         <%= order.status === 'Cancelled' ? 'badge-danger' : '' %>
                                         <%= order.status === 'Delivered' ? 'badge-success' : '' %>">
-                                        <%= order.status %>
+                          <%= order.status %>
 
 
-                                      </span>
-                                    </p>
-                                    <p>
-                                      <span>
-                                        <strong>Payment status: </strong>
-                                        <% if (order.paymentStatus==="Pending" && order.paymentMethod=== "Razor Pay" ) { %>
+                        </span>
+                      </p>
+                      <p>
+                        <span>
+                          <strong>Payment status: </strong>
+                          <% if (order.paymentStatus==="Pending" && order.paymentMethod==="Razor Pay" ) { %>
 
-                                          <div class="alert alert-danger">
-                                            Payment verification failed, Please try again. other wise you order will
-                                            automatically cancelled within 2hrs
-                                          </div>
-                                          <% } else { %>
-                                            <%= order.paymentStatus %>
-                                              <% } %>
-                                      </span>
-
-                                    </p>
-                                    <p>
-
-                                      <% if (order.paymentStatus==="Pending" && order.paymentMethod=== "Razor Pay" ) { %>
-                                        <p><strong>Time Left to Complete Payment:</strong></p>
-                                        <p id="countdown_<%= order._id %>" data-created-at="<%= order.createdAt %>"></p>
-                                        <% } %>
-
-                                    </p>
-
-                                    <h5 class="mt-5 mb-2">Ordered Items:</h5>
-                                    <hr />
-                                    <% order.items.forEach(item=> { %>
-                                      <div class="row">
-                                        <div class="col">
-                                          <% const itemHasImages=item.product_id && item.product_id.primaryImages &&
-                                            item.product_id.primaryImages.length> 0; %>
-                                            <% if (itemHasImages) { %>
-                                              <img
-                                                src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
-                                                class="card-img-top" alt="<%= item.product_id.product_name %>"
-                                                style="width: 100%; height: auto" />
-                                              <% } else { %>
-                                                <img src="/path/to/default-image.jpg" class="card-img-top"
-                                                  alt="Default Image" style="width: 100%; height: auto" />
-                                                <% } %>
-                                        </div>
-                                        <div class="col">
-                                          <%= item.product_id.product_name %>
-                                        </div>
-                                        <div class="col">
-                                          <%= item.quantity %>
-                                        </div>
-                                        <div class="col">$<%= item.price %>
-                                        </div>
-                                        <div class="col">
-                                          <% if (item.status !=='Cancelled' && (order.status==='Processing' ||
-                                            order.status==='Placed' )) { %>
-                                            <button id="cancel-btn-<%= item._id %>" class="btn btn-danger cancel-order"
-                                              data-order-id="<%= order._id %>"
-                                              data-product-id="<%= item.product_id._id %>">
-                                              Cancel
-                                            </button>
-                                            <% } else if (item.status==='Cancelled' || order.status==='Cancelled' ) { %>
-                                              <span id="status-<%= item._id %>" class="text-danger">Item
-                                                Cancelled
-                                              </span>
-                                              <% } else if (order.status==='Delivered' && !item.returnRequested ) { %>
-                                                <a href="/user/returns?orderId=<%= order._id %>&itemId=<%= item._id%>"
-                                                  class="btn btn-warning">
-                                                  Return
-                                                </a>
-                                                <% } else if (order.status==='Delivered' && item.returnRequested ) { %>
-                                                 <span class="badge rounded-pill badge-info" >Return Requested</span>
-                                                <% }  %>
-                                               
-                                                
-
-
-                                        </div>
-                                      </div>
-                                      <hr />
-                                      <% }); %>
-                                        <div class="row">
-                                          <div class="col"></div>
-                                          <div class="col"></div>
-                                          <div class="col"><strong>Subtotal</strong></div>
-                                          <div class="col">
-                                            <strong>$<%= order.items.reduce((total, item)=> total + item.itemTotal,
-                                                0).toFixed(2) %></strong>
-                                          </div>
-                                        </div>
-                                        <div class="row">
-                                          <div class="col"></div>
-                                          <div class="col"></div>
-                                          <div class="col"><strong>Coupon Discount</strong></div>
-                                          <div class="col">
-                                            <strong>-$<%= order.couponDiscount.toFixed(2) %></strong>
-                                          </div>
-                                        </div>
-                                        <div class="row">
-                                          <div class="col"></div>
-                                          <div class="col"></div>
-                                          <div class="col"><strong>Total</strong></div>
-                                          <div class="col">
-                                            <strong>$<%= (order.items.reduce((total, item)=> total + item.itemTotal, 0)
-                                                - order.couponDiscount).toFixed(2) %></strong>
-                                          </div>
-                                        </div>
-                                  </div>
-                                  <div class="modal-footer">
-
-
-                                    <% if (order.status==='Delivered' ) { %>
-                                      <% if (order.paymentMethod==='Razor Pay' || order.paymentMethod==="Wallet" ) { %>
-                                        <a href="/user/invoice/genarate/<%= order._id %>"
-                                          class="btn btn-primary">Generate Invoice</a>
-                                        <% } %>
-
-
-                                          <% } %>
-
-                                            <% if (order.paymentStatus==="Pending" && order.paymentMethod==='Razor Pay') { %>
-                                              <a href="#" class="btn btn-primary retryPaymentButton"
-                                                data-order-id="<%= order.orderId %>"
-                                                data-total-price="<%= (order.items.reduce((total, item) => total + item.itemTotal, 0) - order.couponDiscount).toFixed(2) %>">Retry
-                                                Payment</a>
-
-                                              <% } else { %>
-                                                <%= order.paymentStatus %>
-                                                  <% } %>
-
-
-                                                    <button type="button" class="btn btn-secondary"
-                                                      data-dismiss="modal">Close</button>
-                                  </div>
-                                </div>
-                              </div>
+                            <div class="alert alert-danger">
+                              Payment verification failed, Please try again. other wise you order will
+                              automatically cancelled within 2hrs
                             </div>
+                            <% } else { %>
+                              <%= order.paymentStatus %>
+                                <% } %>
+                        </span>
 
-                            <!-- End of Order Modal -->
+                      </p>
+                      <p>
+
+                        <% if (order.paymentStatus==="Pending" && order.paymentMethod==="Razor Pay" ) { %>
+                          <p><strong>Time Left to Complete Payment:</strong></p>
+                          <p id="countdown_<%= order._id %>" data-created-at="<%= order.createdAt %>"></p>
+                          <% } %>
+
+                      </p>
+
+                      <h5 class="mt-5 mb-2">Ordered Items:</h5>
+                      <hr />
+                      <% order.items.forEach(item=> { %>
+                        <div class="row">
+                          <div class="col">
+                            <% const itemHasImages=item.product_id && item.product_id.primaryImages &&
+                              item.product_id.primaryImages.length> 0; %>
+                              <% if (itemHasImages) { %>
+                                <img src="/uploads/products-images/crp/<%= item.product_id.primaryImages[0].name %>"
+                                  class="card-img-top" alt="<%= item.product_id.product_name %>"
+                                  style="width: 100%; height: auto" />
+                                <% } else { %>
+                                  <img src="/path/to/default-image.jpg" class="card-img-top" alt="Default Image"
+                                    style="width: 100%; height: auto" />
+                                  <% } %>
+                          </div>
+                          <div class="col">
+                            <%= item.product_id ? item.product_id.product_name : 'Product Name Unavailable' %>
+                          </div>
+
+                          <div class="col">
+                            <%= item.quantity %>
+                          </div>
+                          <div class="col">$<%= item.price %>
+                          </div>
+                          <div class="col">
+                            <% if (item.status !=='Cancelled' && (order.status==='Processing' || order.status==='Placed'
+                              )) { %>
+                              <button id="cancel-btn-<%= item._id || 'unknown-id' %>"
+                                class="btn btn-danger cancel-order"
+                                data-order-id="<%= order._id || 'unknown-order-id' %>"
+                                data-product-id="<%= item.product_id || 'unknown-product-id' %>">
+                                Cancel
+                              </button>
+
+                              <% } else if (item.status==='Cancelled' || order.status==='Cancelled' ) { %>
+                                <span id="status-<%= item._id %>" class="text-danger">Item
+                                  Cancelled
+                                </span>
+                                <% } else if (order.status==='Delivered' && !item.returnRequested ) { %>
+                                  <a href="/user/returns?orderId=<%= order._id %>&itemId=<%= item._id%>"
+                                    class="btn btn-warning">
+                                    Return
+                                  </a>
+                                  <% } else if (order.status==='Delivered' && item.returnRequested ) { %>
+                                    <span class="badge rounded-pill badge-info">Return Requested</span>
+                                    <% } %>
 
 
+
+
+                          </div>
+                        </div>
+                        <hr />
+                        <% }); %>
+                          <div class="row">
+                            <div class="col"></div>
+                            <div class="col"></div>
+                            <div class="col"><strong>Subtotal</strong></div>
+                            <div class="col">
+                              <strong>$<%= order.items.reduce((total, item)=> total + item.itemTotal,
+                                  0).toFixed(2) %></strong>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col"></div>
+                            <div class="col"></div>
+                            <div class="col"><strong>Coupon Discount</strong></div>
+                            <div class="col">
+                              <strong>-$<%= order.couponDiscount.toFixed(2) %></strong>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col"></div>
+                            <div class="col"></div>
+                            <div class="col"><strong>Total</strong></div>
+                            <div class="col">
+                              <strong>$<%= (order.items.reduce((total, item)=> total + item.itemTotal, 0)
+                                  - order.couponDiscount).toFixed(2) %></strong>
+                            </div>
+                          </div>
                     </div>
+                    <div class="modal-footer">
 
 
+                      <% if (order.status==='Delivered' ) { %>
+                        <% if (order.paymentMethod==='Razor Pay' || order.paymentMethod==="Wallet" ) { %>
+                          <a href="/user/invoice/genarate/<%= order._id %>" class="btn btn-primary">Generate Invoice</a>
+                          <% } %>
 
-                    <% }); %>
-                      </tbody>
-                      </table>
+
+                            <% } %>
+
+                              <% if (order.paymentStatus==="Pending" ) { %>
+                                <a href="#" class="btn btn-primary retryPaymentButton"
+                                  data-order-id="<%= order.orderId %>"
+                                  data-total-price="<%= (order.items.reduce((total, item) => total + item.itemTotal, 0) - order.couponDiscount).toFixed(2) %>">Retry
+                                  Payment</a>
+
+                                <% } else { %>
+                                  <%= order.paymentStatus %>
+                                    <% } %>
+
+
+                                      <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">Close</button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+
+              <!-- End of Order Modal -->
+
+
+      </div>
+
+
+
+      <% }); %>
+        </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+</div>
