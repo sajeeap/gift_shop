@@ -203,7 +203,7 @@ module.exports = {
         const { orderId, productId } = req.params;
 
         console.log("Order ID and Product ID:", orderId, productId);
-
+ 
         try {
             // Fetch the order by ID and populate related product data
             const order = await Order.findById(orderId).populate('items.product_id');
@@ -222,7 +222,7 @@ module.exports = {
             const orderProduct = order.items[itemIndex];
 
             // Only allow cancellation if the order is in a specific status
-            if (order.status !== 'Processing' && order.status !== 'Pending' && order.status !== 'Confirmed') {
+            if (order.status !== 'Processing' && order.status !== 'Pending' && order.status !== 'Placed') {
                 return res.status(400).json({ error: 'Only orders in processing, pending, or confirmed status can be cancelled' });
             }
 
@@ -295,89 +295,6 @@ module.exports = {
         }
     },
 
-
-    // cancelOrder: async (req, res) => {
-    //     const { orderId, productId } = req.params;
-
-    //     console.log("Order ID and Product ID:", orderId, productId);
-
-    //     try {
-    //         const order = await Order.findById(orderId).populate('items.product_id');
-    //         if (!order) {
-    //             return res.status(404).json({ error: 'Order not found' });
-    //         }
-
-    //         console.log("Order found in cancelOrder:", order);
-
-    //         // Find the item to cancel
-    //         const itemIndex = order.items.findIndex(item => item.product_id._id.toString() === productId);
-    //         if (itemIndex === -1) {
-    //             return res.status(404).json({ error: 'Product not found in the order' });
-    //         }
-
-    //         const orderProduct = order.items[itemIndex];
-
-    //         if (order.status !== 'Processing' && order.status !== 'Pending' && order.status !== 'Confirmed') {
-    //             return res.status(400).json({ error: 'Only orders in processing, pending, or confirmed status can be cancelled' });
-    //         }
-
-    //         // Update the item status to 'Cancelled'
-    //         order.items[itemIndex].status = 'Cancelled';
-    //         order.items[itemIndex].cancelled_on = new Date();
-
-    //         // Check if all items are cancelled, if so, update the overall order status to 'Cancelled'
-    //         const allItemsCancelled = order.items.every(item => item.status === 'Cancelled');
-    //         if (allItemsCancelled) {
-    //             order.status = 'Cancelled';
-    //         }
-
-    //         // Handle refund logic based on payment method
-    //         if (order.paymentMethod === 'COD') {
-    //             // COD orders don't require refund logic, just save the order
-    //         } else if (order.paymentMethod === 'Razor Pay') {
-    //             if (order.paymentId) {
-    //                 try {
-    //                     await razorpayInstance.refunds.create({
-    //                         payment_id: order.paymentId,
-    //                         amount: orderProduct.itemTotal * 100, // amount should be in paise
-    //                         notes: 'Order cancellation refund'
-    //                     });
-    //                 } catch (error) {
-    //                     console.error('Error refunding via Razorpay:', JSON.stringify(error, null, 2));
-    //                     return res.status(500).json({ error: 'Error refunding via Razorpay' });
-    //                 }
-    //             } else {
-    //                 return res.status(400).json({ error: 'Payment ID is missing. Cannot process refund.' });
-    //             }
-    //         } else if (order.paymentMethod === 'Wallet') {
-    //             // Handle Wallet refunds
-    //             let wallet = await Wallet.findOne({ userId: order.customer_id });
-    //             if (!wallet) {
-    //                 wallet = new Wallet({ userId: order.customer_id, balance: 0 });
-    //             }
-
-    //             wallet.balance += orderProduct.itemTotal;
-    //             wallet.transactions.push({
-    //                 amount: orderProduct.itemTotal,
-    //                 message: 'Order cancellation refund',
-    //                 type: 'Credit'
-    //             });
-
-    //             await wallet.save();
-    //         } else {
-    //             return res.status(400).json({ error: 'Invalid payment method' });
-    //         }
-
-    //         // Save the updated order
-    //         await order.save();
-
-    //         // Respond with success
-    //         return res.status(200).json({ success: true, message: 'Order cancelled successfully' });
-    //     } catch (err) {
-    //         console.error('Error cancelling order:', err);
-    //         return res.status(500).json({ error: 'Internal server error' });
-    //     }
-    // },
 
 
 
