@@ -95,7 +95,7 @@ module.exports = {
                 .sort({ createdAt: -1 })
                 .exec();
 
-                console.log("orders",orders);
+                console.log("orders",or);
                 
 
             // Get Returns
@@ -135,7 +135,7 @@ module.exports = {
                 totalPages,
                 limit,
                 referralCode: user.referralCode,
-                successfulReferrals: successfullRefferals,
+                successfullRefferals: successfullRefferals,
                 // returnOrder 
             });
 
