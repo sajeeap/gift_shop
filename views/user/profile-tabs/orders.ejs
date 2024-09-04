@@ -151,7 +151,7 @@
                                          
                                           
                                           <% if (item.status !=='Cancelled' && (order.status==='Processing' ||
-                                            order.status==='Placed' )) { %>
+                                            order.status==='Placed'|| order.status==='Pending' )) { %>
                                             <button id="cancel-btn-<%= item._id %>" class="btn btn-danger cancel-order"
                                               data-order-id="<%= order._id %>"
                                               data-product-id="<%= item.product_id ? item.product_id._id : '' %>">
@@ -169,6 +169,7 @@
                                                 <% } else if (order.status==='Delivered' && item.returnRequested ) { %>
                                                  <span class="badge rounded-pill badge-info" >Return Requested</span>
                                                 <% }  %>
+
                                                
                                                 
 
@@ -216,15 +217,13 @@
 
                                           <% } %>
 
-                                            <% if (order.paymentStatus==="Pending" ) { %>
+                                            <% if (order.paymentStatus==="Pending" && order.paymentMethod==='Razor Pay' ) { %>
                                               <a href="#" class="btn btn-primary retryPaymentButton"
                                                 data-order-id="<%= order.orderId %>"
                                                 data-total-price="<%= (order.items.reduce((total, item) => total + item.itemTotal, 0) - order.couponDiscount).toFixed(2) %>">Retry
                                                 Payment</a>
 
-                                              <% } else { %>
-                                                <%= order.paymentStatus %>
-                                                  <% } %>
+                                              <% } %>
 
 
                                                     <button type="button" class="btn btn-secondary"

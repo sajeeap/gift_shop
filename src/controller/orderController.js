@@ -112,20 +112,20 @@ const generateInvoice = async (order) => {
     });
 };
 
-// const cancelPendingOrders = async () => {
-//     const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000); // 2 hours in milliseconds
+const cancelPendingOrders = async () => {
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000); // 2 hours in milliseconds
   
-//     await Order.updateMany(
-//       {
-//         paymentStatus: 'Pending',
-//         createdAt: { $lt: twoHoursAgo }
-//       },
-//       { $set: { status: 'Cancelled', paymentStatus: 'Cancelled' } }
-//     );
-// };
+    await Order.updateMany(
+      {
+        paymentStatus: 'Pending',
+        createdAt: { $lt: twoHoursAgo }
+      },
+      { $set: { status: 'Cancelled', paymentStatus: 'Cancelled' } }
+    );
+};
   
-// // Schedule this function to run periodically
-// cron.schedule('0 * * * *', cancelPendingOrders); // Check every hour
+// Schedule this function to run periodically
+cron.schedule('0 * * * *', cancelPendingOrders); // Check every hour
 
 
 

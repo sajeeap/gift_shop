@@ -172,53 +172,53 @@
 
 <!-- //cancell if pending
 // -->
-<!-- <script>
-  //   document.addEventListener('DOMContentLoaded', () => {
-  //     const updateCountdown = (orderId, createdAt) => {
-  //       const countdownElement = document.getElementById(`countdown_${orderId}`);
-  //       const createdDate = new Date(createdAt);
-  //       const now = new Date();
-  //       const twoHours = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
-  //       const timeLeft = twoHours - (now - createdDate);
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const updateCountdown = (orderId, createdAt) => {
+        const countdownElement = document.getElementById(`countdown_${orderId}`);
+        const createdDate = new Date(createdAt);
+        const now = new Date();
+        const twoHours = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+        const timeLeft = twoHours - (now - createdDate);
 
-  //       if (timeLeft > 0) {
-  //         const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-  //         const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-  //         const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        if (timeLeft > 0) {
+          const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+          const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-  //         countdownElement.textContent = `${hours} hours ${minutes} minutes ${seconds} seconds`;
-  //       } else {
-  //         countdownElement.textContent = 'Time expired. Your order has been cancelled.';
+          countdownElement.textContent = `${hours} hours ${minutes} minutes ${seconds} seconds`;
+        } else {
+          countdownElement.textContent = 'Time expired. Your order has been cancelled.';
 
-  //         // Optionally, disable or hide elements related to the order
-  //         document.querySelector(`#orderModal_${orderId} .modal-footer`).innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>';
+          // Optionally, disable or hide elements related to the order
+          document.querySelector(`#orderModal_${orderId} .modal-footer`).innerHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>';
 
-  //         // Optionally, inform the server about the cancellation
-  //         fetch(`/user/orders/cancel/${orderId}`, { method: 'POST' })
-  //           .then(response => response.json())
-  //           .then(data => {
-  //             if (data.success) {
-  //               console.log(`Order ${orderId} cancelled.`);
-  //             } else {
-  //               console.error(`Failed to cancel order ${orderId}.`);
-  //             }
-  //           });
-  //       }
-  //     };
+          // Optionally, inform the server about the cancellation
+          fetch(`/user/orders/cancel/${orderId}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                console.log(`Order ${orderId} cancelled.`);
+              } else {
+                console.error(`Failed to cancel order ${orderId}.`);
+              }
+            });
+        }
+      };
 
-  //     // Loop through each order with a pending payment status
-  //     document.querySelectorAll('[id^="countdown_"]').forEach(element => {
-  //       const orderId = element.id.split('_')[1];
-  //       const createdAt = element.dataset.createdAt;
-  //       updateCountdown(orderId, createdAt);
+      // Loop through each order with a pending payment status
+      document.querySelectorAll('[id^="countdown_"]').forEach(element => {
+        const orderId = element.id.split('_')[1];
+        const createdAt = element.dataset.createdAt;
+        updateCountdown(orderId, createdAt);
 
-  //       // Update the countdown every second
-  //       setInterval(() => {
-  //         updateCountdown(orderId, createdAt);
-  //       }, 1000);
-  //     });
-  //   });
-  // </script> -->
+        // Update the countdown every second
+        setInterval(() => {
+          updateCountdown(orderId, createdAt);
+        }, 1000);
+      });
+    });
+   </script>
 
 <!-- //address -->
 <script>
