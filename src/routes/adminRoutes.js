@@ -6,10 +6,11 @@ const adminController = require('../controller/adminController')
 const categoryController = require("../controller/categoryController");
 const productController = require("../controller/productController")
 const orderController = require("../controller/orderController")
-const { productUpload, upload } = require("../middleware/multer");
+const { productUpload, upload, categoryUpload } = require("../middleware/multer");
 const coupenController = require("../controller/couponController")
 const salesReportController = require("../controller/reportController")
 const offerController = require("../controller/offerController")
+
 
 
 const { isAdminLoggedIn } = require("../middleware/authMiddleware");
@@ -31,11 +32,16 @@ router.get('/dashboard/chart-data', isAdminLoggedIn, adminController.getChartDat
 router.get('/category', isAdminLoggedIn, categoryController.getCategory);
 
 router.get('/add-category', isAdminLoggedIn, categoryController.getAddCategory);
-router.post("/add-category", categoryController.addCategory)
+router.post(
+  "/add-category",
+  
+  categoryUpload.fields([{ name:"images", maxCount: 1 }]),
+  categoryController.addCategory
+);
 
 
 router.get('/edit-category/:id', isAdminLoggedIn, categoryController.getEditCategory);
-router.post('/edit-category/:id', isAdminLoggedIn, categoryController.editCategory);
+router.post('/edit-category/:id', isAdminLoggedIn, categoryUpload.fields([{ name:"images", maxCount: 1 }]), categoryController.editCategory);
 router.get('/delete-category/:id', isAdminLoggedIn, categoryController.deleteCategory)
 
 

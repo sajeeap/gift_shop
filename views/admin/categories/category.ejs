@@ -15,11 +15,12 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Status</th>
+                            <th class="text-center">#</th>
+                            <th  class="text-center" >Name</th>
+                            <th class="text-center">Image</th>
+                            <th class="text-center">Status</th>
                            
-                            <th class="text-end">Delete/Edit</th>
+                            <th class="text-center">Delete/Edit</th>
                             
                         </tr>
                     </thead>
@@ -32,12 +33,23 @@
 
                                 <tr>
                                     
-                                    <td><%- index+1 %></td>
-                                    <td><b> <%- category.name %></b></td>
-                                    <td><%- category.isActive? "Listed " : "Unlisted" %></td>
+                                    <td class="text-center">
+                                        <%= (current - 1) * perPage + index + 1 %>
+                                      </td>
+                                    <td  class="text-center"> <b> <%- category.name %></b></td>
+                                    <td class="text-center">
+                                        <% if (category.images && category.images.length > 0) { %>
+                                            <img class="img-fluid img-thumbnail" src="/uploads/category-images/crp/<%= category.images[0].name %>" width="70rem" alt="">
+                                        <% } else { %>
+                                            <span>No Image Available</span>
+                                        <% } %>
+                                    </td>
+                                    
+                                     
+                                    <td class="text-center"><%- category.isActive? "Listed " : "Unlisted" %></td>
                                     
                                     
-                            <td class="text-end">
+                            <td class="text-center">
                                     
                               
                                 <a href="/admin/edit-category/<%= category._id %>" class="btn btn-sm font-sm rounded btn-brand">
@@ -125,5 +137,8 @@
       
       <% } %>
 </section> <!-- content-main end// -->
+
+
+
 
 

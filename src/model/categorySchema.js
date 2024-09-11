@@ -18,32 +18,28 @@ const catogorySchema = new Schema({
         default: true,
     },
     
-      description: {
+    description: {
         type: String,
-      },
-   
+        maxlength: 500  // Example constraint for max length
+    },
 
-    primaryImages:[
+    //   image : {
+    //     filename : String,
+    //     originalname : String,  // Corrected typo
+    //     path: String
+    // },
+    images: [
         {
-            name:{
-                type:String,
+            name: {
+                type: String,
             },
-            path:{
-                type:String
-            }
-        }
-    ],
-    secondaryImages:[
-        {
-            name:{
-                type:String,
-            },
-            path:{
-                type:String
+            path: {
+                type: String
             }
         }
     ],
 
+  
     onOffer: {
         type: Boolean,
         default: false,

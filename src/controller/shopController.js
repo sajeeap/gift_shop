@@ -18,7 +18,8 @@ module.exports = {
 
         
         const products = await Product.find().populate('category').sort({ createdAt: -1 })
-        console.log("prrrrrrrrrrrrrrrrrr", products);
+        const categories = await Category.find({ isActive: true }).sort({ createdAt: -1 }).limit(6);
+        console.log("pr", categories);
         
         const wishlist = await Wishlist.findOne({ user_id:req.session.user }).populate("products");
         
@@ -34,7 +35,8 @@ module.exports = {
                 user: req.session.user,
                 products,
                 wishlist,
-                cart
+                cart,
+                categories
             })
 
         } catch (error) {
