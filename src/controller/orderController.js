@@ -237,56 +237,36 @@ module.exports = {
                 order.status = 'Cancelled';
             }
 
-            // Handle refund logic based on payment method
             if (order.paymentMethod === 'COD') {
                 // No refund necessary for COD orders, simply save the order
-            } else if (order.paymentMethod === 'Razor Pay') {
-
-
-                // Add the amount back to the wallet
+            } else if (order.paymentMethod === 'Razor Pay' || order.paymentMethod === 'Wallet') {
+            
+                // Refund logic for Razor Pay or Wallet payment methods
                 let wallet = await Wallet.findOne({ userId: order.customer_id });
                 if (!wallet) {
                     wallet = new Wallet({ userId: order.customer_id, balance: 0 });
                 }
-
-
+            
                 const discpercent = order.couponDiscount / order.totalPrice;
                 const refundAmount = orderProduct.itemTotal * (1 - discpercent);
-
-                wallet.balance += refundAmount.toFixed(2);
+            
+                // Ensure balance is treated as a number
+                wallet.balance = parseFloat(wallet.balance) + parseFloat(refundAmount.toFixed(2));
                 wallet.transactions.push({
                     amount: refundAmount.toFixed(2),
                     message: 'Refunded to Wallet',
                     type: 'Credit'
                 });
-
+            
                 await wallet.save();
-
-            } else if (order.paymentMethod === 'Wallet') {
-                // Refund directly to the wallet
-                let wallet = await Wallet.findOne({ userId: order.customer_id });
-                if (!wallet) {
-                    wallet = new Wallet({ userId: order.customer_id, balance: 0 });
-                }
-
-
-                const discpercent = order.couponDiscount / order.totalPrice;
-                const refundAmount = orderProduct.itemTotal * (1 - discpercent);
-
-                wallet.balance += refundAmount.toFixed(2);
-                wallet.transactions.push({
-                    amount: refundAmount.toFixed(2),
-                    message: 'Refunded to Wallet',
-                    type: 'Credit'
-                });
-
-                await wallet.save();
+            
             } else {
                 return res.status(400).json({ error: 'Invalid payment method' });
             }
-
+            
             // Save the updated order
             await order.save();
+            
 
             // Respond with success
             return res.status(200).json({ success: true, message: 'Order cancelled and refunded successfully' });
