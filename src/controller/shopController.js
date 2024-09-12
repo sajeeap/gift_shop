@@ -6,6 +6,7 @@ const path = require('path');
 const Cart = require("../model/cartSchema");
 const Wishlist =require("../model/whishlistSchema")
 const Review = require("../model/reviewSchema")
+const mongoose = require("mongoose")
 
 
 
@@ -48,18 +49,14 @@ module.exports = {
         const locals = {
             title: "All Products",
         }
-        const {search} = req.query
-    
+        const { search, category } = req.query; // Fetch category filter
         const userId = req.session.user;
         const user = await User.findById(userId);
     
         let perPage = 6;
         let page = parseInt(req.query.page) || 1;
-    
-        let sortOption = req.query.sort ;
+        let sortOption = req.query.sort;
         let sortOrder = parseInt(req.query.order) || -1;
-        let categoryFilter = req.query.category || '';
-
     
         // Construct sorting object
         let sort = {};
@@ -67,26 +64,20 @@ module.exports = {
     
         // Build filter query
         let filter = {};
-        if (categoryFilter) {
-            filter['category.name'] = categoryFilter;
-
+        if (category) {
+            filter['category'] = await Category.findOne({ _id: category}) // Filter by category ID
         }
-      
-
-
-        if (search) {
-            
     
+        if (search) {
             const categoryNames = await Category.find({ name: new RegExp(search, 'i'), isActive: true }).select('_id');
             const categoryIds = categoryNames.map(cat => cat._id);
     
             // Combine search filters
             filter.$or = [
-              
-              { category: { $in: categoryIds } },
-              { product_name: new RegExp(search, 'i') }
+                { category: { $in: categoryIds } },
+                { product_name: new RegExp(search, 'i') }
             ];
-          }
+        }
     
         let count = await Product.countDocuments(filter);
         let pages = Math.ceil(count / perPage);
@@ -111,7 +102,7 @@ module.exports = {
                 products,
                 categories,
                 nextPage: hasNextPage ? nextPage : null,
-                currentCategory: categoryFilter,
+                currentCategory: category, // Set current category
                 currentSort: sortOption,
                 currentOrder: sortOrder,
                 cart,
@@ -124,6 +115,7 @@ module.exports = {
             console.log(error);
         }
     },
+    
     
 
     

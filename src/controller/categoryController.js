@@ -241,6 +241,8 @@ module.exports = {
                     name: req.files.images[0].filename,
                     path: req.files.images[0].path
                 }];
+               console.log(images);
+               
     
                 // Ensure the cropped image directory exists
                 const croppedDir = path.join(__dirname, "../../public/uploads/category-images/crp/");
